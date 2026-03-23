@@ -8,6 +8,7 @@
 [![Delphi](https://img.shields.io/badge/Delphi-Object%20Pascal-red?logo=delphi)](https://www.embarcadero.com/products/delphi)
 [![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-Ready-blue?logo=github)](https://github.com/features/copilot)
 [![Cursor](https://img.shields.io/badge/Cursor-Rules-purple)](https://cursor.sh)
+[![Claude](https://img.shields.io/badge/Claude-Code-brown?logo=anthropic)](https://claude.ai)
 [![Gemini](https://img.shields.io/badge/Gemini-Skills-orange?logo=google)](https://gemini.google.com)
 [![Kiro](https://img.shields.io/badge/Kiro-Steering-teal)](https://kiro.dev)
 
@@ -69,6 +70,7 @@ O **Delphi AI Spec-Kit** não é um framework de código — é um conjunto de *
 |---|---|---|
 | **GitHub Copilot** | `.github/copilot-instructions.md` | Pre-prompt injetado no Workspace/Chat |
 | **Cursor** | `.cursor/rules/*.md` | Rules carregadas por contexto |
+| **Claude Code** | `.claude/` | Rules por contexto e skills no terminal |
 | **Google Gemini / Antigravity** | `.gemini/skills/*/SKILL.md` | Skills modulares por domínio |
 | **Kiro AI** | `.kiro/steering/*.md` | Restrições de stack e arquitetura |
 | **Qualquer IA** | `AGENTS.md` | Regras universais (raiz do projeto) |
@@ -170,6 +172,13 @@ delphi-spec-kit/
 │
 ├── AGENTS.md                        # 🌐 Regras universais (Copilot, Kiro, Antigravity)
 │
+├── .claude/
+│   ├── CLAUDE.md                    # 🧠 SysPrompt Mestre para Claude
+│   ├── settings.json                # Configurações de permissões
+│   ├── commands/                    # Comandos (ex: project:review)
+│   ├── rules/                       # Regras específicas de contexto
+│   └── skills/                      # Habilidades sob demanda em flat-files
+│
 ├── .github/
 │   └── copilot-instructions.md      # 🤖 Pre-prompt para GitHub Copilot
 │
@@ -254,6 +263,7 @@ git clone https://github.com/delphicleancode/delphi-spec-kit.git
 Seu-Projeto/
 ├── MeuApp.dpr
 ├── AGENTS.md          ← copie da raiz
+├── .claude/           ← copie a pasta
 ├── .github/           ← copie a pasta
 ├── .cursor/           ← copie a pasta
 ├── .gemini/           ← copie a pasta
@@ -262,6 +272,7 @@ Seu-Projeto/
 
 ### 3. A IA assume as regras automaticamente
 
+- **Claude Code** — Aplica `.claude/CLAUDE.md` e usa rules/skills diretas no terminal
 - **Cursor** — Lê os `.cursor/rules/*.md` automaticamente pelo contexto
 - **GitHub Copilot** — Lê `.github/copilot-instructions.md` no workspace
 - **Antigravity / Gemini** — Skills em `.gemini/skills/` são ativadas por demanda
@@ -341,9 +352,10 @@ end;
 
 Pull Requests são bem-vindos! Se seu framework ou biblioteca Delphi favorita precisa de um guia para a IA, adicione:
 
-1. **Rule do Cursor** → `.cursor/rules/seu-framework.md`
-2. **Skill do Gemini** → `.gemini/skills/seu-framework/SKILL.md`
-3. **Referência** → mencione no `AGENTS.md`
+1. **Rule do Claude** → `.claude/rules/seu-framework.md` e `.claude/skills/seu-framework.md`
+2. **Rule do Cursor** → `.cursor/rules/seu-framework.md`
+3. **Skill do Gemini** → `.gemini/skills/seu-framework/SKILL.md`
+4. **Referência** → mencione no `AGENTS.md`
 
 ### Como contribuir
 
