@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS clientes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome VARCHAR(100),
+  email VARCHAR(100),
+  criado_em DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS produtos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome VARCHAR(100),
+  preco DECIMAL(10,2),
+  criado_em DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS vendas (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id_cliente INTEGER,
+  data_venda DATETIME,
+  total DECIMAL(10,2),
+  FOREIGN KEY(id_cliente) REFERENCES clientes(id)
+);

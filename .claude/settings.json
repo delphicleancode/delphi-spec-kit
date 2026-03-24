@@ -1,0 +1,10 @@
+{
+  "allowCommands": [
+    "boss *",
+    "msbuild *"
+  ],
+  "denyPaths": [
+    "**/*.env",
+    "**/*.key"
+  ]
+}
