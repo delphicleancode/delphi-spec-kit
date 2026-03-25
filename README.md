@@ -363,6 +363,20 @@ end;
 
 ---
 
+## 🚫 AI Ignore / Context Checklist
+
+This project enforces a multi-layer strategy to control what AI agents index and use as context. Before submitting a PR:
+
+- [ ] Build output folders of any new subproject are covered by `.gitignore`
+- [ ] `.cursorignore` includes any new heavy or binary paths
+- [ ] Essential instruction files (`AGENTS.md`, rules, skills, examples) are **NOT** excluded
+- [ ] `.vscode/settings.json` excludes are up to date for new artifact types
+- [ ] No secrets (`*.key`, `*.pfx`, `.env`) are committed or referenced
+
+> See [docs/ai-ignore-strategy.md](docs/ai-ignore-strategy.md) for the full rationale and maintenance guide.
+
+---
+
 ## 🤝 Contributions
 
 Pull Requests are welcome! If your favorite Delphi framework or library needs a guide for AI, add:

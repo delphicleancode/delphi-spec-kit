@@ -693,3 +693,33 @@ tests/
 > **Dependency rule:** `Presentation → Application → Domain ← Infrastructure`
 > The Domain **never** depends on other layers. `tests` depend on `Application` and `Domain` but inject Fake implementations by copying `Infrastructure` alone.
 
+---
+
+## 🚫 AI Context Policy — What to Include and Exclude
+
+> Full strategy documented in `docs/ai-ignore-strategy.md`.
+
+### Files AI Must Always Use as Context
+
+- `AGENTS.md` — universal rules
+- `README.md` — project overview
+- `.github/copilot-instructions.md` — Copilot pre-prompt
+- `.claude/CLAUDE.md` — Claude master prompt
+- `.claude/rules/**/*.md` — context-specific rules
+- `.claude/skills/**/SKILL.md` — on-demand skills
+- `.cursor/rules/**/*.md` — Cursor rules
+- `.gemini/skills/**/SKILL.md` — Gemini skills
+- `.kiro/steering/**/*.md` — Kiro steering docs
+- `examples/**/*.pas` — good practice examples
+- `docs/**/*.md` — documentation
+
+### Files AI Must Never Use as Context
+
+- Build artifacts: `*.dcu`, `*.exe`, `*.dll`, `*.bpl`, `*.dcp`, `*.map`, `*.res`
+- IDE temporaries: `*.local`, `*.identcache`, `*.stat`, `__history/`, `__recovery/`
+- Output directories: `Win32/`, `Win64/`, `Debug/`, `Release/`, `build/`, `dist/`
+- Secrets: `*.key`, `*.pfx`, `*.p12`, `.env`, `.env.*`
+- Noise: `*.log`, `*.dmp`, `*.bak`, `*.tmp`
+
+See `.cursorignore`, `.gitignore` and `.vscode/settings.json` for the enforced patterns.
+

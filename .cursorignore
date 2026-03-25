@@ -1,0 +1,75 @@
+# =============================================================================
+# .cursorignore — Delphi AI Spec-Kit
+# Excludes files and folders from Cursor AI indexing/context.
+# See docs/ai-ignore-strategy.md for the full strategy.
+# =============================================================================
+
+# --- Delphi Build Artifacts ---
+*.dcu
+*.exe
+*.dll
+*.bpl
+*.dcp
+*.drc
+*.map
+*.obj
+*.o
+*.a
+*.res
+
+# --- IDE Temporary Files ---
+*.local
+*.identcache
+*.stat
+*.~*
+*.tvsconfig
+__history/
+__recovery/
+
+# --- Build / Output Directories ---
+Win32/
+Win64/
+x64/
+x86/
+Debug/
+Release/
+build/
+dist/
+output/
+
+# --- Dependencies and Caches ---
+node_modules/
+.venv/
+.pytest_cache/
+.mypy_cache/
+modules/
+
+# --- Sensitive Files ---
+*.key
+*.pfx
+*.p12
+.env
+.env.*
+
+# --- Large / Noisy Files ---
+*.log
+*.dmp
+*.bak
+*.tmp
+
+# --- OS Artifacts ---
+Thumbs.db
+.DS_Store
+
+# =============================================================================
+# IMPORTANT: Do NOT add these paths — they are essential for AI context:
+#   AGENTS.md
+#   README.md
+#   .github/copilot-instructions.md
+#   .claude/
+#   .cursor/rules/
+#   .gemini/
+#   .kiro/
+#   examples/
+#   docs/
+# =============================================================================

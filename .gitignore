@@ -1,0 +1,59 @@
+# =============================================================================
+# .gitignore — Delphi AI Spec-Kit
+# =============================================================================
+
+# --- Delphi Build Artifacts ---
+*.dcu
+*.exe
+*.dll
+*.bpl
+*.dcp
+*.drc
+*.map
+*.obj
+*.o
+*.a
+
+# --- IDE Temporary / Generated Files ---
+*.local
+*.identcache
+*.stat
+*.~*
+*.tvsconfig
+__history/
+__recovery/
+
+# --- Build / Output Directories ---
+Win32/
+Win64/
+x64/
+x86/
+Debug/
+Release/
+build/
+dist/
+output/
+
+# --- Dependencies and Caches ---
+node_modules/
+.venv/
+.pytest_cache/
+.mypy_cache/
+modules/
+
+# --- Sensitive / Credential Files ---
+*.key
+*.pfx
+*.p12
+.env
+.env.*
+
+# --- Large / Noisy Files ---
+*.log
+*.dmp
+*.bak
+*.tmp
+
+# --- OS Artifacts ---
+Thumbs.db
+.DS_Store

@@ -1,0 +1,43 @@
+{
+  "files.exclude": {
+    "**/*.dcu": true,
+    "**/*.exe": true,
+    "**/*.dll": true,
+    "**/*.bpl": true,
+    "**/*.dcp": true,
+    "**/*.map": true,
+    "**/*.local": true,
+    "**/*.identcache": true,
+    "**/*.stat": true,
+    "**/*.tvsconfig": true,
+    "**/__history": true,
+    "**/__recovery": true,
+    "**/Win32": true,
+    "**/Win64": true,
+    "**/Debug": true,
+    "**/Release": true,
+    "**/Thumbs.db": true,
+    "**/.DS_Store": true
+  },
+  "search.exclude": {
+    "**/*.dcu": true,
+    "**/*.exe": true,
+    "**/*.dll": true,
+    "**/*.bpl": true,
+    "**/*.dcp": true,
+    "**/*.res": true,
+    "**/*.map": true,
+    "**/*.local": true,
+    "**/*.identcache": true,
+    "**/*.stat": true,
+    "**/__history": true,
+    "**/__recovery": true,
+    "**/Win32": true,
+    "**/Win64": true,
+    "**/Debug": true,
+    "**/Release": true,
+    "**/node_modules": true,
+    "**/.venv": true,
+    "**/.pytest_cache": true
+  }
+}

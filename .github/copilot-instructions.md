@@ -191,4 +191,23 @@ When creating new features, follow the layered architecture:
 - **Domain-Based Exception Handling:** Use and create `Exception` Classes customized for your logics.
 - **Exception Transparency:** When using the `except` block, be strictly focused on specific exceptions (`on E: EFDDBEngineException do`). If you use the generic `Exception` from scratch, NEVER stop using the pure `raise;` at the end of the exception block so as not to hide technical errors from global Stack Traces.
 
+---
+
+## 🚫 Context Scope for Copilot
+
+### Recommended Context (always relevant)
+
+- `AGENTS.md`, `README.md`, `.github/copilot-instructions.md`
+- `.claude/rules/**/*.md`, `.claude/skills/**/SKILL.md`
+- `examples/**/*.pas`, `docs/**/*.md`
+
+### Excludes (never useful as context)
+
+- Build artifacts: `*.dcu`, `*.exe`, `*.dll`, `*.bpl`, `*.dcp`, `*.map`
+- IDE temporaries: `*.local`, `*.identcache`, `__history/`, `__recovery/`
+- Output dirs: `Win32/`, `Win64/`, `Debug/`, `Release/`
+- Secrets and noise: `*.key`, `*.pfx`, `.env`, `*.log`, `*.bak`
+
+> Full strategy: `docs/ai-ignore-strategy.md`. Patterns enforced via `.gitignore`, `.cursorignore` and `.vscode/settings.json`.
+
 
