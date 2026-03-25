@@ -1,7 +1,7 @@
-/// <summary>
-///   Exemplo completo de Controller DMVC com Active Record.
-///   Demonstra: MVCPath attributes, Active Record, serialização,
-///   tratamento de erros, guard clauses e memory management.
+﻿/// <summary>
+/// Complete DMVC Controller example with Active Record.
+/// Demonstrates: MVCPath attributes, Active Record, serialization,
+/// error handling, guard clauses and memory management.
 /// </summary>
 unit Example.Controller.Customer;
 
@@ -30,7 +30,7 @@ type
     [MVCTableField('cpf')]
     FCpf: string;
 
-    [MVCTableField('email')]
+    [MVCTableField('e-mail')]
     FEmail: string;
 
     [MVCTableField('status')]
@@ -39,7 +39,7 @@ type
     [MVCTableField('created_at')]
     FCreatedAt: TDateTime;
   public
-    /// <summary>Valida os dados do customer antes de salvar.</summary>
+    /// <summary>Validates customer data before saving.</summary>
     function IsValid: Boolean;
 
     property Id: Integer read FId write FId;
@@ -57,37 +57,37 @@ type
   [MVCPath('/api/customers')]
   TCustomerController = class(TMVCController)
   public
-    /// <summary>Retorna todos os customers.</summary>
+    /// <summary>Returns all customers.</summary>
     [MVCPath]
     [MVCHTTPMethod([httpGET])]
     [MVCProduces(TMVCMediaType.APPLICATION_JSON)]
     procedure GetAll;
 
-    /// <summary>Retorna um customer por ID.</summary>
+    /// <summary>Returns a customer by ID.</summary>
     [MVCPath('/($id)')]
     [MVCHTTPMethod([httpGET])]
     [MVCProduces(TMVCMediaType.APPLICATION_JSON)]
     procedure GetById(const AId: Integer);
 
-    /// <summary>Cria um novo customer.</summary>
+    /// <summary>Creates a new customer.</summary>
     [MVCPath]
     [MVCHTTPMethod([httpPOST])]
     [MVCConsumes(TMVCMediaType.APPLICATION_JSON)]
     [MVCProduces(TMVCMediaType.APPLICATION_JSON)]
     procedure CreateCustomer;
 
-    /// <summary>Atualiza um customer existente.</summary>
+    /// <summary>Updates an existing customer.</summary>
     [MVCPath('/($id)')]
     [MVCHTTPMethod([httpPUT])]
     [MVCConsumes(TMVCMediaType.APPLICATION_JSON)]
     procedure UpdateCustomer(const AId: Integer);
 
-    /// <summary>Remove um customer por ID.</summary>
+    /// <summary>Remove a customer by ID.</summary>
     [MVCPath('/($id)')]
     [MVCHTTPMethod([httpDELETE])]
     procedure DeleteCustomer(const AId: Integer);
 
-    /// <summary>Busca customers por nome (parcial).</summary>
+    /// <summary>Search customers by name (partial).</summary>
     [MVCPath('/search')]
     [MVCHTTPMethod([httpGET])]
     [MVCProduces(TMVCMediaType.APPLICATION_JSON)]
@@ -150,7 +150,7 @@ var
 begin
   LCustomer := Context.Request.BodyAs<TCustomer>;
   try
-    // Guard clause — validação
+    // Guard clause — validation
     if not LCustomer.IsValid then
     begin
       Render(HTTP_STATUS.BadRequest, 'Invalid customer data');
@@ -166,7 +166,7 @@ begin
   except
     on E: Exception do
     begin
-      Log.Error('[CreateCustomer] ' + E.Message, 'customer');
+      Log.Error('[CreateCustomer]' + E.Message, 'customer');
       LCustomer.Free;
       raise;
     end;
@@ -178,7 +178,7 @@ var
   LCustomer: TCustomer;
   LExisting: TCustomer;
 begin
-  // Guard clause — verificar se existe
+  // Guard clause — check if it exists
   LExisting := TMVCActiveRecord.GetByPK<TCustomer>(AId);
   if not Assigned(LExisting) then
   begin
@@ -203,7 +203,7 @@ begin
   except
     on E: Exception do
     begin
-      Log.Error('[UpdateCustomer] ' + E.Message, 'customer');
+      Log.Error('[UpdateCustomer]' + E.Message, 'customer');
       LCustomer.Free;
       raise;
     end;
@@ -238,7 +238,7 @@ var
 begin
   LSearchTerm := Context.Request.Params['q'];
 
-  // Guard clause — parâmetro obrigatório
+  // Guard clause — mandatory parameter
   if LSearchTerm.Trim.IsEmpty then
   begin
     Render(HTTP_STATUS.BadRequest, 'Query parameter "q" is required');
@@ -251,3 +251,4 @@ begin
 end;
 
 end.
+

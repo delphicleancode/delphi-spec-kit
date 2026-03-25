@@ -1,15 +1,15 @@
-unit MeuApp.Examples.DesignPatterns;
+﻿unit MeuApp.Examples.DesignPatterns;
 {
-  DESIGN PATTERNS EM DELPHI — Exemplo Prático Completo
-  =====================================================
-  Este arquivo demonstra os principais padrões GoF aplicados em Object Pascal,
-  seguindo todas as conveções do Delphi AI Spec-Kit:
-  - Prefixos: T (classes), I (interfaces), E (exceptions), F (fields), A (params), L (locals)
-  - Memory management: try..finally para TObject sem ARC
-  - Interfaces com TInterfacedObject para ARC automático
+  DESIGN PATTERNS IN DELPHI — Complete Practical Example
+  ======================================================
+  This file demonstrates the main GoF patterns applied in Object Pascal,
+  following all conventions from the Delphi AI Spec-Kit:
+  - Prefixes: T (classes), I (interfaces), E (exceptions), F (fields), A (params), L (locals)
+  - Memory management: try..finally for TObject without ARC
+  - Interfaces with TInterfacedObject for automatic ARC
   - Constructor Injection (DIP)
   - Guard clauses
-  - XMLDoc em português
+  - XMLDoc in English
 }
 
 interface
@@ -30,8 +30,8 @@ type
   EEntityNotFoundException = class(Exception);
 
 // ============================================================================
-// PADRÃO: STRATEGY
-// Varia algoritmos de desconto sem mudar o contexto (TOrderCalculator).
+// DEFAULT: STRATEGY
+// Vary discount algorithms without changing context (TOrderCalculator).
 // ============================================================================
 
 type
@@ -63,8 +63,8 @@ type
   end;
 
   /// <summary>
-  ///   Contexto que delega o cálculo de desconto para a strategy configurada.
-  ///   Troque a strategy sem modificar este código (OCP).
+  /// Context that delegates the discount calculation to the configured strategy.
+  /// Change the strategy without modifying this code (OCP).
   /// </summary>
   TOrderCalculator = class
   private
@@ -76,8 +76,8 @@ type
   end;
 
 // ============================================================================
-// PADRÃO: OBSERVER
-// Notifica múltiplos listeners sobre eventos de pedido.
+// DEFAULT: OBSERVER
+// Notifies multiple listeners about request events.
 // ============================================================================
 
 type
@@ -95,8 +95,8 @@ type
   end;
 
   /// <summary>
-  ///   Publisher de eventos de pedido. Notifica todos os listeners inscritos.
-  ///   Listeners são referenciados por interface — sem gerenciamento manual de memória.
+  /// Order event publisher. Notifies all subscribed listeners.
+  /// Listeners are referenced by interface — no manual memory management.
   /// </summary>
   TOrderEventBus = class
   private
@@ -123,8 +123,8 @@ type
   end;
 
 // ============================================================================
-// PADRÃO: DECORATOR
-// Adiciona comportamento ao logger sem herança.
+// PATTERN: DECORATOR
+// Add behavior to the logger without inheritance.
 // ============================================================================
 
 type
@@ -156,14 +156,14 @@ type
   end;
 
 // ============================================================================
-// PADRÃO: BUILDER (Fluent Interface)
-// Constrói queries SQL sem concatenação de strings.
+// DEFAULT: BUILDER (Fluent Interface)
+// Builds SQL queries without string concatenation.
 // ============================================================================
 
 type
   /// <summary>
-  ///   Builder fluente para queries SQL parametrizadas.
-  ///   Uso: TQueryBuilder.Create.Select('*').From('customers').Where('active=1').Build
+  /// Fluent builder for parameterized SQL queries.
+  /// Usage: TQueryBuilder.Create.Select('*').From('customers').Where('active=1').Build
   /// </summary>
   TQueryBuilder = class
   private
@@ -182,14 +182,14 @@ type
     function OrderBy(const AField: string; ADescending: Boolean = False): TQueryBuilder;
     function Limit(ACount: Integer): TQueryBuilder;
 
-    /// <summary>Finaliza e retorna a query SQL montada.</summary>
-    /// <exception cref="EValidationException">Se SELECT ou FROM não foram configurados.</exception>
+    /// <summary>Finalizes and returns the assembled SQL query.</summary>
+    /// <exception cref="EValidationException">If SELECT or FROM were not configured.</exception>
     function Build: string;
   end;
 
 // ============================================================================
-// PADRÃO: CHAIN OF RESPONSIBILITY
-// Pipeline de validação de cliente.
+// DEFAULT: CHAIN ​​OF RESPONSIBILITY
+// Customer validation pipeline.
 // ============================================================================
 
 type
@@ -242,8 +242,8 @@ type
   end;
 
 // ============================================================================
-// PADRÃO: FACTORY METHOD
-// Cria exportadores de relatório por tipo.
+// DEFAULT: FACTORY METHOD
+// Create report exporters by type.
 // ============================================================================
 
 type
@@ -277,7 +277,7 @@ type
   end;
 
   /// <summary>
-  ///   Factory Method: cria o exportador correto baseado no formato solicitado.
+  /// Factory Method: creates the correct exporter based on the requested format.
   /// </summary>
   TReportExporterFactory = class
   public
@@ -287,7 +287,7 @@ type
 implementation
 
 // ============================================================================
-// STRATEGY — Implementação
+// STRATEGY — Implementation
 // ============================================================================
 
 { TNoDiscountStrategy }
@@ -299,7 +299,7 @@ end;
 
 function TNoDiscountStrategy.GetDescription: string;
 begin
-  Result := 'Sem desconto';
+  Result := 'No discount';
 end;
 
 { TPercentageDiscountStrategy }
@@ -308,7 +308,7 @@ constructor TPercentageDiscountStrategy.Create(APercentage: Double);
 begin
   inherited Create;
   if (APercentage < 0) or (APercentage > 100) then
-    raise EValidationException.Create('Percentual deve estar entre 0 e 100');
+    raise EValidationException.Create('Percentage must be between 0 and 100');
   FPercentage := APercentage;
 end;
 
@@ -319,7 +319,7 @@ end;
 
 function TPercentageDiscountStrategy.GetDescription: string;
 begin
-  Result := Format('Desconto de %.0f%%', [FPercentage]);
+  Result := Format('%.0f%% discount', [FPercentage]);
 end;
 
 { TBlackFridayDiscountStrategy }
@@ -333,7 +333,7 @@ end;
 
 function TBlackFridayDiscountStrategy.GetDescription: string;
 begin
-  Result := 'Black Friday — 50% de desconto';
+  Result := 'Black Friday — 50% off';
 end;
 
 { TOrderCalculator }
@@ -342,19 +342,19 @@ constructor TOrderCalculator.Create(AStrategy: IDiscountStrategy);
 begin
   inherited Create;
   if not Assigned(AStrategy) then
-    raise EArgumentNilException.Create('AStrategy não pode ser nil');
+    raise EArgumentNilException.Create('AStrategy cannot be nil');
   FStrategy := AStrategy;
 end;
 
 function TOrderCalculator.CalculateFinalPrice(ABasePrice: Currency): Currency;
 begin
   if ABasePrice < 0 then
-    raise EValidationException.Create('Preço base não pode ser negativo');
+    raise EValidationException.Create('Base price cannot be negative');
   Result := FStrategy.Apply(ABasePrice);
 end;
 
 // ============================================================================
-// OBSERVER — Implementação
+// OBSERVER — Implementation
 // ============================================================================
 
 { TOrderEventBus }
@@ -374,7 +374,7 @@ end;
 procedure TOrderEventBus.Subscribe(AListener: IOrderEventListener);
 begin
   if not Assigned(AListener) then
-    raise EArgumentNilException.Create('AListener não pode ser nil');
+    raise EArgumentNilException.Create('AListener cannot be nil');
   FListeners.Add(AListener);
 end;
 
@@ -403,14 +403,14 @@ end;
 
 procedure TEmailNotificationListener.OnOrderPlaced(const AArgs: TOrderEventArgs);
 begin
-  // Em produção: enviar e-mail de confirmação para AArgs.CustomerEmail
-  Writeln(Format('[EMAIL] Pedido #%d confirmado — enviando para %s',
+  // In production: send confirmation email to AArgs.CustomerEmail
+  Writeln(Format('[EMAIL] Order #%d confirmed — sending to %s',
     [AArgs.OrderId, AArgs.CustomerEmail]));
 end;
 
 procedure TEmailNotificationListener.OnOrderCancelled(const AArgs: TOrderEventArgs);
 begin
-  Writeln(Format('[EMAIL] Pedido #%d cancelado — notificando %s',
+  Writeln(Format('[EMAIL] Order #%d canceled — notifying %s',
     [AArgs.OrderId, AArgs.CustomerEmail]));
 end;
 
@@ -418,16 +418,16 @@ end;
 
 procedure TStockUpdateListener.OnOrderPlaced(const AArgs: TOrderEventArgs);
 begin
-  Writeln(Format('[ESTOQUE] Reservando itens do pedido #%d', [AArgs.OrderId]));
+  Writeln(Format('[STOCK] Reserving order items #%d', [AArgs.OrderId]));
 end;
 
 procedure TStockUpdateListener.OnOrderCancelled(const AArgs: TOrderEventArgs);
 begin
-  Writeln(Format('[ESTOQUE] Liberando itens do pedido #%d cancelado', [AArgs.OrderId]));
+  Writeln(Format('[STOCK] Releasing items from canceled order #%d', [AArgs.OrderId]));
 end;
 
 // ============================================================================
-// DECORATOR — Implementação
+// DECORATOR — Implementation
 // ============================================================================
 
 { TConsoleLogger }
@@ -443,7 +443,7 @@ constructor TTimestampLogDecorator.Create(AInner: ILogger);
 begin
   inherited Create;
   if not Assigned(AInner) then
-    raise EArgumentNilException.Create('AInner logger não pode ser nil');
+    raise EArgumentNilException.Create('AInner logger cannot be nil');
   FInner := AInner;
 end;
 
@@ -459,7 +459,7 @@ constructor TLevelFilterLogDecorator.Create(AInner: ILogger; const AMinLevel: st
 begin
   inherited Create;
   if not Assigned(AInner) then
-    raise EArgumentNilException.Create('AInner logger não pode ser nil');
+    raise EArgumentNilException.Create('AInner logger cannot be nil');
   FInner := AInner;
   FMinLevel := AMinLevel.ToUpper;
 end;
@@ -471,7 +471,7 @@ begin
 end;
 
 // ============================================================================
-// BUILDER — Implementação
+// BUILDER — Implementation
 // ============================================================================
 
 { TQueryBuilder }
@@ -519,7 +519,7 @@ end;
 function TQueryBuilder.Limit(ACount: Integer): TQueryBuilder;
 begin
   if ACount <= 0 then
-    raise EValidationException.Create('Limit deve ser maior que zero');
+    raise EValidationException.Create('Limit must be greater than zero');
   FLimitValue := ACount;
   Result := Self;
 end;
@@ -527,9 +527,9 @@ end;
 procedure TQueryBuilder.ValidateBeforeBuild;
 begin
   if FSelectClause.Trim.IsEmpty then
-    raise EValidationException.Create('SELECT clause é obrigatória');
+    raise EValidationException.Create('SELECT clause is mandatory');
   if FFromClause.Trim.IsEmpty then
-    raise EValidationException.Create('FROM clause é obrigatória');
+    raise EValidationException.Create('FROM clause is mandatory');
 end;
 
 function TQueryBuilder.Build: string;
@@ -540,7 +540,7 @@ begin
 
   LResult := TStringBuilder.Create;
   try
-    LResult.Append('SELECT ').Append(FSelectClause);
+    LResult.Append('SELECT').Append(FSelectClause);
     LResult.Append(' FROM ').Append(FFromClause);
 
     if FWhereConditions.Count > 0 then
@@ -550,7 +550,7 @@ begin
       LResult.Append(' ORDER BY ').Append(FOrderByClause);
 
     if FLimitValue > 0 then
-      LResult.Append(' LIMIT ').Append(FLimitValue.ToString);
+      LResult.Append(' LIMIT').Append(FLimitValue.ToString);
 
     Result := LResult.ToString;
   finally
@@ -559,7 +559,7 @@ begin
 end;
 
 // ============================================================================
-// CHAIN OF RESPONSIBILITY — Implementação
+// CHAIN ​​OF RESPONSIBILITY — Implementation
 // ============================================================================
 
 { TValidationResult }
@@ -598,9 +598,9 @@ const
   MIN_NAME_LENGTH = 3;
 begin
   if ADto.Name.Trim.IsEmpty then
-    Exit(TValidationResult.Fail('Nome é obrigatório'));
+    Exit(TValidationResult.Fail('Name is mandatory'));
   if ADto.Name.Trim.Length < MIN_NAME_LENGTH then
-    Exit(TValidationResult.Fail('Nome deve ter ao menos 3 caracteres'));
+    Exit(TValidationResult.Fail('Name must have at least 3 characters'));
   Result := inherited Validate(ADto);
 end;
 
@@ -609,9 +609,9 @@ end;
 function TEmailValidator.Validate(const ADto: TCustomerDTO): TValidationResult;
 begin
   if ADto.Email.Trim.IsEmpty then
-    Exit(TValidationResult.Fail('E-mail é obrigatório'));
+    Exit(TValidationResult.Fail('Email is mandatory'));
   if not ADto.Email.Contains('@') then
-    Exit(TValidationResult.Fail('E-mail inválido'));
+    Exit(TValidationResult.Fail('Invalid email'));
   Result := inherited Validate(ADto);
 end;
 
@@ -622,9 +622,9 @@ const
   CPF_LENGTH = 11;
 begin
   if ADto.Cpf.Trim.IsEmpty then
-    Exit(TValidationResult.Fail('CPF é obrigatório'));
+    Exit(TValidationResult.Fail('CPF is mandatory'));
   if ADto.Cpf.Trim.Length <> CPF_LENGTH then
-    Exit(TValidationResult.Fail('CPF deve ter 11 dígitos'));
+    Exit(TValidationResult.Fail('CPF must have 11 digits'));
   Result := inherited Validate(ADto);
 end;
 
@@ -635,20 +635,20 @@ const
   MINIMUM_AGE = 18;
 begin
   if ADto.Age < MINIMUM_AGE then
-    Exit(TValidationResult.Fail(Format('Idade mínima: %d anos', [MINIMUM_AGE])));
+    Exit(TValidationResult.Fail(Format('Minimum age: %d years', [MINIMUM_AGE])));
   Result := inherited Validate(ADto);
 end;
 
 // ============================================================================
-// FACTORY METHOD — Implementação
+// FACTORY METHOD — Implementation
 // ============================================================================
 
 { TPdfReportExporter }
 
 procedure TPdfReportExporter.Export(const AData: TReportData; const AOutputPath: string);
 begin
-  // Em produção: geração real do PDF
-  Writeln(Format('[PDF] Exportando "%s" para %s', [AData.Title, AOutputPath]));
+  // In production: actual PDF generation
+  Writeln(Format('[PDF] Exporting "%s" to %s', [AData.Title, AOutputPath]));
 end;
 
 function TPdfReportExporter.GetExtension: string;
@@ -660,7 +660,7 @@ end;
 
 procedure TExcelReportExporter.Export(const AData: TReportData; const AOutputPath: string);
 begin
-  Writeln(Format('[EXCEL] Exportando "%s" para %s', [AData.Title, AOutputPath]));
+  Writeln(Format('[EXCEL] Exporting "%s" to %s', [AData.Title, AOutputPath]));
 end;
 
 function TExcelReportExporter.GetExtension: string;
@@ -672,7 +672,7 @@ end;
 
 procedure TCsvReportExporter.Export(const AData: TReportData; const AOutputPath: string);
 begin
-  Writeln(Format('[CSV] Exportando "%s" para %s', [AData.Title, AOutputPath]));
+  Writeln(Format('[CSV] Exporting "%s" to %s', [AData.Title, AOutputPath]));
 end;
 
 function TCsvReportExporter.GetExtension: string;
@@ -690,12 +690,12 @@ begin
     'xlsx' : Result := TExcelReportExporter.Create;
     'csv'  : Result := TCsvReportExporter.Create;
   else
-    raise EArgumentException.CreateFmt('Formato de exportação não suportado: "%s"', [AFormat]);
+    raise EArgumentException.CreateFmt('Unsupported export format: "%s"', [AFormat]);
   end;
 end;
 
 // ============================================================================
-// DEMONSTRAÇÃO DE USO — Como orquestrar os padrões
+// USAGE DEMONSTRATION — How to orchestrate patterns
 // ============================================================================
 
 procedure DemoStrategyPattern;
@@ -705,16 +705,16 @@ var
 begin
   Writeln('=== STRATEGY PATTERN ===');
 
-  // Sem desconto (padrão)
+  // No discount (default)
   LCalc := TOrderCalculator.Create(TNoDiscountStrategy.Create);
   try
     LPrice := LCalc.CalculateFinalPrice(100);
-    Writeln(Format('Sem desconto: R$ %.2f', [LPrice]));   // 100.00
+    Writeln(Format('No discount: R$ %.2f', [LPrice]));   // 100.00
 
-    // Troca a strategy em runtime — sem alterar TOrderCalculator
+    // Change the strategy at runtime — without changing TOrderCalculator
     LCalc.Strategy := TPercentageDiscountStrategy.Create(20);
     LPrice := LCalc.CalculateFinalPrice(100);
-    Writeln(Format('20%% de desconto: R$ %.2f', [LPrice])); // 80.00
+    Writeln(Format('20%% discount: R$ %.2f', [LPrice])); // 80.00
 
     LCalc.Strategy := TBlackFridayDiscountStrategy.Create;
     LPrice := LCalc.CalculateFinalPrice(100);
@@ -733,7 +733,7 @@ begin
 
   LBus := TOrderEventBus.Create;
   try
-    // Inscreve listeners — interfaces gerenciadas por ARC
+    // Subscribe listeners — ARC-managed interfaces
     LBus.Subscribe(TEmailNotificationListener.Create);
     LBus.Subscribe(TStockUpdateListener.Create);
 
@@ -755,19 +755,19 @@ var
 begin
   Writeln('=== DECORATOR PATTERN ===');
 
-  // Composição: ConsoleLogger → Timestamp → LevelFilter
+  // Composition: ConsoleLogger → Timestamp → LevelFilter
   LLogger :=
     TLevelFilterLogDecorator.Create(
       TTimestampLogDecorator.Create(
         TConsoleLogger.Create
       ),
-      'WARN'  // Filtra DEBUG e INFO em produção
+      'WARN'  // Filters DEBUG and INFO in production
     );
 
-  LLogger.Log('DEBUG', 'Iniciando conexão');   // filtrado, não aparece
-  LLogger.Log('INFO',  'Serviço iniciado');     // filtrado
-  LLogger.Log('WARN',  'Tentativa 2 de 3');    // aparece com timestamp
-  LLogger.Log('ERROR', 'Falha na conexão');    // aparece com timestamp
+  LLogger.Log('DEBUG', 'Starting connection');   // filtrado, not aparece
+  LLogger.Log('INFO',  'Service started');     // filtrado
+  LLogger.Log('WARN',  'Attempt 2 of 3');    // aparece com timestamp
+  LLogger.Log('ERROR', 'Connection failed');    // aparece com timestamp
 end;
 
 procedure DemoBuilderPattern;
@@ -804,9 +804,9 @@ var
   LResult: TValidationResult;
   LCustomer: TCustomerDTO;
 begin
-  Writeln('=== CHAIN OF RESPONSIBILITY ===');
+  Writeln('=== CHAIN ​​OF RESPONSIBILITY ===');
 
-  // Monta a cadeia de validação
+  // Set up the validation chain
   LNameValidator  := TNameValidator.Create;
   LEmailValidator := TEmailValidator.Create;
   LCpfValidator   := TCpfValidator.Create;
@@ -816,23 +816,23 @@ begin
   LEmailValidator.SetNext(LCpfValidator);
   LCpfValidator.SetNext(LAgeValidator);
 
-  // Teste 1: dados inválidos
+  // Test 1: invalid data
   LCustomer.Name  := 'Jo';           // muito curto
-  LCustomer.Email := 'invalido';
+  LCustomer.Email := 'invalid';
   LCustomer.Cpf   := '12345678901';
   LCustomer.Age   := 25;
 
   LResult := LNameValidator.Validate(LCustomer);
-  Writeln(Format('Válido: %s — %s', [BoolToStr(LResult.IsValid, True), LResult.ErrorMessage]));
+  Writeln(Format('Valid: %s — %s', [BoolToStr(LResult.IsValid, True), LResult.ErrorMessage]));
 
-  // Teste 2: dados válidos
-  LCustomer.Name  := 'João Silva';
+  // Test 2: valid data
+  LCustomer.Name  := 'John Silva';
   LCustomer.Email := 'joao@email.com';
   LCustomer.Cpf   := '12345678901';
   LCustomer.Age   := 25;
 
   LResult := LNameValidator.Validate(LCustomer);
-  Writeln(Format('Válido: %s — %s', [BoolToStr(LResult.IsValid, True), LResult.ErrorMessage]));
+  Writeln(Format('Valid: %s — %s', [BoolToStr(LResult.IsValid, True), LResult.ErrorMessage]));
 end;
 
 procedure DemoFactoryMethodPattern;
@@ -842,18 +842,19 @@ var
 begin
   Writeln('=== FACTORY METHOD ===');
 
-  LData.Title := 'Relatório de Vendas';
+  LData.Title := 'Sales Report';
   LData.Lines := ['Item 1', 'Item 2', 'Total: R$ 1.500,00'];
 
-  // Cria o exportador correto sem conhecer a classe concreta
+  // Create the correct exporter without knowing the concrete class
   LExporter := TReportExporterFactory.CreateExporter('pdf');
-  LExporter.Export(LData, 'C:\relatorios\vendas' + LExporter.GetExtension);
+  LExporter.Export(LData, 'C:\reports\sales' + LExporter.GetExtension);
 
   LExporter := TReportExporterFactory.CreateExporter('excel');
-  LExporter.Export(LData, 'C:\relatorios\vendas' + LExporter.GetExtension);
+  LExporter.Export(LData, 'C:\reports\sales' + LExporter.GetExtension);
 
   LExporter := TReportExporterFactory.CreateExporter('csv');
-  LExporter.Export(LData, 'C:\relatorios\vendas' + LExporter.GetExtension);
+  LExporter.Export(LData, 'C:\reports\sales' + LExporter.GetExtension);
 end;
 
 end.
+

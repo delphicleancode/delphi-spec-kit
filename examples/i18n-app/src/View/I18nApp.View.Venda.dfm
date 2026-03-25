@@ -1,7 +1,7 @@
-object VendaForm: TVendaForm
+﻿object VendaForm: TVendaForm
   Left = 0
   Top = 0
-  Caption = 'Registro de Vendas'
+  Caption = 'Sales Record'
   ClientHeight = 300
   ClientWidth = 400
   Color = clBtnFace
@@ -30,14 +30,14 @@ object VendaForm: TVendaForm
     Top = 72
     Width = 63
     Height = 13
-    Caption = 'ID Cliente *'
+    Caption = 'Customer ID *'
   end
   object lblDate: TLabel
     Left = 24
     Top = 120
     Width = 83
     Height = 13
-    Caption = 'Data da Venda *'
+    Caption = 'Date of Sale *'
   end
   object lblTotal: TLabel
     Left = 24
@@ -95,7 +95,7 @@ object VendaForm: TVendaForm
       Top = 8
       Width = 75
       Height = 25
-      Caption = 'Salvar Venda'
+      Caption = 'Save Sale'
       TabOrder = 1
     end
     object btnDelete: TButton
@@ -108,3 +108,4 @@ object VendaForm: TVendaForm
     end
   end
 end
+

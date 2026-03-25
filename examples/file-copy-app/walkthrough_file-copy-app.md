@@ -1,17 +1,17 @@
 # File Copy Application — Walkthrough
 
-## O que foi criado
+## What was created
 
-Aplicação VCL em `examples/file-copy-app/` com 4 arquivos:
+VCL application in `examples/file-copy-app/` with 4 files:
 
-| Arquivo | Descrição |
+| Archive | Description |
 |---------|-----------|
-| [FileCopy.dpr](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.dpr) | Projeto Delphi |
-| [FileCopy.Main.View.pas](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.Main.View.pas) | Form principal (UI) |
-| [FileCopy.Main.View.dfm](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.Main.View.dfm) | Layout do form |
-| [FileCopy.Service.Copier.pas](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.Service.Copier.pas) | Service de cópia (lógica) |
+| [FileCopy.dpr](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.dpr) | Delphi Project |
+| [FileCopy.Main.View.pas](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.Main.View.pas) | Main Form (UI) |
+| [FileCopy.Main.View.dfm](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.Main.View.dfm) | Form layout |
+| [FileCopy.Service.Copier.pas](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.Service.Copier.pas) | Copy service (logic) |
 
-## Arquitetura
+## Architecture
 
 ```mermaid
 graph LR
@@ -19,22 +19,22 @@ graph LR
   B -->|implementado por| C["TFileCopierService<br/>(System.IOUtils)"]
 ```
 
-- **SRP**: A lógica de cópia está isolada em `TFileCopierService`, separada da UI
-- **DIP**: O form depende da interface `IFileCopierService`, não da classe concreta
-- **ARC**: O service é gerenciado por interface — sem necessidade de `Free`
+- **SRP**: Copy logic is isolated in `TFileCopierService`, separate from the UI
+- **DIP**: The form depends on the `IFileCopierService` interface, not the concrete class
+- **ARC**: The service is managed by interface — no need for `Free`
 
-## Funcionalidades
+## Features
 
-1. **Selecionar pasta de origem** — `TFileOpenDialog` com `fdoPickFolders`
-2. **Listar arquivos** — exibe automaticamente no `TListBox` ao selecionar a origem
-3. **Selecionar pasta de destino** — cria o diretório se não existir
-4. **Copiar com progresso** — `TProgressBar` + `TStatusBar` atualizados via callback
-5. **Guard clauses** — validações antes de copiar (pastas vazias, sem arquivos)
+1. **Select source folder** — `TFileOpenDialog` with `fdoPickFolders`
+2. **List files** — automatically displays in `TListBox` when selecting source
+3. **Select destination folder** — creates the directory if it does not exist
+4. **Copy with progress** — `TProgressBar` + `TStatusBar` updated via callback
+5. **Guard clauses** — validations before copying (empty folders, no files)
 
-## Como compilar e testar
+## How to compile and test
 
-1. Abrir `FileCopy.dpr` no RAD Studio
-2. **F9** para compilar e executar
-3. Selecionar uma pasta com arquivos como origem
-4. Selecionar uma pasta de destino
-5. Clicar **"Copiar Arquivos"** e acompanhar o progresso
+1. Open `FileCopy.dpr` in RAD Studio
+2. **F9** to compile and run
+3. Select a folder with files as source
+4. Select a destination folder
+5. Click **"Copy Files"** and track the progress

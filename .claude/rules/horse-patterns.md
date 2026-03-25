@@ -1,22 +1,22 @@
 ---
-description: "Padrões Horse REST API — rotas, middleware, controllers, JSON responses"
+description: "Horse REST API patterns — routes, middleware, controllers, JSON responses"
 globs: ["**/*.pas"]
 alwaysApply: false
 ---
 
 # Horse Framework — Claude Rules
 
-Use estas regras ao desenvolver APIs REST com o framework Horse.
+Use these rules when developing REST APIs with the Horse framework.
 
-## Estrutura de Controller
+## Controller Structure
 
-- Controller é uma classe com `class procedure RegisterRoutes`
+- Controller is a class with `class procedure RegisterRoutes`
 - Cada handler: `class procedure Nome(AReq: THorseRequest; ARes: THorseResponse; ANext: TProc)`
-- Controllers NÃO acessam banco diretamente — delegam para Services
+- Controllers DO NOT access the bank directly — they delegate it to Services
 
-## Convenções de Rotas
+## Route Conventions
 
-| Verbo | Rota | Handler | Status |
+| verb | Route | handlers | Status |
 |-------|------|---------|--------|
 | GET | `/api/customers` | `GetAll` | 200 |
 | GET | `/api/customers/:id` | `GetById` | 200 / 404 |
@@ -24,34 +24,34 @@ Use estas regras ao desenvolver APIs REST com o framework Horse.
 | PUT | `/api/customers/:id` | `Update` | 200 |
 | DELETE | `/api/customers/:id` | `Delete` | 204 |
 
-## Middleware Obrigatórios
+## Mandatory Middleware
 
 ```pascal
-THorse.Use(Jhonson);           // JSON automático
-THorse.Use(CORS);              // Cross-Origin
+THorse.Use(Jhonson);           //Automatic JSON
+THorse.Use(CORS);              //Cross-Origin
 THorse.Use(HandleException);   // Error handler global
 ```
 
-## Padrões de Resposta
+## Response Patterns
 
 ```pascal
-// Sucesso com JSON
+//Success with JSON
 ARes.Send<TJSONObject>(LResult).Status(THTTPStatus.OK);
 
-// Criação
+//Creation
 ARes.Send('Created').Status(THTTPStatus.Created);
 
-// Não encontrado
+//Not found
 ARes.Send('Not found').Status(THTTPStatus.NotFound);
 
-// Erro de validação
+//Validation error
 ARes.Send(E.Message).Status(THTTPStatus.BadRequest);
 ```
 
-## Proibições em Horse
+## Bans on Horse
 
-- ❌ Acessar `TFDConnection` direto no controller
-- ❌ Lógica de negócio no handler
-- ❌ Rotas sem tratamento de erro
-- ❌ Concatenar SQL no controller
-- ❌ Ignorar status HTTP
+- ❌ Access `TFDConnection` directly from the controller
+- ❌ Business logic in the handler
+- ❌ Routes without error handling
+- ❌ Concatenate SQL in the controller
+- ❌ Ignore HTTP status

@@ -1,27 +1,27 @@
 ---
 name: "DelphiMVCFramework"
-description: "Padrões para desenvolvimento com DelphiMVCFramework (DMVC) — controllers, Active Record, JWT, Swagger"
+description: "Patterns for development with DelphiMVCFramework (DMVC) — controllers, Active Record, JWT, Swagger"
 ---
 
 # DelphiMVCFramework (DMVC) — Skill
 
-Use esta skill ao criar aplicações web e APIs REST com o **DelphiMVCFramework**.
+Use this skill when creating web applications and REST APIs with **DelphiMVCFramework**.
 
-## Quando Usar
+## When to Use
 
-- Ao criar APIs REST com arquitetura MVC
-- Ao usar Active Record para acesso a dados
-- Ao implementar autenticação JWT
-- Ao gerar documentação Swagger/OpenAPI
+- When creating REST APIs with MVC architecture
+- When using Active Record for data access
+- When implementing JWT authentication
+- When generating Swagger/OpenAPI documentation
 
-## Sobre o DMVC
+## About DMVC
 
-DelphiMVCFramework é o framework MVC mais completo para Delphi, criado por Daniele Teti. Suporta RESTful APIs, Server-Sent Events, WebSockets, Active Record, serialização JSON/XML e muito mais.
+DelphiMVCFramework is the most complete MVC framework for Delphi, created by Daniele Teti. Supports RESTful APIs, Server-Sent Events, WebSockets, Active Record, JSON/XML serialization and more.
 
-- **Repositório:** [github.com/danieleteti/delphimvcframework](https://github.com/danieleteti/delphimvcframework)
-- **Instalação:** Clonar repositório e adicionar paths, ou via Boss/Delphinus
+- **Repository:** [github.com/danieleteti/delphimvcframework](https://github.com/danieleteti/delphimvcframework)
+- **Installation:** Clone repository and add paths, or via Boss/Delphinus
 
-## Estrutura de Projeto
+## Project Structure
 
 ```
 src/
@@ -100,7 +100,7 @@ begin
 end;
 ```
 
-## Padrão de Controller
+## Controller Pattern
 
 ```pascal
 unit MeuApp.Controller.Customer;
@@ -272,7 +272,7 @@ implementation
 end.
 ```
 
-## Middleware JWT
+## JWT Middleware
 
 ```pascal
 uses
@@ -301,27 +301,27 @@ LCustomers := TMVCActiveRecord.SelectRQL<TCustomer>(
 );
 ```
 
-## Convenções DMVC
+## DMVC Conventions
 
-| Aspecto | Convenção |
+| Appearance | Convention |
 |---------|-----------|
-| **Controller** | Herda de `TMVCController` com `[MVCPath]` attribute |
-| **Models** | Herda de `TMVCActiveRecord` com `[MVCTable]` attribute |
-| **Rotas** | Attributes: `[MVCPath]`, `[MVCHTTPMethod]` |
-| **Serialização** | Automática via `Render()` (JSON por padrão) |
-| **Parâmetros** | Path: `($id)`, Query: `Context.Request.QueryStringParam` |
-| **Body** | `Context.Request.BodyAs<T>` para deserializar JSON |
+| **Controller** | Inherits from `TMVCController` with `[MVCPath]` attribute |
+| **Models** | Inherits from `TMVCActiveRecord` with `[MVCTable]` attribute |
+| **Routes** | Attributes: `[MVCPath]`, `[MVCHTTPMethod]` |
+| **Serialization** | Automatic via `Render()` (JSON by default) |
+| **Parameters** | Path: `($id)`, Query: `Context.Request.QueryStringParam` |
+| **Body** | `Context.Request.BodyAs<T>` to deserialize JSON |
 | **Status** | `Render(HTTP_STATUS.OK)`, `Render201Created` |
-| **Middleware** | Herda de `TMVCCustomMiddleware` ou usa built-in |
+| **Middleware** | Inherits from `TMVCCustomMiddleware` or uses built-in |
 | **Swagger** | Attributes `[MVCSwagSummary]`, `[MVCSwagParam]` |
 
-## Checklist para Projetos DMVC
+## Checklist for DMVC Projects
 
-- [ ] WebModule configurado com `TMVCEngine`?
-- [ ] Controllers registrados com `AddController`?
-- [ ] Middleware CORS adicionado?
-- [ ] Active Record models com `[MVCTable]` e `[MVCTableField]`?
-- [ ] Rotas seguem padrão RESTful?
-- [ ] `Render()` usado para todas as respostas?
-- [ ] JWT middleware para rotas protegidas?
-- [ ] Objetos `BodyAs<T>` liberados em caso de exception?
+- [ ] WebModule configured with `TMVCEngine`?
+- [ ] Controllers registered with `AddController`?
+- [ ] CORS middleware added?
+- [ ] Active Record models with `[MVCTable]` and `[MVCTableField]`?
+- [ ] Do routes follow the RESTful standard?
+- [ ] `Render()` used for all answers?
+- [ ] JWT middleware for protected routes?
+- [ ] `BodyAs<T>` objects released in case of exception?

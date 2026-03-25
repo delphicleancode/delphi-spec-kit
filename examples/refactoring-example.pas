@@ -1,19 +1,19 @@
-unit MeuApp.Examples.Refactoring;
+﻿unit MeuApp.Examples.Refactoring;
 {
-  REFATORAÇÃO DE CÓDIGO DELPHI — Exemplos Antes/Depois
-  =====================================================
-  Demonstra as principais técnicas de refatoração aplicadas em Object Pascal,
-  seguindo as convenções do Delphi AI Spec-Kit.
+  DELPHI CODE REFACTORING — Before/After Examples
+  ===============================================
+  Demonstrates the main refactoring techniques applied in Object Pascal,
+  following the conventions of the Delphi AI Spec-Kit.
 
-  Técnicas demonstradas:
-  1. Extract Method              — quebra método longo em métodos menores
-  2. Guard Clauses               — substitui nesting por saídas antecipadas
-  3. Replace Magic Numbers       — constantes nomeadas no lugar de literais
-  4. Replace Conditional w/ Poly — elimina case/if de tipo com Strategy
-  5. Introduce Parameter Object  — agrupa parâmetros em Record/DTO
-  6. Remove `with` Statement     — elimina escopo implícito perigoso
-  7. Extract Class               — separa responsabilidades em classes coesas
-  8. Extract Interface + DI      — desacopla dependências para testabilidade
+  Techniques demonstrated:
+  1. Extract Method              — breaks a long method into smaller ones
+  2. Guard Clauses               — replaces nesting with early exits
+  3. Replace Magic Numbers       — named constants instead of literals
+  4. Replace Conditional w/ Poly — eliminates type case/if with Strategy
+  5. Introduce Parameter Object  — groups parameters into Record/DTO
+  6. Remove `with` Statement     — eliminates dangerous implicit scope
+  7. Extract Class               — separates responsibilities into cohesive classes
+  8. Extract Interface + DI      — decouples dependencies for testability
 }
 
 interface
@@ -24,7 +24,7 @@ uses
   System.Generics.Collections;
 
 // ============================================================================
-// EXCEÇÕES DE DOMÍNIO
+// DOMAIN EXCEPTIONS
 // ============================================================================
 
 type
@@ -34,8 +34,8 @@ type
   EArgumentNilException      = class(Exception);
 
 // ============================================================================
-// TÉCNICA 1: GUARD CLAUSES
-// Elimina nesting criando saídas antecipadas para casos inválidos.
+// TECHNIQUE 1: GUARD CLAUSES
+// Eliminates nesting by creating early exits for invalid cases.
 // ============================================================================
 
 type
@@ -46,20 +46,20 @@ type
     IsBlocked: Boolean;
   end;
 
-  { ❌ ANTES: 5 níveis de nesting }
+  { ❌ BEFORE: 5 levels of nesting }
   TBankServiceBefore = class
   public
     function Withdraw(AAccount: TAccount; AAmount: Currency): Boolean;
   end;
 
-  { ✅ DEPOIS: guard clauses — casos inválidos saem cedo, lógica no topo }
+  { ✅ AFTER: guard clauses — invalid cases exit early, logic at the top }
   TBankServiceAfter = class
   public
     function Withdraw(AAccount: TAccount; AAmount: Currency): Boolean;
   end;
 
 // ============================================================================
-// TÉCNICA 2: REPLACE MAGIC NUMBERS WITH CONSTANTS
+// TECHNIQUE 2: REPLACE MAGIC NUMBERS WITH CONSTANTS
 // ============================================================================
 
 type
@@ -72,19 +72,19 @@ type
   TLoanCalculatorAfter = class
   private
     const
-      ANNUAL_INTEREST_RATE     = 0.139;  // 13.9% ao ano
+      ANNUAL_INTEREST_RATE     = 0.139;  // 13.9% per year
       MONTHS_IN_YEAR           = 12;
       MIN_ELIGIBLE_AGE         = 18;
       MAX_ELIGIBLE_AGE         = 70;
-      MIN_INCOME_MULTIPLIER    = 3.0;    // renda mínima = 3x a parcela
+      MIN_INCOME_MULTIPLIER    = 3.0;    // minimum income = 3x the installment
   public
     function CalculateMonthlyPayment(APrincipal: Currency; AMonths: Integer): Currency;
     function IsEligible(AAge: Integer; AIncome: Currency): Boolean;
   end;
 
 // ============================================================================
-// TÉCNICA 3: EXTRACT METHOD
-// Quebra método longo em partes com responsabilidade única.
+// TECHNIQUE 3: EXTRACT METHOD
+// Break long method into parts with single responsibility.
 // ============================================================================
 
 type
@@ -103,20 +103,20 @@ type
     function GetItemCount: Integer;
   end;
 
-  { ❌ ANTES: um método de 40 linhas gerando nota fiscal }
+  { ❌ BEFORE: a 40-line method generating an invoice }
   TInvoiceServiceBefore = class
   public
     procedure GenerateInvoice(AOrder: TOrder);
   end;
 
-  { ✅ DEPOIS: responsabilidades extraídas, cada método ≤ 15 linhas }
+  { ✅ AFTER: responsibilities extracted, each method ≤ 15 lines }
   TInvoiceServiceAfter = class
   private
     const
-      VIP_DISCOUNT_RATE  = 0.10;  // 10% para VIP
-      BULK_DISCOUNT_MIN  = 500.0; // mínimo para desconto por volume
-      BULK_DISCOUNT_RATE = 0.05;  // 5% por volume
-      STANDARD_TAX_RATE  = 0.12;  // 12% de imposto padrão
+      VIP_DISCOUNT_RATE  = 0.10;  // 10% for VIP
+      BULK_DISCOUNT_MIN  = 500.0; // minimum for bulk discount
+      BULK_DISCOUNT_RATE = 0.05;  // 5% bulk
+      STANDARD_TAX_RATE  = 0.12;  // 12% default tax
 
     function CalculateSubtotal(AOrder: TOrder): Currency;
     function CalculateDiscount(AOrder: TOrder; ASubtotal: Currency): Currency;
@@ -127,19 +127,19 @@ type
   end;
 
 // ============================================================================
-// TÉCNICA 4: REPLACE CONDITIONAL WITH POLYMORPHISM (Strategy)
+// TECHNIQUE 4: CONDITIONAL REPLACE WITH POLYMORPHISM (Strategy)
 // ============================================================================
 
 type
   TShippingMethodKind = (smPAC, smSEDEX, smTransportadora, smRetirada);
 
-  { ❌ ANTES: case com lógica espalhada }
+  { ❌ BEFORE: case with scattered logic }
   TShippingServiceBefore = class
   public
     function CalculateFreight(AWeightKg: Double; AMethod: TShippingMethodKind): Currency;
   end;
 
-  { ✅ DEPOIS: Strategy — adicionar novo meio = nova classe, zero edições }
+  { ✅ AFTER: Strategy — add new method = new class, zero edits }
   IFreightStrategy = interface
     ['{AAAA0001-0000-0000-0000-000000000001}']
     function Calculate(AWeightKg: Double): Currency;
@@ -170,7 +170,7 @@ type
     function GetCarrierName: string;
   end;
 
-  // Factory que mapeia o enum legado → Strategy moderna
+  // Factory that maps the legacy enum → Modern Strategy
   TFreightStrategyFactory = class
   public
     class function Create(AMethod: TShippingMethodKind): IFreightStrategy;
@@ -182,11 +182,11 @@ type
   end;
 
 // ============================================================================
-// TÉCNICA 5: INTRODUCE PARAMETER OBJECT
+// TECHNIQUE 5: INTRODUCE PARAMETER OBJECT
 // ============================================================================
 
 type
-  { ❌ ANTES: 7 parâmetros }
+  { ❌ BEFORE: 7 parameters }
   TReportServiceBefore = class
   public
     function GenerateSalesReport(
@@ -196,7 +196,7 @@ type
       AIncludeReturns: Boolean): string;
   end;
 
-  { ✅ DEPOIS: parâmetros em Record com valores padrão }
+  { ✅ AFTER: parameters in Record with default values }
   TSalesReportFilter = record
     StartDate: TDate;
     EndDate: TDate;
@@ -214,19 +214,19 @@ type
   end;
 
 // ============================================================================
-// TÉCNICA 6: EXTRACT INTERFACE + DEPENDENCY INVERSION
-// Desacopla dependências para permitir testes com Fakes.
+// TECHNIQUE 6: EXTRACT INTERFACE + DEPENDENCY INVERSION
+// Decouples dependencies to allow testing with Fakes.
 // ============================================================================
 
 type
-  { ❌ ANTES: acoplado a classes concretas }
+  { ❌ BEFORE: coupled to concrete classes }
   TNotificationServiceBefore = class
   public
     procedure NotifyOrderPlaced(AOrderId: Integer; const AEmail: string);
-    // Instancia TSmtpSender e TSlackClient internamente — impossível testar
+    // Instantiate TSmtpSender and TSlackClient internally — impossible to test
   end;
 
-  { ✅ DEPOIS: depende de interfaces, testável com Fakes }
+  { ✅ AFTER: depends on interfaces, testable with Fakes }
   IEmailSender = interface
     ['{AAAA0002-0000-0000-0000-000000000002}']
     procedure Send(const ATo, ASubject, ABody: string);
@@ -246,7 +246,7 @@ type
     procedure NotifyOrderPlaced(AOrderId: Integer; const AEmail: string);
   end;
 
-  // Fakes para testes DUnitX
+  // Fakes for DUnitX tests
   TFakeEmailSender = class(TInterfacedObject, IEmailSender)
   public
     LastTo: string;
@@ -265,7 +265,7 @@ type
 implementation
 
 // ============================================================================
-// TÉCNICA 1: GUARD CLAUSES — Implementação
+// TECHNIQUE 1: GUARD CLAUSES — Implementation
 // ============================================================================
 
 { TBankServiceBefore }
@@ -273,7 +273,7 @@ implementation
 function TBankServiceBefore.Withdraw(AAccount: TAccount; AAmount: Currency): Boolean;
 begin
   Result := False;
-  // 5 níveis de nesting — difícil de ler e manter
+  // 5 nesting levels — difficult to read and maintain
   if Assigned(AAccount) then
     if AAccount.IsActive then
       if AAmount > 0 then
@@ -289,26 +289,26 @@ end;
 
 function TBankServiceAfter.Withdraw(AAccount: TAccount; AAmount: Currency): Boolean;
 begin
-  // Guard clauses — casos inválidos eliminam o nesting
+  // Guard clauses — invalid cases eliminate nesting
   if not Assigned(AAccount) then
-    raise EArgumentNilException.Create('Conta não pode ser nula');
+    raise EArgumentNilException.Create('Account cannot be null');
   if not AAccount.IsActive then
-    raise EBusinessRuleException.Create('Operação negada: conta inativa');
+    raise EBusinessRuleException.Create('Operation denied: inactive account');
   if AAmount <= 0 then
-    raise EValidationException.Create('Valor do saque deve ser maior que zero');
+    raise EValidationException.Create('Withdrawal amount must be greater than zero');
   if AAccount.Balance < AAmount then
     raise EInsufficientFundsException.CreateFmt(
-      'Saldo insuficiente. Disponível: R$%.2f', [AAccount.Balance]);
+      'Insufficient balance. Available: R$%.2f', [AAccount.Balance]);
   if AAccount.IsBlocked then
-    raise EBusinessRuleException.Create('Operação negada: conta bloqueada');
+    raise EBusinessRuleException.Create('Operation denied: account blocked');
 
-  // Lógica principal — sem nesting, fácil de entender
+  // Core logic — no nesting, easy to understand
   AAccount.Balance := AAccount.Balance - AAmount;
   Result := True;
 end;
 
 // ============================================================================
-// TÉCNICA 2: MAGIC NUMBERS — Implementação
+// TECHNIQUE 2: MAGIC NUMBERS — Implementation
 // ============================================================================
 
 { TLoanCalculatorBefore }
@@ -317,7 +317,7 @@ function TLoanCalculatorBefore.CalculateMonthlyPayment(APrincipal: Currency;
   AMonths: Integer): Currency;
 var LMonthlyRate: Double;
 begin
-  // ❌ 0.139 e 12 são números mágicos — o que significam?
+  // ❌ 0.139 and 12 are magic numbers — what do they mean?
   LMonthlyRate := 0.139 / 12;
   Result := APrincipal * (LMonthlyRate * Power(1 + LMonthlyRate, AMonths)) /
             (Power(1 + LMonthlyRate, AMonths) - 1);
@@ -325,7 +325,7 @@ end;
 
 function TLoanCalculatorBefore.IsEligible(AAge: Integer; AIncome: Currency): Boolean;
 begin
-  // ❌ 18, 70 e 3.0 são mágicos — por que estes valores?
+  // ❌ 18, 70 and 3.0 are magic — why these values?
   Result := (AAge >= 18) and (AAge <= 70) and (AIncome >= AIncome * 3.0);
 end;
 
@@ -335,7 +335,7 @@ function TLoanCalculatorAfter.CalculateMonthlyPayment(APrincipal: Currency;
   AMonths: Integer): Currency;
 var LMonthlyRate: Double;
 begin
-  // ✅ Constantes nomeadas — auto-documentado
+  // ✅ Named constants — self-documenting
   LMonthlyRate := ANNUAL_INTEREST_RATE / MONTHS_IN_YEAR;
   Result := APrincipal * (LMonthlyRate * Power(1 + LMonthlyRate, AMonths)) /
             (Power(1 + LMonthlyRate, AMonths) - 1);
@@ -344,7 +344,7 @@ end;
 function TLoanCalculatorAfter.IsEligible(AAge: Integer; AIncome: Currency): Boolean;
 var LMonthlyPayment: Currency;
 begin
-  // ✅ Lógica clara com constantes
+  // ✅ Clear logic with constants
   if (AAge < MIN_ELIGIBLE_AGE) or (AAge > MAX_ELIGIBLE_AGE) then
     Exit(False);
   LMonthlyPayment := CalculateMonthlyPayment(AIncome, MONTHS_IN_YEAR);
@@ -352,7 +352,7 @@ begin
 end;
 
 // ============================================================================
-// TÉCNICA 3: EXTRACT METHOD — Implementação
+// TECHNIQUE 3: EXTRACT METHOD — Implementation
 // ============================================================================
 
 { TOrder }
@@ -370,14 +370,14 @@ var
   LItem: TOrderItem;
   LLines: TStringList;
 begin
-  // ❌ ANTES: tudo em um método — 40+ linhas misturando cálculo, formatação e E/S
+  // ❌ BEFORE: all in one method — 40+ lines mixing calculation, formatting and I/O
 
-  // Calcula subtotal
+  // Calculate subtotal
   LSubtotal := 0;
   for LItem in AOrder.Items do
     LSubtotal := LSubtotal + (LItem.UnitPrice * LItem.Quantity);
 
-  // Aplica desconto
+  //Apply discount
   if AOrder.IsVipCustomer then
     LDiscount := LSubtotal * 0.10
   else if LSubtotal > 500 then
@@ -385,22 +385,22 @@ begin
   else
     LDiscount := 0;
 
-  // Calcula imposto
+  // Calculate tax
   LTax := (LSubtotal - LDiscount) * 0.12;
   LTotal := LSubtotal - LDiscount + LTax;
 
-  // Grava arquivo
+  // Write file
   LLines := TStringList.Create;
   try
-    LLines.Add('=== NOTA FISCAL ===');
-    LLines.Add(Format('Cliente: %s', [AOrder.CustomerName]));
+    LLines.Add('=== TAX NOTE ===');
+    LLines.Add(Format('Client: %s', [AOrder.CustomerName]));
     for LItem in AOrder.Items do
       LLines.Add(Format('  %-30s %3dx R$%8.2f = R$%8.2f',
         [LItem.ProductName, LItem.Quantity,
          LItem.UnitPrice, LItem.UnitPrice * LItem.Quantity]));
-    LLines.Add(Format('Subtotal:  R$%.2f', [LSubtotal]));
-    LLines.Add(Format('Desconto: -R$%.2f', [LDiscount]));
-    LLines.Add(Format('Imposto:  +R$%.2f', [LTax]));
+    LLines.Add(Format('Subtotal: R$%.2f', [LSubtotal]));
+    LLines.Add(Format('Discount: -R$%.2f', [LDiscount]));
+    LLines.Add(Format('Tax: +R$%.2f', [LTax]));
     LLines.Add(Format('TOTAL:     R$%.2f', [LTotal]));
     LLines.SaveToFile(AOrder.InvoicePath);
   finally
@@ -413,7 +413,7 @@ end;
 function TInvoiceServiceAfter.CalculateSubtotal(AOrder: TOrder): Currency;
 var LItem: TOrderItem;
 begin
-  // ✅ APÓS: responsabilidade única — calcula apenas o subtotal
+  // ✅ AFTER: single responsibility — calculates only the subtotal
   Result := 0;
   for LItem in AOrder.Items do
     Result := Result + (LItem.UnitPrice * LItem.Quantity);
@@ -442,15 +442,15 @@ var
 begin
   LLines := TStringList.Create;
   try
-    LLines.Add('=== NOTA FISCAL ===');
-    LLines.Add(Format('Cliente: %s', [AOrder.CustomerName]));
+    LLines.Add('=== TAX NOTE ===');
+    LLines.Add(Format('Client: %s', [AOrder.CustomerName]));
     for LItem in AOrder.Items do
       LLines.Add(Format('  %-30s %3dx R$%8.2f = R$%8.2f',
         [LItem.ProductName, LItem.Quantity,
          LItem.UnitPrice, LItem.UnitPrice * LItem.Quantity]));
-    LLines.Add(Format('Subtotal:  R$%.2f', [ASubtotal]));
-    LLines.Add(Format('Desconto: -R$%.2f', [ADiscount]));
-    LLines.Add(Format('Imposto:  +R$%.2f', [ATax]));
+    LLines.Add(Format('Subtotal: R$%.2f', [ASubtotal]));
+    LLines.Add(Format('Discount: -R$%.2f', [ADiscount]));
+    LLines.Add(Format('Tax: +R$%.2f', [ATax]));
     LLines.Add(Format('TOTAL:     R$%.2f', [ASubtotal - ADiscount + ATax]));
     LLines.SaveToFile(AOrder.InvoicePath);
   finally
@@ -462,7 +462,7 @@ procedure TInvoiceServiceAfter.GenerateInvoice(AOrder: TOrder);
 var
   LSubtotal, LDiscount, LTax: Currency;
 begin
-  // ✅ Orquestra os métodos extraídos — lê como prosa
+  // ✅ Orchestrates extracted methods — reads like prose
   LSubtotal := CalculateSubtotal(AOrder);
   LDiscount := CalculateDiscount(AOrder, LSubtotal);
   LTax      := CalculateTax(LSubtotal - LDiscount);
@@ -470,7 +470,7 @@ begin
 end;
 
 // ============================================================================
-// TÉCNICA 4: STRATEGY — Implementação
+// TECHNIQUE 4: STRATEGY — Implementation
 // ============================================================================
 
 { TShippingServiceBefore }
@@ -478,14 +478,14 @@ end;
 function TShippingServiceBefore.CalculateFreight(AWeightKg: Double;
   AMethod: TShippingMethodKind): Currency;
 begin
-  // ❌ ANTES: case que precisa ser editado a cada novo método de entrega
+  // ❌ BEFORE: case that needs to be edited with each new delivery method
   case AMethod of
     smPAC:            Result := AWeightKg * 2.50 + 8.0;
     smSEDEX:          Result := AWeightKg * 4.80 + 15.0;
     smTransportadora: Result := AWeightKg * 1.20;
     smRetirada:       Result := 0;
   else
-    raise EArgumentException.Create('Método de entrega desconhecido');
+    raise EArgumentException.Create('Unknown delivery method');
   end;
 end;
 
@@ -496,7 +496,7 @@ begin
   Result := AWeightKg * RATE_PER_KG + BASE_FEE;
 end;
 function TPACStrategy.GetCarrierName: string;
-begin Result := 'Correios PAC'; end;
+begin Result := 'PAC Post Office'; end;
 
 { TSEDEXStrategy }
 function TSEDEXStrategy.Calculate(AWeightKg: Double): Currency;
@@ -505,20 +505,20 @@ begin
   Result := AWeightKg * RATE_PER_KG + BASE_FEE;
 end;
 function TSEDEXStrategy.GetCarrierName: string;
-begin Result := 'Correios SEDEX'; end;
+begin Result := 'SEDEX Post Office'; end;
 
 { TTransportadoraStrategy }
 function TTransportadoraStrategy.Calculate(AWeightKg: Double): Currency;
 const RATE_PER_KG = 1.20;
 begin Result := AWeightKg * RATE_PER_KG; end;
 function TTransportadoraStrategy.GetCarrierName: string;
-begin Result := 'Transportadora Parceira'; end;
+begin Result := 'Partner Carrier'; end;
 
 { TRetiradaStrategy }
 function TRetiradaStrategy.Calculate(AWeightKg: Double): Currency;
 begin Result := 0; end;
 function TRetiradaStrategy.GetCarrierName: string;
-begin Result := 'Retirada na Loja'; end;
+begin Result := 'In-Store Pickup'; end;
 
 { TFreightStrategyFactory }
 class function TFreightStrategyFactory.Create(AMethod: TShippingMethodKind): IFreightStrategy;
@@ -529,7 +529,7 @@ begin
     smTransportadora: Result := TTransportadoraStrategy.Create;
     smRetirada:       Result := TRetiradaStrategy.Create;
   else
-    raise EArgumentException.Create('Método de entrega desconhecido');
+    raise EArgumentException.Create('Unknown delivery method');
   end;
 end;
 
@@ -538,14 +538,14 @@ end;
 function TShippingServiceAfter.CalculateFreight(AWeightKg: Double;
   AStrategy: IFreightStrategy): Currency;
 begin
-  // ✅ DEPOIS: apenas delega — adicionar nova modalidade = nova classe
+  // ✅ AFTER: just delegate — add new modality = new class
   if not Assigned(AStrategy) then
-    raise EArgumentNilException.Create('AStrategy não pode ser nil');
+    raise EArgumentNilException.Create('AStrategy cannot be nil');
   Result := AStrategy.Calculate(AWeightKg);
 end;
 
 // ============================================================================
-// TÉCNICA 5: PARAMETER OBJECT — Implementação
+// TECHNIQUE 5: PARAMETER OBJECT — Implementation
 // ============================================================================
 
 { TSalesReportFilter }
@@ -567,7 +567,7 @@ function TReportServiceBefore.GenerateSalesReport(AStartDate: TDate;
   AEndDate: TDate; const ACategory: string; const ASalesRepId: string;
   AMinAmount: Currency; AGroupByMonth: Boolean; AIncludeReturns: Boolean): string;
 begin
-  // ❌ 7 parâmetros — chamada confusa no ponto de uso
+  // ❌ 7 parameters — confusing call at point of use
   Result := Format('Report %s-%s Cat:%s Rep:%s Min:%.0f',
     [DateToStr(AStartDate), DateToStr(AEndDate), ACategory, ASalesRepId, AMinAmount]);
 end;
@@ -576,15 +576,15 @@ end;
 
 function TReportServiceAfter.GenerateSalesReport(AFilter: TSalesReportFilter): string;
 begin
-  // ✅ UM parâmetro coeso — ponto de uso legível:
-  //    ReportService.GenerateSalesReport(TSalesReportFilter.Default)
+  // ✅ ONE cohesive parameter — readable point of use:
+  // ReportService.GenerateSalesReport(TSalesReportFilter.Default)
   Result := Format('Report %s-%s Cat:%s Rep:%s Min:%.0f',
     [DateToStr(AFilter.StartDate), DateToStr(AFilter.EndDate),
      AFilter.Category, AFilter.SalesRepId, AFilter.MinAmount]);
 end;
 
 // ============================================================================
-// TÉCNICA 6: EXTRACT INTERFACE + DI — Implementação
+// TECHNIQUE 6: EXTRACT INTERFACE + DI — Implementation
 // ============================================================================
 
 { TNotificationServiceBefore }
@@ -592,10 +592,10 @@ end;
 procedure TNotificationServiceBefore.NotifyOrderPlaced(AOrderId: Integer;
   const AEmail: string);
 begin
-  // ❌ Instancia dependências internamente — impossível testar sem servidor SMTP/Slack
+  // ❌ Instantiates dependencies internally — impossible to test without SMTP/Slack server
   // TSmtpSender.Create('smtp.empresa.com', 587).Send(AEmail, ...);
-  // TSlackClient.Create(SLACK_TOKEN).Post('#pedidos', ...);
-  Writeln('[BEFORE] Notificando pedido (hardcoded — não testável)');
+  // TSlackClient.Create(SLACK_TOKEN).Post('#orders', ...);
+  Writeln('[BEFORE] Notifying request (hardcoded — not testable)');
 end;
 
 { TNotificationServiceAfter }
@@ -605,9 +605,9 @@ constructor TNotificationServiceAfter.Create(AEmailSender: IEmailSender;
 begin
   inherited Create;
   if not Assigned(AEmailSender) then
-    raise EArgumentNilException.Create('AEmailSender não pode ser nil');
+    raise EArgumentNilException.Create('AEmailSender cannot be nil');
   if not Assigned(ASlackNotifier) then
-    raise EArgumentNilException.Create('ASlackNotifier não pode ser nil');
+    raise EArgumentNilException.Create('ASlackNotifier cannot be nil');
   FEmailSender  := AEmailSender;
   FSlackNotifier := ASlackNotifier;
 end;
@@ -615,15 +615,15 @@ end;
 procedure TNotificationServiceAfter.NotifyOrderPlaced(AOrderId: Integer;
   const AEmail: string);
 begin
-  // ✅ Delega para abstrações — fácil de testar com TFakeEmailSender
+  // ✅ Delegates to abstractions — easy to test with TFakeEmailSender
   FEmailSender.Send(
     AEmail,
-    Format('Pedido #%d confirmado', [AOrderId]),
-    Format('Seu pedido #%d foi recebido e está sendo processado.', [AOrderId])
+    Format('Order #%d confirmed', [AOrderId]),
+    Format('Your order #%d has been received and is being processed.', [AOrderId])
   );
   FSlackNotifier.PostMessage(
-    '#pedidos',
-    Format('🛍️ Novo pedido #%d para %s', [AOrderId, AEmail])
+    '#orders',
+    Format('🛍️ New order #%d for %s', [AOrderId, AEmail])
   );
 end;
 
@@ -645,7 +645,7 @@ begin
 end;
 
 // ============================================================================
-// DEMONSTRAÇÃO — Como usar as versões refatoradas
+// DEMO — How to use refactored versions
 // ============================================================================
 
 procedure DemoGuardClauses;
@@ -663,7 +663,7 @@ begin
       LAccount.Balance   := 1000;
 
       LSvc.Withdraw(LAccount, 300);
-      Writeln(Format('Saldo após saque: R$%.2f', [LAccount.Balance]));  // 700
+      Writeln(Format('Balance after withdrawal: R$%.2f', [LAccount.Balance]));  // 700
 
       try
         LSvc.Withdraw(LAccount, 5000);  // saldo insuficiente
@@ -684,7 +684,7 @@ var
   LSvc: TShippingServiceAfter;
   LFreight: Currency;
 begin
-  Writeln('=== STRATEGY — FRETE ===');
+  Writeln('=== STRATEGY — SHIPPING ===');
   LSvc := TShippingServiceAfter.Create;
   try
     LFreight := LSvc.CalculateFreight(2.5, TPACStrategy.Create);
@@ -694,7 +694,7 @@ begin
     Writeln(Format('SEDEX 2.5kg: R$%.2f', [LFreight]));  // 2.5*4.8 + 15 = 27.00
 
     LFreight := LSvc.CalculateFreight(2.5, TRetiradaStrategy.Create);
-    Writeln(Format('Retirada: R$%.2f', [LFreight]));      // 0.00
+    Writeln(Format('Withdrawal: R$%.2f', [LFreight]));      // 0.00
   finally
     LSvc.Free;
   end;
@@ -708,9 +708,9 @@ begin
   Writeln('=== PARAMETER OBJECT ===');
   LSvc := TReportServiceAfter.Create;
   try
-    // Uso com valores default + sobrescrita seletiva — muito mais legível
+    // Use with default values ​​+ selective overwrite — much more readable
     LFilter           := TSalesReportFilter.Default;
-    LFilter.Category  := 'Eletrônicos';
+    LFilter.Category  := 'Electronics';
     LFilter.MinAmount := 500;
 
     Writeln(LSvc.GenerateSalesReport(LFilter));
@@ -730,17 +730,18 @@ begin
   LEmailFake := TFakeEmailSender.Create;
   LSlackFake := TFakeSlackNotifier.Create;
 
-  // Interfaces gerenciadas por ARC — sem Free necessário para os fakes
+  // Interfaces managed by ARC — no Free needed for fakes
   LSvc := TNotificationServiceAfter.Create(LEmailFake, LSlackFake);
   try
     LSvc.NotifyOrderPlaced(1042, 'joao@email.com');
 
-    // Verificações sem servidor real
-    Writeln(Format('E-mail enviado para: %s (%d)', [LEmailFake.LastTo, LEmailFake.SentCount]));
-    Writeln(Format('Slack postado: %s (%d)', [LSlackFake.LastMessage, LSlackFake.PostedCount]));
+    // Real serverless checks
+    Writeln(Format('Email sent to: %s (%d)', [LEmailFake.LastTo, LEmailFake.SentCount]));
+    Writeln(Format('Slack posted: %s (%d)', [LSlackFake.LastMessage, LSlackFake.PostedCount]));
   finally
     LSvc.Free;
   end;
 end;
 
 end.
+

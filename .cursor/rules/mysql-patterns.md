@@ -1,14 +1,14 @@
 ---
-description: "Padrões MySQL/MariaDB Database — conexão FireDAC, AUTO_INCREMENT, LAST_INSERT_ID(), UPSERT, JSON, stored procedures, transactions"
+description: "MySQL/MariaDB Database defaults — FireDAC connection, AUTO_INCREMENT, LAST_INSERT_ID(), UPSERT, JSON, stored procedures, transactions"
 globs: ["**/*.pas", "**/*.sql"]
 alwaysApply: false
 ---
 
 # MySQL / MariaDB Database — Cursor Rules
 
-Use estas regras ao desenvolver com banco de dados MySQL ou MariaDB via FireDAC.
+Use these rules when developing with MySQL or MariaDB databases via FireDAC.
 
-## Conexão Obrigatória
+## Connection Required
 
 ```pascal
 { Configuração base }
@@ -18,26 +18,26 @@ FConnection.Params.Values['Port'] := '3306';
 FConnection.Params.Database := 'meubanco';
 FConnection.Params.UserName := 'root';
 FConnection.Params.Password := 'senha';
-FConnection.Params.Values['CharacterSet'] := 'utf8mb4';  // NUNCA 'utf8' (só 3 bytes!)
+FConnection.Params.Values['CharacterSet'] := 'utf8mb4';  //NEVER 'utf8' (only 3 bytes!)
 ```
 
-## AUTO_INCREMENT e LAST_INSERT_ID()
+## AUTO_INCREMENT and LAST_INSERT_ID()
 
 ```pascal
-// ⚠️ MySQL NÃO suporta RETURNING!
-// Usar LAST_INSERT_ID() após INSERT
+//⚠️ MySQL DOES NOT support RETURNING!
+//Use LAST_INSERT_ID() after INSERT
 
 LQuery.SQL.Text := 'INSERT INTO customers (name) VALUES (:name)';
 LQuery.ParamByName('name').AsString := ACustomer.Name;
 LQuery.ExecSQL;
 
-// Obter ID gerado
+//Get generated ID
 LQuery.SQL.Text := 'SELECT LAST_INSERT_ID() AS new_id';
 LQuery.Open;
 ACustomer.Id := LQuery.FieldByName('new_id').AsInteger;
 
-// Alternativa FireDAC:
-// ACustomer.Id := FConnection.GetLastAutoGenValue('');
+//Alternativa FireDAC:
+//ACustomer.Id := FConnection.GetLastAutoGenValue('');
 ```
 
 ## UPSERT — INSERT ... ON DUPLICATE KEY UPDATE
@@ -51,7 +51,7 @@ LQuery.SQL.Text :=
 LQuery.ExecSQL;
 ```
 
-## JSON Nativo (MySQL 5.7+)
+## Native JSON (MySQL 5.7+)
 
 ```pascal
 { Gravar JSON }
@@ -61,13 +61,13 @@ LQuery.ParamByName('settings').AsString := '{"theme":"dark"}';
 LQuery.SQL.Text := 'SELECT settings->>''$.theme'' FROM ... WHERE id = :id';
 ```
 
-## Stored Procedures e Functions
+## Stored Procedures and Functions
 
-| Tipo | Chamada Delphi |
+| Type | Delphi Call |
 |------|----------------|
 | **Procedure** | `CALL sp_nome(:param)` + `ExecSQL` |
-| **Function escalar** | `SELECT fn_nome(:param)` + `Open` |
-| **Procedure com result set** | `CALL sp_nome(:param)` + `Open` |
+| **Scalar function** | `SELECT fn_nome(:param)` + `Open` |
+| **Procedure with result set** | `CALL sp_nome(:param)` + `Open` |
 
 ## Transactions
 
@@ -83,16 +83,16 @@ except
 end;
 ```
 
-| Isolation | FireDAC | Uso |
+| Isolation | FireDAC | Usage |
 |-----------|---------|-----|
-| Read Uncommitted | `xiDirtyRead` | ⚠️ Quase nunca |
-| Read Committed | `xiReadCommitted` | ✅ Recomendado |
-| Repeatable Read | `xiRepeatableRead` | Padrão InnoDB |
-| Serializable | `xiSerializable` | Máxima consistência |
+| Read Uncommitted | `xiDirtyRead` | ⚠️ Almost never |
+| Read Committed | `xiReadCommitted` | ✅ Recommended |
+| Repeatable Read | `xiRepeatableRead` | InnoDB Standard |
+| Serializable | `xiSerializable` | Maximum consistency |
 
-> **Nota:** O default do InnoDB é `REPEATABLE READ`, diferente de Firebird/PG (`READ COMMITTED`).
+> **Note:** InnoDB's default is `REPEATABLE READ`, different from Firebird/PG (`READ COMMITTED`).
 
-## Tratamento de Erros MySQL
+## MySQL Error Handling
 
 ```pascal
 except
@@ -114,18 +114,18 @@ except
 end;
 ```
 
-## Cuidados Importantes
+## Important Care
 
-| Tópico | Regra |
+| Topic | Rule |
 |--------|-------|
-| **Charset** | `utf8mb4` SEMPRE (nunca `utf8` — só 3 bytes no MySQL!) |
-| **Engine** | `InnoDB` SEMPRE (nunca MyISAM em novos projetos) |
-| **RETURNING** | ❌ NÃO existe no MySQL — usar `LAST_INSERT_ID()` |
-| **COLLATE** | `utf8mb4_unicode_ci` para comparação case-insensitive correta |
-| **Boolean** | `TINYINT(1)` — convenção MySQL, mapear como `AsBoolean` |
-| **Timestamps** | `ON UPDATE CURRENT_TIMESTAMP` para auto-update |
+| **Charset** | `utf8mb4` ALWAYS (never `utf8` — only 3 bytes in MySQL!) |
+| **Engine** | `InnoDB` ALWAYS (never MyISAM in new projects) |
+| **RETURNING** | ❌ Does NOT exist in MySQL — use `LAST_INSERT_ID()` |
+| **COLLATE** | `utf8mb4_unicode_ci` for correct case-insensitive comparison |
+| **Boolean** | `TINYINT(1)` — MySQL convention, map as `AsBoolean` |
+| **Timestamps** | `ON UPDATE CURRENT_TIMESTAMP` for auto-update |
 
-## Metadata — Verificar Existência
+## Metadata — Check Existence
 
 ```sql
 -- Tabela existe?
@@ -137,13 +137,13 @@ SELECT COUNT(*) FROM information_schema.columns
 WHERE table_schema = DATABASE() AND table_name = 'customers' AND column_name = 'email';
 ```
 
-## Proibições em MySQL
+## Prohibitions in MySQL
 
-- ❌ Concatenar SQL — usar parâmetros parametrizados
-- ❌ `utf8` como charset — usar `utf8mb4`
-- ❌ `RETURNING` (não existe) — usar `LAST_INSERT_ID()`
-- ❌ `MyISAM` para novas tabelas — usar `InnoDB`
-- ❌ `SELECT *` sem `LIMIT` — paginar com `LIMIT/OFFSET`
-- ❌ N+1 queries — usar JOIN/subquery
-- ❌ Ignorar índices em colunas de WHERE/JOIN
-- ❌ `RDB$` para metadata — usar `information_schema`
+- ❌ Concatenate SQL — use parameterized parameters
+- ❌ `utf8` as charset — use `utf8mb4`
+- ❌ `RETURNING` (does not exist) — use `LAST_INSERT_ID()`
+- ❌ `MyISAM` for new tables — use `InnoDB`
+- ❌ `SELECT *` without `LIMIT` — page with `LIMIT/OFFSET`
+- ❌ N+1 queries — use JOIN/subquery
+- ❌ Ignore indexes on WHERE/JOIN columns
+- ❌ `RDB$` for metadata — use `information_schema`

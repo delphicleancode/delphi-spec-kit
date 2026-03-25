@@ -1,37 +1,37 @@
 ---
 name: "PostgreSQL Database"
-description: "Padrões de desenvolvimento com PostgreSQL via FireDAC — conexão, PL/pgSQL, sequences, JSONB, UPSERT, full-text search, migrations"
+description: "Development patterns with PostgreSQL via FireDAC — connection, PL/pgSQL, sequences, JSONB, UPSERT, full-text search, migrations"
 ---
 
 # PostgreSQL Database — Skill
 
-Use esta skill ao trabalhar com banco de dados PostgreSQL em projetos Delphi via FireDAC.
+Use this skill when working with PostgreSQL database in Delphi projects via FireDAC.
 
-## Quando Usar
+## When to Use
 
-- Ao configurar conexão FireDAC com PostgreSQL
-- Ao criar tabelas, sequences, functions, triggers e views
-- Ao implementar Repositories com FireDAC + PostgreSQL
-- Ao trabalhar com tipos avançados (JSONB, Arrays, UUID, ENUM)
-- Ao implementar UPSERT, CTEs, Full-Text Search ou Window Functions
-- Ao planejar migrações de schema (scripts versionados)
+- When configuring FireDAC connection with PostgreSQL
+- When creating tables, sequences, functions, triggers and views
+- When implementing Repositories with FireDAC + PostgreSQL
+- When working with advanced types (JSONB, Arrays, UUID, ENUM)
+- When implementing UPSERT, CTEs, Full-Text Search or Window Functions
+- When planning schema migrations (versioned scripts)
 
-## Versões do PostgreSQL
+## PostgreSQL Versions
 
-| Versão | Novidades Relevantes |
+| Version | Relevant News |
 |--------|----------------------|
 | **12** | Generated Columns, CTE inlining, Partitioning improvements |
-| **13** | Incremental sorting, Parallel vacuum, Deduplication em B-tree |
-| **14** | Multirange types, `SEARCH`/`CYCLE` em CTEs recursivas |
+| **13** | Incremental sorting, Parallel vacuum, Deduplication in B-tree |
+| **14** | Multirange types, `SEARCH`/`CYCLE` in recursive CTEs |
 | **15** | `MERGE` statement, JSON logging, `UNIQUE NULL NOT DISTINCT` |
-| **16** | Logical replication from standby, `ANY_VALUE()`, ICU collations padrão |
+| **16** | Logical replication from standby, `ANY_VALUE()`, ICU default collations |
 | **17** | `RETURNING OLD/NEW` no `MERGE`, `JSON_TABLE`, Identity columns improvements |
 
-> **Recomendação:** Use PostgreSQL 14+ para novos projetos. Aproveite `MERGE`, JSONB e partitioning.
+> **Recommendation:** Use PostgreSQL 14+ for new projects. Enjoy `MERGE`, JSONB and partitioning.
 
-## Conexão FireDAC com PostgreSQL
+## FireDAC Connection with PostgreSQL
 
-### Configuração Mínima
+### Minimum Configuration
 
 ```pascal
 unit MeuApp.Infra.Database.PostgreSQL.Connection;
@@ -40,27 +40,27 @@ interface
 
 uses
   FireDAC.Comp.Client,
-  FireDAC.Phys.PG,         // Driver PostgreSQL
-  FireDAC.Phys.PGDef,      // Defaults do PostgreSQL
+  FireDAC.Phys.PG,         //Driver PostgreSQL
+  FireDAC.Phys.PGDef,      //Defaults do PostgreSQL
   FireDAC.Stan.Def,
   FireDAC.Stan.Pool,
   FireDAC.DApt;
 
 type
-  /// <summary>
-  ///   Factory de conexão PostgreSQL via FireDAC.
-  /// </summary>
+  ///<summary>
+  ///PostgreSQL connection factory via FireDAC.
+  ///</summary>
   TPostgreSQLConnectionFactory = class
   public
-    /// <summary>
-    ///   Cria e configura uma conexão PostgreSQL.
-    /// </summary>
-    /// <param name="AServer">Endereço do servidor</param>
-    /// <param name="ADatabase">Nome do banco de dados</param>
-    /// <param name="AUserName">Usuário (padrão: postgres)</param>
-    /// <param name="APassword">Senha do banco</param>
-    /// <param name="APort">Porta (padrão: 5432)</param>
-    /// <returns>Conexão FireDAC configurada e aberta</returns>
+    ///<summary>
+    ///Creates and configures a PostgreSQL connection.
+    ///</summary>
+    ///<param name="AServer">Server address</param>
+    ///<param name="ADatabase">Database name</param>
+    ///<param name="AUserName">User (default: postgres)</param>
+    ///<param name="APassword">Bank password</param>
+    ///<param name="APort">Port (default: 5432)</param>
+    ///<returns>FireDAC connection configured and opened</returns>
     class function CreateConnection(
       const AServer: string;
       const ADatabase: string;
@@ -69,9 +69,9 @@ type
       APort: Integer = 5432
     ): TFDConnection;
 
-    /// <summary>
-    ///   Cria conexão via connection string completa.
-    /// </summary>
+    ///<summary>
+    ///Creates connection via full connection string.
+    ///</summary>
     class function CreateFromConnectionString(
       const AConnectionString: string
     ): TFDConnection;
@@ -108,7 +108,7 @@ begin
     Result.TxOptions.Isolation := xiReadCommitted;
 
     { Schema padrão — 'public' por default, alterar se necessário }
-    // Result.Params.Values['MetaDefSchema'] := 'public';
+    //Result.Params.Values['MetaDefSchema'] := 'public';
 
     Result.Connected := True;
   except
@@ -131,7 +131,7 @@ begin
 end;
 ```
 
-### FDPhysPGDriverLink — Configurar Client Library
+### FDPhysPGDriverLink — Configure Client Library
 
 ```pascal
 uses
@@ -180,37 +180,37 @@ end;
 { Conexão segura com SSL }
 Result.Params.Values['PGAdvanced'] := 'sslmode=require';
 { Para certificado de cliente: }
-// Result.Params.Values['PGAdvanced'] :=
-//   'sslmode=verify-full;sslcert=client-cert.pem;sslkey=client-key.pem;sslrootcert=ca.pem';
+//Result.Params.Values['PGAdvanced'] :=
+//'sslmode=verify-full;sslcert=client-cert.pem;sslkey=client-key.pem;sslrootcert=ca.pem';
 ```
 
-## Tipos de Dados — Mapeamento PostgreSQL ↔ Delphi
+## Data Types — PostgreSQL Mapping ↔ Delphi
 
-| PostgreSQL | Delphi (FireDAC) | Observação |
+| PostgreSQL | Delphi (FireDAC) | Note |
 |------------|------------------|------------|
 | `INTEGER` / `INT4` | `ftInteger` / `AsInteger` | 32-bit |
 | `BIGINT` / `INT8` | `ftLargeint` / `AsLargeInt` | 64-bit |
 | `SMALLINT` / `INT2` | `ftSmallint` / `AsSmallInt` | 16-bit |
-| `SERIAL` | `ftAutoInc` / `AsInteger` | Auto-increment 32-bit |
-| `BIGSERIAL` | `ftAutoInc` / `AsLargeInt` | Auto-increment 64-bit |
-| `VARCHAR(N)` | `ftString` / `AsString` | Texto limitado |
-| `TEXT` | `ftMemo` / `AsString` | Texto ilimitado |
-| `NUMERIC(P,S)` | `ftBCD` / `AsCurrency` | Valores monetários |
+| `SERIAL` | `ftAutoInc` / `AsInteger` | 32-bit auto-increment |
+| `BIGSERIAL` | `ftAutoInc` / `AsLargeInt` | 64-bit auto-increment |
+| `VARCHAR(N)` | `ftString` / `AsString` | Limited text |
+| `TEXT` | `ftMemo` / `AsString` | Unlimited Text |
+| `NUMERIC(P,S)` | `ftBCD` / `AsCurrency` | Monetary values ​​|
 | `DOUBLE PRECISION` | `ftFloat` / `AsFloat` | Ponto flutuante |
 | `REAL` / `FLOAT4` | `ftSingle` / `AsSingle` | 32-bit float |
-| `DATE` | `ftDate` / `AsDateTime` | Apenas data |
-| `TIME` | `ftTime` / `AsDateTime` | Apenas hora |
-| `TIMESTAMP` | `ftDateTime` / `AsDateTime` | Data + Hora (sem timezone) |
-| `TIMESTAMPTZ` | `ftDateTime` / `AsDateTime` | Data + Hora (com timezone) |
-| `BOOLEAN` | `ftBoolean` / `AsBoolean` | `TRUE`/`FALSE` nativo |
+| `DATE` | `ftDate` / `AsDateTime` | Date only |
+| `TIME` | `ftTime` / `AsDateTime` | Just in time |
+| `TIMESTAMP` | `ftDateTime` / `AsDateTime` | Date + Time (without timezone) |
+| `TIMESTAMPTZ` | `ftDateTime` / `AsDateTime` | Date + Time (with timezone) |
+| `BOOLEAN` | `ftBoolean` / `AsBoolean` | `TRUE`/`FALSE` native |
 | `UUID` | `ftGuid` / `AsString` | Use `gen_random_uuid()` (PG 13+) |
-| `JSON` | `ftMemo` / `AsString` | JSON texto (validado) |
-| `JSONB` | `ftMemo` / `AsString` | JSON binário (indexável) |
-| `BYTEA` | `ftBlob` / `AsBytes` | Dados binários |
-| `ARRAY` | `ftMemo` / `AsString` | Array PostgreSQL como texto |
-| `INET` / `CIDR` | `ftString` / `AsString` | Endereços de rede |
+| `JSON` | `ftMemo` / `AsString` | JSON text (validated) |
+| `JSONB` | `ftMemo` / `AsString` | Binary JSON (indexable) |
+| `BYTEA` | `ftBlob` / `AsBytes` | Binary data |
+| `ARRAY` | `ftMemo` / `AsString` | PostgreSQL Array as Text |
+| `INET` / `CIDR` | `ftString` / `AsString` | Network addresses |
 
-## Sequences e Auto-Increment
+## Sequences and Auto-Increment
 
 ### SERIAL / BIGSERIAL (Legacy)
 
@@ -223,7 +223,7 @@ CREATE TABLE customers (
 -- Equivale a criar uma SEQUENCE + DEFAULT nextval('customers_id_seq')
 ```
 
-### IDENTITY Columns (Moderno — SQL Standard)
+### IDENTITY Columns (Modern — SQL Standard)
 
 ```sql
 -- Preferir sobre SERIAL em novos projetos (PG 10+)
@@ -239,7 +239,7 @@ CREATE TABLE products (
 );
 ```
 
-### Sequences Manuais
+### Manual Sequences
 
 ```sql
 CREATE SEQUENCE seq_order_number START WITH 1000 INCREMENT BY 1;
@@ -248,13 +248,13 @@ CREATE SEQUENCE seq_order_number START WITH 1000 INCREMENT BY 1;
 INSERT INTO orders (order_number) VALUES (nextval('seq_order_number'));
 ```
 
-### RETURNING no Delphi
+### RETURNING in Delphi
 
 ```pascal
-/// <summary>
-///   Insere cliente e obtém o id e created_at gerados pelo banco.
-///   RETURNING funciona com Open (igual ao Firebird).
-/// </summary>
+///<summary>
+///Insert customer and obtain the id and created_at generated by the bank.
+///RETURNING works with Open (same as Firebird).
+///</summary>
 procedure TPostgreSQLCustomerRepository.Insert(ACustomer: TCustomer);
 var
   LQuery: TFDQuery;
@@ -298,7 +298,7 @@ VALUES (:customer_id, :tag)
 ON CONFLICT DO NOTHING;
 ```
 
-**No Delphi:**
+**In Delphi:**
 
 ```pascal
 procedure TPostgreSQLCustomerRepository.Upsert(ACustomer: TCustomer);
@@ -328,9 +328,9 @@ begin
 end;
 ```
 
-## JSONB — Dados Semi-Estruturados
+## JSONB — Semi-Structured Data
 
-### Armazenamento e Consulta
+### Storage and Query
 
 ```sql
 -- Tabela com coluna JSONB
@@ -354,7 +354,7 @@ SELECT * FROM customer_settings WHERE settings @> '{"theme": "dark"}';
 CREATE INDEX idx_settings_gin ON customer_settings USING GIN (settings);
 ```
 
-**No Delphi:**
+**In Delphi:**
 
 ```pascal
 { Inserir JSONB }
@@ -402,7 +402,7 @@ WHERE search_vector @@ plainto_tsquery('portuguese', 'camisa azul')
 ORDER BY ts_rank(search_vector, plainto_tsquery('portuguese', 'camisa azul')) DESC;
 ```
 
-**No Delphi:**
+**In Delphi:**
 
 ```pascal
 function TProductRepository.Search(const ASearchTerm: string): TObjectList<TProduct>;
@@ -454,7 +454,7 @@ LEFT JOIN customer_orders co ON co.customer_id = ac.id
 ORDER BY co.total_spent DESC NULLS LAST;
 ```
 
-### CTE Recursiva
+### Recursive CTE
 
 ```sql
 -- Hierarquia de categorias
@@ -472,7 +472,7 @@ WITH RECURSIVE category_tree AS (
 SELECT * FROM category_tree ORDER BY level, name;
 ```
 
-## Window Functions
+## WindowFunctions
 
 ```sql
 -- Ranking de clientes por valor gasto
@@ -542,7 +542,7 @@ END;
 $$;
 ```
 
-**Chamar no Delphi:**
+**Call in Delphi:**
 
 ```pascal
 { Function escalar }
@@ -579,7 +579,7 @@ CREATE TABLE orders (
 INSERT INTO orders (customer_id, status) VALUES (1, 'processing');
 ```
 
-**No Delphi (mapear para enum Pascal):**
+**In Delphi (map to Pascal enum):**
 
 ```pascal
 type
@@ -607,7 +607,7 @@ LOrder.Status := StringToOrderStatus(LQuery.FieldByName('status').AsString);
 LQuery.ParamByName('status').AsString := ORDER_STATUS_NAMES[AOrder.Status];
 ```
 
-## UUID como Primary Key
+## UUID as Primary Key
 
 ```sql
 -- Usar gen_random_uuid() nativo (PG 13+)
@@ -622,7 +622,7 @@ CREATE TABLE sessions (
 -- Então: DEFAULT uuid_generate_v4()
 ```
 
-**No Delphi:**
+**In Delphi:**
 
 ```pascal
 LQuery.SQL.Text :=
@@ -635,17 +635,17 @@ LQuery.Open;
 LSessionId := LQuery.FieldByName('id').AsString; { UUID como string }
 ```
 
-## Transactions e Isolation Levels
+## Transactions and Isolation Levels
 
-### Níveis de Isolamento no PostgreSQL
+### Isolation Levels in PostgreSQL
 
-| Nível | FireDAC | Uso |
+| Level | FireDAC | Usage |
 |-------|---------|-----|
-| **Read Committed** | `xiReadCommitted` | ✅ Padrão — vê dados commitados |
-| **Repeatable Read** | `xiRepeatableRead` | Relatórios — snapshot no início da transação |
-| **Serializable** | `xiSerializable` | Máxima consistência (pode dar serialization failure) |
+| **Read Committed** | `xiReadCommitted` | ✅ Standard — see committed data |
+| **Repeatable Read** | `xiRepeatableRead` | Reports — snapshot at start of transaction |
+| **Serializable** | `xiSerializable` | Maximum consistency (may result in serialization failure) |
 
-### Transação Explícita
+### Explicit Transaction
 
 ```pascal
 procedure ExecuteInTransaction(AConnection: TFDConnection; AProc: TProc);
@@ -661,7 +661,7 @@ begin
 end;
 ```
 
-### SAVEPOINT (Transação Parcial)
+### SAVEPOINT (Partial Transaction)
 
 ```pascal
 { PostgreSQL suporta SAVEPOINT para rollback parcial }
@@ -684,7 +684,7 @@ except
 end;
 ```
 
-## LISTEN / NOTIFY (Eventos do Banco)
+## LISTEN / NOTIFY (Bank Events)
 
 ```sql
 -- No PostgreSQL: notificações assíncronas
@@ -745,7 +745,7 @@ CREATE TABLE audit.log (...);
 SET search_path TO app, public;
 ```
 
-**No Delphi:**
+**In Delphi:**
 
 ```pascal
 { Definir schema padrão na conexão }
@@ -779,7 +779,7 @@ CREATE TABLE orders_2026 PARTITION OF orders
 CREATE INDEX idx_orders_customer ON orders (customer_id);
 ```
 
-## Criação de Schema — Script de Migração
+## Schema Creation — Migration Script
 
 ```sql
 /* migration_001_initial_schema.sql */
@@ -856,12 +856,12 @@ CREATE TRIGGER trg_customer_updated BEFORE UPDATE ON customers
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 ```
 
-## Migração de Schema no Delphi
+## Schema migration in Delphi
 
 ```pascal
-/// <summary>
-///   Verifica se uma tabela existe no PostgreSQL.
-/// </summary>
+///<summary>
+///Checks whether a table exists in PostgreSQL.
+///</summary>
 function TableExists(AConnection: TFDConnection; const ATableName: string;
   const ASchema: string = 'public'): Boolean;
 var
@@ -882,9 +882,9 @@ begin
   end;
 end;
 
-/// <summary>
-///   Verifica se uma coluna existe em uma tabela.
-/// </summary>
+///<summary>
+///Checks whether a column exists in a table.
+///</summary>
 function ColumnExists(AConnection: TFDConnection;
   const ATableName, AColumnName: string;
   const ASchema: string = 'public'): Boolean;
@@ -908,7 +908,7 @@ begin
 end;
 ```
 
-## Tratamento de Erros PostgreSQL
+## PostgreSQL Error Handling
 
 ```pascal
 except
@@ -947,7 +947,7 @@ except
 end;
 ```
 
-## Extensões Úteis
+## Useful Extensions
 
 ```sql
 -- pgcrypto: criptografia
@@ -963,86 +963,86 @@ SELECT * FROM customers WHERE name % 'Joao';  -- busca fuzzy
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 ```
 
-## Anti-Patterns PostgreSQL a Evitar
+## PostgreSQL Anti-Patterns to Avoid
 
 ```pascal
-// ❌ Concatenar SQL — SQL Injection
+//❌ Concatenar SQL — SQL Injection
 LQuery.SQL.Text := 'SELECT * FROM customers WHERE name = ''' + AName + '''';
 
-// ✅ Parâmetros parametrizados
+//✅ Parameterized parameters
 LQuery.SQL.Text := 'SELECT * FROM customers WHERE name = :name';
 LQuery.ParamByName('name').AsString := AName;
 
-// ❌ ExecSQL com RETURNING — perde o resultado
+//❌ ExecSQL with RETURNING — loses the result
 LQuery.SQL.Text := 'INSERT INTO ... RETURNING id';
 LQuery.ExecSQL;
 
-// ✅ Open com RETURNING
+//✅ Open com RETURNING
 LQuery.SQL.Text := 'INSERT INTO ... RETURNING id';
 LQuery.Open;
 
-// ❌ SELECT * em tabelas grandes
+//❌ SELECT * on large tables
 LQuery.SQL.Text := 'SELECT * FROM orders';
 
-// ✅ Selecionar apenas colunas necessárias + LIMIT
+//✅ Select only necessary columns + LIMIT
 LQuery.SQL.Text := 'SELECT id, customer_id, total FROM orders LIMIT :limit';
 
-// ❌ N+1 queries (loop com query dentro)
+//❌ N+1 queries (loop with query inside)
 for I := 0 to LCustomers.Count - 1 do
 begin
   LQuery.SQL.Text := 'SELECT COUNT(*) FROM orders WHERE customer_id = :id';
   // ...
 end;
 
-// ✅ JOIN ou subquery
+//✅ JOIN ou subquery
 LQuery.SQL.Text :=
   'SELECT c.*, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) AS order_count ' +
   'FROM customers c';
 
-// ❌ Usar SERIAL quando IDENTITY é melhor
+//❌ Use SERIAL when IDENTITY is better
 CREATE TABLE t (id SERIAL PRIMARY KEY);
 
-// ✅ Usar IDENTITY (SQL Standard)
+//✅ Usar IDENTITY (SQL Standard)
 CREATE TABLE t (id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY);
 
-// ❌ Ignorar índices em colunas filtradas
+//❌ Ignore indexes on filtered columns
 SELECT * FROM orders WHERE customer_id = 1;  -- sem índice = full scan
 
-// ✅ Criar índices para colunas usadas em WHERE, JOIN, ORDER BY
+//✅ Create indexes for columns used in WHERE, JOIN, ORDER BY
 CREATE INDEX idx_order_customer ON orders (customer_id);
 ```
 
-## Diferenças Chave: PostgreSQL vs Firebird
+## Key Differences: PostgreSQL vs Firebird
 
 | Feature | PostgreSQL | Firebird |
 |---------|-----------|----------|
 | Auto-increment | `SERIAL`, `IDENTITY` | Generator + Trigger BI |
-| UPSERT | `ON CONFLICT` | Não nativo (MERGE parcial FB5) |
-| JSON | `JSONB` (indexável) | Não nativo |
-| Full-Text Search | `tsvector` nativo | Não nativo |
-| Arrays | `TEXT[]`, `INT[]` nativo | Não nativo |
+| UPSERT | `ON CONFLICT` | Non-native (partial MERGE FB5) |
+| JSON | `JSONB` (indexable) | Non-native |
+| Full-Text Search | `tsvector` native | Non-native |
+| Arrays | `TEXT[]`, `INT[]` native | Non-native |
 | ENUM | `CREATE TYPE ... AS ENUM` | Domain + CHECK |
-| Embedded | Não (requer servidor) | Sim (fbclient.dll) |
-| Schemas | Sim (schema separation) | Não (single namespace) |
-| IF EXISTS | `CREATE TABLE IF NOT EXISTS` | ✅ Não existe (usar `RDB$RELATIONS`) |
-| Partitioning | Nativo (PG 10+) | Não nativo |
-| Procedures | `CREATE PROCEDURE` (PG 11+) | `CREATE PROCEDURE` (com `SUSPEND`) |
-| Window Functions | Amplo suporte | FB 3+ (suporte básico) |
-| Driver FireDAC | `PG` | `FB` |
+| Embedded | No (server required) | Yes (fbclient.dll) |
+| Schemas | Yes (schema separation) | No (single namespace) |
+| IF EXISTS | `CREATE TABLE IF NOT EXISTS` | ✅ Does not exist (use `RDB$RELATIONS`) |
+| Partitioning | Native (PG 10+) | Non-native |
+| Procedures | `CREATE PROCEDURE` (PG 11+) | `CREATE PROCEDURE` (with `SUSPEND`) |
+| WindowFunctions | Extensive support | FB 3+ (basic support) |
+| FireDAC Driver | `PG` | `FB` |
 | Client Library | `libpq.dll` | `fbclient.dll` |
 
-## Checklist PostgreSQL
+## PostgreSQL Checklist
 
-- [ ] Driver `PG` configurado?
-- [ ] Connection string com `Server`, `Port`, `Database`, `UserName`, `Password`?
-- [ ] `CharacterSet := 'UTF8'` definido?
-- [ ] Queries parametrizadas (sem concatenação de strings)?
-- [ ] `RETURNING` com `Open` (não `ExecSQL`)?
-- [ ] `IDENTITY` em vez de `SERIAL` para novos projetos?
-- [ ] Transactions explícitas para operações compostas?
-- [ ] Erros tratados via `EFDDBEngineException.Kind`?
-- [ ] libpq.dll (32/64-bit) no PATH ou configurado no VendorLib?
-- [ ] Índices criados para colunas usadas em WHERE e JOIN?
-- [ ] Foreign Keys com `ON DELETE`/`ON UPDATE` apropriados?
-- [ ] JSONB para dados semi-estruturados (em vez de TEXT)?
-- [ ] `information_schema` para verificar metadata (não `RDB$`)?
+- [ ] Driver `PG` configured?
+- [ ] Connection string with `Server`, `Port`, `Database`, `UserName`, `Password`?
+- [ ] `CharacterSet := 'UTF8'` defined?
+- [ ] Parameterized queries (without string concatenation)?
+- [ ] `RETURNING` with `Open` (not `ExecSQL`)?
+- [ ] `IDENTITY` instead of `SERIAL` for new projects?
+- [ ] Explicit transactions for compound operations?
+- [ ] Errors handled via `EFDDBEngineException.Kind`?
+- [ ] libpq.dll (32/64-bit) in PATH or configured in VendorLib?
+- [ ] Indexes created for columns used in WHERE and JOIN?
+- [ ] Foreign Keys with appropriate `ON DELETE`/`ON UPDATE`?
+- [ ] JSONB for semi-structured data (instead of TEXT)?
+- [ ] `information_schema` to check metadata (not `RDB$`)?

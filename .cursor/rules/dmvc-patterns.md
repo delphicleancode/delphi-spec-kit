@@ -1,19 +1,19 @@
 ---
-description: "Padrões DelphiMVCFramework — controllers, Active Record, serialização, middleware"
+description: "DelphiMVCFramework patterns — controllers, Active Record, serialization, middleware"
 globs: ["**/*.pas"]
 alwaysApply: false
 ---
 
 # DelphiMVCFramework — Cursor Rules
 
-Use estas regras ao desenvolver com o DelphiMVCFramework (DMVC).
+Use these rules when developing with DelphiMVCFramework (DMVC).
 
 ## Controller
 
 - Herda de `TMVCController`
-- Rotas via attributes: `[MVCPath]`, `[MVCHTTPMethod]`
-- Retorno via `Render()` (JSON automático)
-- Parâmetros de path: `($id)` no attribute
+- Routes via attributes: `[MVCPath]`, `[MVCHTTPMethod]`
+- Return via `Render()` (automatic JSON)
+- Path parameters: `($id)` no attribute
 
 ```pascal
 [MVCPath('/api/customers')]
@@ -31,9 +31,9 @@ end;
 ## Active Record
 
 - Herda de `TMVCActiveRecord`
-- Mapeamento via attributes: `[MVCTable]`, `[MVCTableField]`
+- Mapping via attributes: `[MVCTable]`, `[MVCTableField]`
 - CRUD: `.Insert`, `.Update`, `.Delete`
-- Consulta: `TMVCActiveRecord.SelectRQL<T>`
+- Consultation: `TMVCActiveRecord.SelectRQL<T>`
 
 ```pascal
 [MVCTable('customers')]
@@ -46,24 +46,24 @@ TCustomer = class(TMVCActiveRecord)
 end;
 ```
 
-## Respostas
+## Answers
 
 ```pascal
-Render(LObject);                  // 200 + JSON serializado
-Render<T>(LList);                 // 200 + array JSON
-Render201Created('/path/' + Id);  // 201 Created com Location
+Render(LObject);                  //200+ serialized JSON
+Render<T>(LList);                 //200 + array JSON
+Render201Created('/path/' + Id);  //201 Created com Location
 Render(HTTP_STATUS.NotFound, ''); // 404
 ```
 
 ## Middleware
 
-- Registrar via `FMVCEngine.AddMiddleware(...)`
+- Register via `FMVCEngine.AddMiddleware(...)`
 - CORS: `TMVCCORSMiddleware.Create`
 - JWT: `TMVCJWTAuthenticationMiddleware.Create`
 
-## Proibições em DMVC
+## Prohibitions in DMVC
 
-- ❌ Acessar `TFDConnection` direto no controller
-- ❌ `Response.Content` manual — usar `Render()`
-- ❌ Serialização manual de JSON — DMVC serializa automaticamente
-- ❌ Controller sem attributes de rota
+- ❌ Access `TFDConnection` directly from the controller
+- ❌ `Response.Content` manual — use `Render()`
+- ❌ Manual JSON serialization — DMVC automatically serializes
+- ❌ Controller without route attributes

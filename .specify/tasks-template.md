@@ -1,73 +1,73 @@
-# Tarefas: [Nome da Feature]
+# Tasks: [Feature Name]
 
 ## Legenda
 
 - `[ ]` — Pendente
-- `[/]` — Em progresso
-- `[x]` — Concluída
+- `[/]` — In progress
+- `[x]` — Completed
 
 ## 1. Domain Layer
 
-- [ ] Criar entidade `T[Nome]` em `*.Domain.[X].Entity.pas`
-  - [ ] Definir propriedades e validações de domínio
-  - [ ] Criar enum `T[Nome]Status` se necessário
-  - [ ] Adicionar XMLDoc
+- [ ] Create entity `T[Nome]` in `*.Domain.[X].Entity.pas`
+  - [ ] Set domain properties and validations
+  - [ ] Create enum `T[Nome]Status` if necessary
+  - [ ] Add XMLDoc
 
-- [ ] Criar interface `I[Nome]Repository` em `*.Domain.[X].Repository.Intf.pas`
-  - [ ] Definir métodos CRUD (FindById, FindAll, Insert, Update, Delete)
-  - [ ] Definir métodos de busca específicos
+- [ ] Create interface `I[Nome]Repository` in `*.Domain.[X].Repository.Intf.pas`
+  - [ ] Define CRUD methods (FindById, FindAll, Insert, Update, Delete)
+  - [ ] Define specific search methods
 
 ## 2. Application Layer
 
-- [ ] Criar interface `I[Nome]Service` em `*.Application.[X].Service.Intf.pas`
-  - [ ] Definir métodos de negócio
+- [ ] Create interface `I[Nome]Service` in `*.Application.[X].Service.Intf.pas`
+  - [ ] Define business methods
 
-- [ ] Criar service `T[Nome]Service` em `*.Application.[X].Service.pas`
-  - [ ] Constructor injection com `I[Nome]Repository`
-  - [ ] Implementar validações de negócio
-  - [ ] Guard clauses em todos os métodos
-  - [ ] Métodos ≤ 20 linhas
+- [ ] Create service `T[Nome]Service` in `*.Application.[X].Service.pas`
+  - [ ] Constructor injection with `I[Nome]Repository`
+  - [ ] Implement business validations
+  - [ ] Guard clauses in all methods
+  - [ ] Methods ≤ 20 lines
 
 ## 3. Infrastructure Layer
 
-- [ ] Criar repository `T[Nome]Repository` em `*.Infra.[X].Repository.pas`
-  - [ ] Implementar `I[Nome]Repository` com FireDAC
-  - [ ] Try/finally para TFDQuery temporários
-  - [ ] Parametrizar todas as queries (sem SQL injection)
+- [ ] Create `T[Nome]Repository` repository in `*.Infra.[X].Repository.pas`
+  - [ ] Implement `I[Nome]Repository` with FireDAC
+  - [ ] Try/finally for TFDQuery temporary
+  - [ ] Parameterize all queries (without SQL injection)
 
-- [ ] Atualizar factory em `*.Infra.Factory.pas`
-  - [ ] Adicionar `Create[Nome]Repository`
-  - [ ] Adicionar `Create[Nome]Service`
+- [ ] Update factory in `*.Infra.Factory.pas`
+  - [ ] Add `Create[Nome]Repository`
+  - [ ] Add `Create[Nome]Service`
 
-- [ ] Criar migration SQL
-  - [ ] Script de criação da tabela
-  - [ ] Testar execução no banco
+- [ ] Create SQL migration
+  - [ ] Table creation script
+  - [ ] Test execution on the bank
 
 ## 4. Presentation Layer
 
-- [ ] Criar form de listagem `Tfrm[Nome]List` em `*.Presentation.[X].List.pas`
-  - [ ] PageControl com tabSearch
-  - [ ] DBGrid para exibição
-  - [ ] Filtros de pesquisa
-  - [ ] Botões: Novo, Editar, Excluir
+- [ ] Create listing form `Tfrm[Nome]List` in `*.Presentation.[X].List.pas`
+  - [ ] PageControl with tabSearch
+  - [ ] DBGrid for display
+  - [ ] Search filters
+  - [ ] Buttons: New, Edit, Delete
 
-- [ ] Criar form de edição `Tfrm[Nome]Edit` em `*.Presentation.[X].Edit.pas`
-  - [ ] Campos vinculados à entidade
-  - [ ] Validação visual de campos obrigatórios
-  - [ ] Botões: Salvar, Cancelar
+- [ ] Create `Tfrm[Nome]Edit` editing form in `*.Presentation.[X].Edit.pas`
+  - [ ] Fields linked to the entity
+  - [ ] Visual validation of mandatory fields
+  - [ ] Buttons: Save, Cancel
 
-## 5. Testes
+## 5. Tests
 
-- [ ] Criar testes unitários do Service
-  - [ ] Teste de criação com dados válidos
-  - [ ] Teste de validação com dados inválidos
-  - [ ] Teste de duplicidade
+- [ ] Create Service unit tests
+  - [ ] Creation test with valid data
+  - [ ] Validation test with invalid data
+  - [ ] Duplicity test
 
-- [ ] Criar testes do Repository (com banco em memória)
+- [ ] Create Repository tests (with bank in memory)
 
-## 6. Integração e Revisão
+## 6. Integration and Review
 
-- [ ] Registrar form no menu principal
-- [ ] Testar fluxo completo (CRUD)
-- [ ] Code review: verificar SOLID e clean code
-- [ ] Verificar XMLDoc em APIs públicas
+- [ ] Register form in main menu
+- [ ] Test full flow (CRUD)
+- [ ] Code review: check SOLID and clean code
+- [ ] Check XMLDoc in public APIs

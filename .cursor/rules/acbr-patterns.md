@@ -1,31 +1,31 @@
----
-description: "Projeto ACBr - Boas práticas, prefixos, injeção de dependências e isolamento de componentes fiscais"
+﻿---
+description: "ACBr Project - Good practices, prefixes, dependency injection and isolation of fiscal components"
 globs: ["**/*.pas", "**/*.dfm"]
 alwaysApply: false
 ---
 
-# Projeto ACBr — Cursor Rules
+# ACBr Project — Cursor Rules
 
-Use estas regras ao trabalhar com componentes da suíte **Projeto ACBr** (Automação Comercial Brasil) em aplicações Delphi.
+Use these rules when working with components from the **ACBr Project** suite (Commercial Automation Brazil) in Delphi applications.
 
-## Isolamento e Padrões (SOLID)
+## Insulation and Standards (SOLID)
 
-- ❌ **Não instancie ou acople os componentes ACBr diretamente nos formulários de UI** (ex: colocar um `TACBrNFe` dentro do `TfrmEmissao`).
-- ✅ **Crie abstrações ou classes de Serviço** (ex: `TNFeService`) em Módulos de Domínio/Infra que encapsulem o `TACBrNFe`.
-- O formulário só deve disparar uma interface, por exemplo: `INFeService.Emitir(Nota)`.
+- ❌ **Do not instantiate or attach ACBr components directly to UI forms** (e.g. placing a `TACBrNFe` inside `TfrmEmissao`).
+- ✅ **Create abstractions or Service classes** (ex: `TNFeService`) in Domain/Infra Modules that encapsulate `TACBrNFe`.
+- The form should only trigger one interface, for example: `INFeService.Emitir(Nota)`.
 
-## Gerenciamento de Memória
+## Memory Management
 
-- Componentes ACBr criados dinamicamente em Services **sempre** devem ser liberados apropriadamente (Try/Finally ou criados como Child de DataModules mantidos por injeção).
+- ACBr components created dynamically in Services **always** must be released appropriately (Try/Finally or created as Child of DataModules maintained by injection).
   
 ```pascal
-// Exemplo de criação dinâmica encapsulada
+//Encapsulated dynamic creation example
 var
   LAcbrNFe: TACBrNFe;
 begin
   LAcbrNFe := TACBrNFe.Create(nil);
   try
-    // Configurações e uso
+    //Settings and usage
     LAcbrNFe.Configuracoes.Certificados.NumeroSerie := 'XYZ';
   finally
     LAcbrNFe.Free;
@@ -33,18 +33,18 @@ begin
 end;
 ```
 
-## Configurações Dinâmicas
+## Dynamic Settings
 
-- Evite ler de arquivos `.ini` via UI. Carregue as configurações via uma camada de configuração do sistema (`IConfiguration`) e injete-a no serviço que encapsula a ACBr.
+- Avoid reading from `.ini` files via UI. Load the configurations via a system configuration layer (`IConfiguration`) and inject it into the service that encapsulates the ACBr.
 
-## Tratamento de Erros e Retornos
+## Error and Return Handling
 
-- Capture exceções específicas do ACBr quando possível.
-- Converta retornos longos do componente (ex: status, motivos de rejeição) em Object Results/Records da aplicação em vez de prender a aplicação à string formatação natural do componente.
+- Catch ACBr specific exceptions when possible.
+- Convert long component returns (e.g. status, rejection reasons) into application Object Results/Records instead of tying the application to the component's natural formatting string.
 
-## Convenções de Prefixos (UI/Design Time)
+## Prefix Conventions (UI/Design Time)
 
-Se precisar dropar o componente ou instanciá-lo em tempo de execução, siga estas convenções de nomes:
+If you need to drop the component or instantiate it at runtime, follow these naming conventions:
 - **TACBrNFe:** `acbrNFe`
 - **TACBrCTe:** `acbrCTe`
 - **TACBrBoleto:** `acbrBoleto`
@@ -52,3 +52,4 @@ Se precisar dropar o componente ou instanciá-lo em tempo de execução, siga es
 - **TACBrPosPrinter:** `acbrPosPrinter`
 - **TACBrECF:** `acbrEcf`
 - **TACBrCEP:** `acbrCep`
+

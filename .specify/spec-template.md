@@ -1,38 +1,38 @@
-# Especificação: [Nome da Feature]
+# Specification: [Feature Name]
 
 ## Contexto
 
-<!-- Descreva o problema ou necessidade que esta feature resolve -->
+<!-- Describe the problem or need that this feature solves -->
 
-## Requisitos Funcionais
+## Functional Requirements
 
 ### User Stories
 
-1. **Como** [tipo de usuário], **quero** [ação], **para** [benefício].
-2. **Como** [tipo de usuário], **quero** [ação], **para** [benefício].
+1. **How** [user type], **want** [action], **for** [benefit].
+2. **How** [user type], **want** [action], **for** [benefit].
 
-### Critérios de Aceitação (EARS)
+### Acceptance Criteria (EARS)
 
-<!-- Use EARS notation: WHEN [condição] THE SYSTEM SHALL [comportamento] -->
+<!-- Use EARS notation: WHEN [condition] THE SYSTEM SHALL [behavior] -->
 
-1. **WHEN** [evento/condição] **THE SYSTEM SHALL** [comportamento esperado].
-2. **WHEN** [evento/condição] **THE SYSTEM SHALL** [comportamento esperado].
-3. **WHEN** [evento/condição] **THE SYSTEM SHALL** [comportamento esperado].
+1. **WHEN** [event/condition] **THE SYSTEM SHALL** [expected behavior].
+2. **WHEN** [event/condition] **THE SYSTEM SHALL** [expected behavior].
+3. **WHEN** [event/condition] **THE SYSTEM SHALL** [expected behavior].
 
-## Requisitos Não-Funcionais
+## Non-Functional Requirements
 
-- **Performance:** [ex: resposta em < 500ms]
-- **Compatibilidade:** [ex: Delphi 11+, Windows 10+]
-- **Banco de dados:** [ex: SQLite via FireDAC]
+- **Performance:** [ex: response in < 500ms]
+- **Compatibility:** [ex: Delphi 11+, Windows 10+]
+- **Database:** [ex: SQLite via FireDAC]
 
-## Regras de Negócio
+## Business Rules
 
-1. [Regra 1]
-2. [Regra 2]
+1. [Rule 1]
+2. [Rule 2]
 
-## Modelo de Dados
+## Data Model
 
-### Entidades
+### Entities
 
 ```pascal
 type
@@ -46,7 +46,7 @@ type
   end;
 ```
 
-### Tabelas
+### Tables
 
 ```sql
 CREATE TABLE [nome_tabela] (
@@ -56,13 +56,13 @@ CREATE TABLE [nome_tabela] (
 );
 ```
 
-## Wireframe / Layout
+## Wireframe/Layout
 
-<!-- Descreva ou referencie o layout da tela se aplicável -->
+<!-- Describe or reference the screen layout if applicable -->
 
-- Form principal: `Tfrm[Nome]`
-- Componentes: `pgcMain`, `tabSearch`, `tabEdit`
+- Main form: `Tfrm[Nome]`
+- Components: `pgcMain`, `tabSearch`, `tabEdit`
 
-## Fora de Escopo
+## Out of Scope
 
-- [O que NÃO será feito nesta spec]
+- [What will NOT be done in this spec]

@@ -1,36 +1,36 @@
 # Delphi AI Spec-Kit
 
-Este é o **Delphi AI Spec-Kit**, o guia mestre para desenvolvimento Delphi (Object Pascal) neste repositório.
+This is the **Delphi AI Spec-Kit**, the master guide for Delphi (Object Pascal) development in this repository.
 
-## Stack do Projeto
-- **Linguagem:** Object Pascal (Delphi)
-- **IDE Nativa:** RAD Studio / Delphi
-- **Frameworks Principais:** VCL, FMX, FireDAC
-- **Testes:** DUnitX
+## Project Stack
+- **Language:** Object Pascal (Delphi)
+- **Native IDE:** RAD Studio / Delphi
+- **Main Frameworks:** VCL, FMX, FireDAC
+- **Tests:** DUnitX
 - **Build / Tooling:** MSBuild, dcc32/dcc64, Boss (Package Manager)
 
-## Diretivas Cruciais (Memory Management)
-- **Blocos Vigiados (Obrigatório):** TUDO o que você instanciar com `.Create` (se for `TObject` e não tiver `Owner`) **DEVE** ter um `try..finally` na linha IMEDIATAMENTE subsequente.
+## Crucial Directives (Memory Management)
+- **Watched Blocks (Required):** EVERYTHING you instantiate with `.Create` (if it is `TObject` and does not have `Owner`) **MUST** have a `try..finally` on the IMMEDIATELY subsequent line.
   ```pascal
   Obj := TMyClass.Create;
   try
     Obj.DoSomething;
   finally
-    Obj.Free; // ou FreeAndNil(Obj)
+    Obj.Free; //my FreeAndNil(Obj)
   end;
   ```
-- **NÃO use** `with`.
-- **NÃO crie** God Classes. Use Princípios SOLID.
-- Isole componentes visuais (FMX/VCL) de regras de negócio estritas. Não acesse DBGrid ou edits do form em units lógicas puras.
-- Para injeção de dependências, passe abstrações no constructor.
+- **DO NOT use** `with`.
+- **DO NOT create** God Classes. Use SOLID Principles.
+- Isolate visual components (FMX/VCL) from strict business rules. Do not access DBGrid or form edits in pure logical units.
+- For dependency injection, pass abstractions in the constructor.
 
 ## File Organization & Naming (PascalCase)
-- Classes: Começam com `T` (ex: `TCustomer`).
-- Interfaces: Começam com `I` (ex: `ICustomer`).
-- Exceptions: Começam com `E` (ex: `EValidationError`).
-- Atributos ou Campos privados: Começam com `F` (ex: `FName`).
-- Variáveis locais: Começam com `L` (ex: `LCustomer`).
-- Parâmetros: Começam com `A` (ex: `ACustomer`).
-- Nomenclatura das Units: `NomeProjeto.Camada.Dominio.Funcionalidade.pas`
+- Classes: Start with `T` (ex: `TCustomer`).
+- Interfaces: Start with `I` (ex: `ICustomer`).
+- Exceptions: Start with `E` (ex: `EValidationError`).
+- Private attributes or fields: Start with `F` (ex: `FName`).
+- Local variables: Start with `L` (ex: `LCustomer`).
+- Parameters: Start with `A` (ex: `ACustomer`).
+- Unit nomenclature: `NomeProjeto.Camada.Dominio.Funcionalidade.pas`
 
-*(Veja o arquivo global `AGENTS.md` e a pasta `rules/` para diretrizes específicas de frameworks como FireDAC, Rest, Horse e Banco de Dados).*
+*(See the `AGENTS.md` global file and `rules/` folder for guidelines specific to frameworks such as FireDAC, Rest, Horse and Database).*

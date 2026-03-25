@@ -1,20 +1,20 @@
 ---
 name: "DUnitX Testing Patterns"
-description: "Padrões de testes unitários com DUnitX para Delphi — fixtures, mocking, integration tests"
+description: "Unit testing patterns with DUnitX for Delphi — fixtures, mocking, integration tests"
 ---
 
 # DUnitX Testing Patterns — Skill
 
-Use esta skill ao criar ou organizar testes unitários em projetos Delphi.
+Use this skill when creating or organizing unit tests in Delphi projects.
 
-## Quando Usar
+## When to Use
 
-- Ao criar testes para novas funcionalidades
-- Ao aplicar TDD (Test-Driven Development)
-- Ao criar testes de integração com banco de dados
-- Ao refatorar testes existentes
+- When creating tests for new features
+- When applying TDD (Test-Driven Development)
+- When creating database integration tests
+- When refactoring existing tests
 
-## Estrutura de Projeto de Testes
+## Test Project Structure
 
 ```
 tests/
@@ -32,7 +32,7 @@ tests/
     └── MeuApp.Tests.Helpers.Mocks.pas
 ```
 
-## Test Fixture Básico
+## Basic Test Fixture
 
 ```pascal
 unit MeuApp.Tests.Customer.Service;
@@ -90,7 +90,7 @@ end;
 procedure TCustomerServiceTest.TearDown;
 begin
   FService.Free;
-  // FMockRepo é interface — liberado automaticamente
+  //FMockRepo is interface — released automatically
 end;
 
 [Test]
@@ -164,7 +164,7 @@ initialization
 end.
 ```
 
-## Mock Repository (em memória)
+## Mock Repository (in memory)
 
 ```pascal
 unit MeuApp.Tests.Helpers.Mocks;
@@ -217,38 +217,38 @@ begin
   FItems.Add(ACustomer);
 end;
 
-// ... demais métodos seguem o mesmo padrão
+//... other methods follow the same pattern
 ```
 
-## Convenções de Nomenclatura de Testes
+## Test Naming Conventions
 
 ```
 MethodName_Scenario_ExpectedBehavior
 ```
 
-| Exemplo | Significado |
+| Example | Meaning |
 |---------|-------------|
-| `CreateCustomer_WithValidData_ShouldSucceed` | Cenário feliz |
-| `CreateCustomer_WithEmptyName_ShouldRaiseException` | Validação |
+| `CreateCustomer_WithValidData_ShouldSucceed` | Happy scenery |
+| `CreateCustomer_WithEmptyName_ShouldRaiseException` | Validation |
 | `GetById_WithInvalidId_ShouldRaiseNotFoundException` | Not found |
-| `Delete_WhenItemHasDependencies_ShouldRaiseException` | Regra de negócio |
+| `Delete_WhenItemHasDependencies_ShouldRaiseException` | Business rule |
 
-## Assertions Comuns do DUnitX
+## DUnitX Common Assertions
 
 ```pascal
-// Igualdade
+//equality
 Assert.AreEqual(Expected, Actual);
 Assert.AreEqual('João', LCustomer.Name);
 
-// Nulidade
+//Nullity
 Assert.IsNotNull(LCustomer);
 Assert.IsNull(LResult);
 
-// Booleanos
+//Booleanos
 Assert.IsTrue(LCustomer.IsActive);
 Assert.IsFalse(LOrder.IsCancelled);
 
-// Exceptions
+//Exceptions
 Assert.WillRaise(AnonProc, EValidationException);
 Assert.WillNotRaiseAny(AnonProc);
 
@@ -256,7 +256,7 @@ Assert.WillNotRaiseAny(AnonProc);
 Assert.AreEqual(3, LList.Count);
 ```
 
-## Teste de Integração com SQLite em Memória
+## Integration Test with SQLite in Memory
 
 ```pascal
 [TestFixture]
@@ -279,7 +279,7 @@ begin
   FConnection.Params.Database := ':memory:';
   FConnection.Connected := True;
 
-  // Criar schema
+  //Create schema
   FConnection.ExecSQL(
     'CREATE TABLE customers (' +
     '  id INTEGER PRIMARY KEY AUTOINCREMENT,' +
@@ -299,12 +299,12 @@ begin
 end;
 ```
 
-## Checklist de Testes
+## Test Checklist
 
-- [ ] Nome do teste segue `MethodName_Scenario_ExpectedBehavior`?
-- [ ] Setup e TearDown limpos e sem efeitos colaterais?
-- [ ] Teste verifica UMA coisa?
-- [ ] Objetos liberados corretamente no TearDown e em try/finally?
-- [ ] Mock repository usado para testes de Service?
-- [ ] SQLite `:memory:` usado para testes de integração de Repository?
-- [ ] Testa cenário feliz E cenários de erro?
+- [ ] Test name follows `MethodName_Scenario_ExpectedBehavior`?
+- [ ] Clean setup and TearDown without side effects?
+- [ ] Test checks ONE thing?
+- [ ] Objects released correctly in TearDown and in try/finally?
+- [ ] Mock repository used for Service testing?
+- [ ] SQLite `:memory:` used for Repository integration testing?
+- [ ] Test happy scenario AND error scenarios?

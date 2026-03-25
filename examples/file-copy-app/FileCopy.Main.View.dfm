@@ -1,14 +1,14 @@
-object frmMain: TfrmMain
+﻿object frmMain: TfrmMain
   Left = 0
   Top = 0
-  Caption = 'File Copy - Copiar Arquivos'
+  Caption = 'File Copy - Copy Files'
   ClientHeight = 480
   ClientWidth = 640
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
-  Font.Name = 'Segoe UI'
+  Font.Name = 'Follow UI'
   Font.Style = []
   Position = poScreenCenter
   PixelsPerInch = 96
@@ -26,14 +26,14 @@ object frmMain: TfrmMain
       Top = 12
       Width = 90
       Height = 15
-      Caption = 'Pasta de Origem:'
+      Caption = 'Source Folder:'
     end
     object lblDest: TLabel
       Left = 16
       Top = 64
       Width = 96
       Height = 15
-      Caption = 'Pasta de Destino:'
+      Caption = 'Destination Folder:'
     end
     object edtSource: TEdit
       Left = 16
@@ -48,7 +48,7 @@ object frmMain: TfrmMain
       Top = 29
       Width = 80
       Height = 25
-      Caption = 'Selecionar...'
+      Caption = 'Select...'
       TabOrder = 1
       OnClick = btnSelectSourceClick
     end
@@ -65,7 +65,7 @@ object frmMain: TfrmMain
       Top = 81
       Width = 80
       Height = 25
-      Caption = 'Selecionar...'
+      Caption = 'Select...'
       TabOrder = 3
       OnClick = btnSelectDestClick
     end
@@ -83,7 +83,7 @@ object frmMain: TfrmMain
       Top = 4
       Width = 140
       Height = 15
-      Caption = 'Arquivos na pasta de origem:'
+      Caption = 'Files in source folder:'
     end
     object lbxFiles: TListBox
       Left = 16
@@ -107,7 +107,7 @@ object frmMain: TfrmMain
       Top = 8
       Width = 120
       Height = 36
-      Caption = 'Copiar Arquivos'
+      Caption = 'Copy Files'
       TabOrder = 0
       OnClick = btnCopyClick
     end
@@ -134,8 +134,9 @@ object frmMain: TfrmMain
     FavoriteLinks = <>
     FileTypes = <>
     Options = [fdoPickFolders, fdoPathMustExist]
-    Title = 'Selecionar Pasta'
+    Title = 'Select Folder'
     Left = 296
     Top = 232
   end
 end
+

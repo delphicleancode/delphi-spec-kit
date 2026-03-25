@@ -1,28 +1,28 @@
 ---
 name: Dext Framework Patterns
-description: Padrões arquiteturais, Entity ORM, Minimal APIs e de injeção de dependência para projetos criados com Dext Framework (cesarliws/dext).
+description: Architectural patterns, Entity ORM, Minimal APIs and dependency injection for projects created with Dext Framework (cesarliws/dext).
 ---
 
-# Padrões Dext Framework (Delphi)
+# Dext Framework Patterns (Delphi)
 
-O **Dext Framework** é um ecossistema completo para Delphi, inspirado diretamente no **ASP.NET Core** e no **Spring Boot**. Ele se destina ao desenvolvimento corporativo de alta performance. Diferente do Horse ou DMVC, o Dext abraça a Injeção de Dependências, Minimal APIs com model binding automático e tem o próprio Entity ORM (`Dext.Entity`).
+The **Dext Framework** is a complete ecosystem for Delphi, directly inspired by **ASP.NET Core** and **Spring Boot**. It is intended for high-performance corporate development. Unlike Horse or DMVC, Dext embraces Dependency Injection, Minimal APIs with automatic model binding and has its own Entity ORM (`Dext.Entity`).
 
-Este manual traz as convenções que devem ser seguidas pela IA ao codificar com Dext.
+This manual provides the conventions that must be followed by the AI ​​when coding with Dext.
 
-**Nota Importante:** Dext Framework **não** é abreviação para componentes visuais DevExpress/DevExtreme, e sim o projeto backend (https://github.com/cesarliws/dext).
+**Important Note:** Dext Framework is **not** short for DevExpress/DevExtreme visual components, but rather the backend project (https://github.com/cesarliws/dext).
 
-## Princípios Core
+## Core Principles
 
-1. **Roteamento Minimal (Minimal APIs):** Não utilize Controllers tradicionais MVC, a menos que necessário. Use sintaxe de roteamento funcional (`MapGet`, `MapPost`).
-2. **Auto Model Binding:** Obtenha JSON body não via strings e conversões parciais, mas delegando a tipagem forte aos parâmetros anônimos da rota (`function(Dto: MyDto): IResult`).
-3. **Container DI Integrado:** Toda dependência de interface deve ser resolvida via `App.Services` (Injection). Não use factories manuais.
-4. **Smart ORM (Dext.Entity):** Nunca concatene SQL.
+1. **Minimal Routing (Minimal APIs):** Do not use traditional MVC Controllers unless necessary. Use functional routing syntax (`MapGet`, `MapPost`).
+2. **Auto Model Binding:** Get JSON body not via strings and partial conversions, but by delegating strong typing to anonymous route parameters (`function(Dto: MyDto): IResult`).
+3. **Integrated DI Container:** All interface dependencies must be resolved via `App.Services` (Injection). Do not use manual factories.
+4. **Smart ORM (Dext.Entity):** Never concatenate SQL.
 
 ---
 
-## 1. WebApp Lifecycle e DI
+## 1. WebApp Lifecycle and DI
 
-O Bootstrap de uma API Dext ocorre registrando serviços na mesma pipeline de rotas.
+Bootstrap of a Dext API occurs by registering services in the same route pipeline.
 
 ```pascal
 program MyAPI;
@@ -53,9 +53,9 @@ end.
 
 ## 2. Minimal APIs & Model Binding
 
-A forma preferencial de construir APIs REST com o Dext é usando delegates anônimos tipados, com as dependências do DI passadas nos argumentos finais.
+The preferred way to build REST APIs with Dext is using typed anonymous delegates, with DI dependencies passed in the final arguments.
 
-### Criar usuário (Post + DTO Body + Auth)
+### Create user (Post + DTO Body + Auth)
 
 ```pascal
 type
@@ -97,16 +97,16 @@ Builder.MapGet<Integer, IResult>('/orders/{id}',
 
 ## 3. Dext.Entity (ORM & Smart Properties)
 
-O mapeamento de Banco de Dados com Dext é focado em strongly typed query building e Classes "Code First".
+Database mapping with Dext is focused on strongly typed query building and "Code First" Classes.
 
-### Consultas LINQ-Like
+### LINQ-Like Queries
 
-Evite uso de RTTI complexo ou ADOTables nativas se estiver no Dext. Entregue os resultados em Collections tipadas (`IList<T>`).
+Avoid using complex RTTI or native ADOTables if you are on Dext. Deliver results in typed Collections (`IList<T>`).
 
 ```pascal
 uses Dext.Entity;
 
-// P é a representação da Smart Property para a classe de contexto
+// P é a representaction da Smart Property para a classe de contexto
 var Products := DbContext.Products
   .Where((P.Price > 100) and (P.Stock > 0))  // 'and' bitwise/Smart property syntax
   .OrderBy(P.Name)
@@ -114,9 +114,9 @@ var Products := DbContext.Products
   .ToList;
 ```
 
-### Entendendo "Update" em Massa via Dext.Entity
+### Understanding "Mass Update" via Dext.Entity
 
-Com o Dext ORM, Updates podem rodar no banco de dados sem puxar os dados pra memória (como efetuado em Entity Framework Core moderno):
+With Dext ORM, Updates can run in the database without pulling data into memory (as done in modern Entity Framework Core):
 
 ```pascal
 DbContext.Orders
@@ -127,20 +127,20 @@ DbContext.Orders
 
 ---
 
-## 4. Retornos (IResult)
+## 4. Returns (IResult)
 
-Sempre retorne implementações baseadas em `IResult` em endpoints usando a factory `Results`.
+Always return `IResult`-based implementations on endpoints using the `Results` factory.
 
-- `Results.Ok( MeuRecord )` -> Status 200 + Serializa Automaticamente em JSON.
+- `Results.Ok( MeuRecord )` -> Status 200 + Automatically Serializes into JSON.
 - `Results.Created('/rota', 'Msg')` -> Status 201 + Header "Location".
 - `Results.NotFound` -> Status 404.
 - `Results.BadRequest('Msg')` -> Status 400 bad request error.
 
 ---
 
-## 5. Dext.Net Async Tasks e Resiliência (TAsyncTask)
+## 5. Dext.Net Async Tasks and Resilience (TAsyncTask)
 
-O Dext inclui primitivas de promises/tasks mais modernas do que as puras `TTask` originais do Delphi.
+Dext includes more modern promises/tasks primitives than the pure `TTask` originals of Delphi.
 
 ```pascal
 uses Dext.Core.Tasks; // Usar Task Flow da biblioteca central
@@ -165,9 +165,9 @@ TAsyncTask.Run<TUserProfile>(
 
 ---
 
-## Checklist de Revisão (Dext Framework)
+## Review Checklist (Dext Framework)
 
-- **Rotas fluentes?** A aplicação usa `Builder.MapGet`/`MapPost` com binding implícito em vez de manipulação manual da request e parse de Body puro para json objects complexos?
-- **O container DI foi alimentado?** Instâncias estão sendo passadas aos construtores/routers através de `App.Services`?
-- **Sem Strings de Filtro em Módulos Data?** Utilizou as Smart Properties expressivas (`.Where(E.Price > 100)`) em vez de query concat?
-- **Os retornos sãos baseados em records e objects POLD?** (Plain Old Delphi Objects, permitindo UTF-8 Zero Allocation JSON do Dext).
+- **Fluent routes?** Does the application use `Builder.MapGet`/`MapPost` with implicit binding instead of manual request manipulation and pure Body parse for complex json objects?
+- **Has the DI container been powered?** Are instances being passed to constructors/routers through `App.Services`?
+- **No Filter Strings in Data Modules?** Did you use expressive Smart Properties (`.Where(E.Price > 100)`) instead of query concat?
+- **Are returns based on records and POLD objects?** (Plain Old Delphi Objects, allowing UTF-8 Zero Allocation JSON from Dext).

@@ -1,4 +1,4 @@
-program FileCopyTests;
+﻿program FileCopyTests;
 
 {$IFNDEF TESTINSIGHT}
 {$APPTYPE CONSOLE}
@@ -13,8 +13,8 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
-  FileCopy.Service.Copier in 'FileCopy.Service.Copier.pas',
-  FileCopy.Service.Copier.Tests in 'FileCopy.Service.Copier.Tests.pas';
+  FileCopy.Service.Copier in 'FileCopy.Service.Copy.pas',
+  FileCopy.Service.Copier.Tests in 'FileCopy.Service.Copy.Tests.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
@@ -29,27 +29,27 @@ begin
   TestInsight.DUnitX.RunRegisteredTests;
   {$ELSE}
   try
-    // Verificar se algum fixture foi registrado
+    // Check if any fixtures have been registered
     TDUnitX.CheckCommandLine;
 
-    // Criar o runner
+    // Create the runner
     LRunner := TDUnitX.CreateRunner;
     LRunner.UseRTTI := True;
     LRunner.FailsOnNoAsserts := False;
 
-    // Logger de console
+    // Console logger
     LLogger := TDUnitXConsoleLogger.Create(True);
     LRunner.AddLogger(LLogger);
 
-    // Logger NUnit XML
+    // NUnit XML Logger
     LNUnitLogger := TDUnitXXMLNUnitFileLogger.Create(
       TDUnitX.Options.XMLOutputFile);
     LRunner.AddLogger(LNUnitLogger);
 
-    // Executar testes
+    // Run tests
     LResults := LRunner.Execute;
 
-    // Exibir resultado no console
+    // Display result in console
     if not LResults.AllPassed then
       System.ExitCode := EXIT_FAILURE
     else
@@ -58,7 +58,7 @@ begin
     {$IFNDEF CI}
     if TDUnitX.Options.ExitBehavior = TDUnitXExitBehavior.Pause then
     begin
-      System.Write('Pressione ENTER para sair...');
+      System.Write('Press ENTER to exit...');
       System.Readln;
     end;
     {$ENDIF}
@@ -68,3 +68,4 @@ begin
   end;
   {$ENDIF}
 end.
+

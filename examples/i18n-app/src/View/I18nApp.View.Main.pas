@@ -1,4 +1,4 @@
-unit I18nApp.View.Main;
+﻿unit I18nApp.View.Main;
 
 interface
 
@@ -86,13 +86,13 @@ begin
   mnuCadastrosClientes.Caption := LLang.GetString('menu.cadastros.clientes');
   mnuCadastrosProdutos.Caption := LLang.GetString('menu.cadastros.produtos');
   
-  mnuVendas.Caption := LLang.GetString('menu.vendas');
+  mnuVendas.Caption := LLang.GetString('menu.sales');
   mnuVendasNova.Caption := LLang.GetString('menu.vendas.nova');
   
   mnuConfig.Caption := LLang.GetString('menu.config');
-  mnuConfigIdioma.Caption := LLang.GetString('menu.config.idioma');
+  mnuConfigIdioma.Caption := LLang.GetString('menu.config.language');
   mnuIdiomaPTBR.Caption := LLang.GetString('menu.config.idioma.ptbr');
-  mnuIdiomaENUS.Caption := LLang.GetString('menu.config.idioma.enus');
+  mnuIdiomaENUS.Caption := LLang.GetString('menu.config.language.enus');
   
   mnuHelp.Caption := LLang.GetString('menu.help');
   mnuHelpAbout.Caption := LLang.GetString('menu.help.about');
@@ -137,3 +137,4 @@ begin
 end;
 
 end.
+

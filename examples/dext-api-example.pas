@@ -1,6 +1,6 @@
-/// <summary>
-///   Exemplo completo de Minimal API com Dext Framework (cesarliws/dext).
-///   Demonstra: Injeção de dependências, Model Binding via tipos e Responses IResult.
+﻿/// <summary>
+/// Complete example of Minimal API with Dext Framework (cesarliws/dext).
+/// Demonstrates: Dependency injection, Model Binding via IResult types and Responses.
 /// </summary>
 program Example.Dext.MinimalApi;
 
@@ -12,11 +12,11 @@ uses
   Dext.Web;
 
 // =========================================================================
-// Classes de Serviço e Interfaces (Domain/Application)
+// Service Classes and Interfaces (Domain/Application)
 // =========================================================================
 
 type
-  // DTO (Será preenchido pelo JSON request body nativamente)
+  // DTO (Will be populated by the JSON request body natively)
   TUserRequestDto = record
     Name: string;
     Email: string;
@@ -39,31 +39,31 @@ type
   end;
 
 // =========================================================================
-// Implementações
+// Implementations
 // =========================================================================
 
 function TUserService.RegisterNewUser(const ADto: TUserRequestDto): string;
 begin
-  // Em uma aplicação real, aqui salvaríamos as coisas com o Dext.Entity
-  // e aplicaríamos regras de negócio.
-  Result := TGUID.NewGuid.ToString; // Retorna Novo ID
+  // In a real application, here we would save things with Dext.Entity
+  // and we would apply business rules.
+  Result := TGUID.NewGuid.ToString; // Returns the new ID
 end;
 
 
 // =========================================================================
-// Startup (Host)
+//Startup (Host)
 // =========================================================================
 
 begin
   try
-    // Inicia a aplicação server do Dext
+    // Start the Dext server application
     var App := WebApplication;
     var Builder := App.Builder;
 
     // 1. DI Registration - Container
     App.Services.AddScoped<IUserService, TUserService>;
 
-    // 2. Mapeamento de Rotas - Endpoints
+    // 2. Route Mapping - Endpoints
 
     // Health Check Endpoint
     Builder.MapGet<IResult>('/api/health',
@@ -72,13 +72,13 @@ begin
         Result := Results.Ok('{"status": "API is running"}');
       end);
 
-    // Registro de Usuario - Model Binding e Injection do IUserService
+    // User Registration - Model Binding and IUserService Injection
     Builder.MapPost<TUserRequestDto, IUserService, IResult>('/api/users',
       function(Dto: TUserRequestDto; UserService: IUserService): IResult
       var
         LResponse: TUserResponseDto;
       begin
-        // Validções no Minimal API Handler ou delegadas via Filters.
+        // Validations in the Minimal API Handler or delegated via Filters.
         if (Dto.Name.Trim.IsEmpty) or (Dto.Email.Trim.IsEmpty) then
         begin
           Exit(Results.BadRequest('Name and Email are required'));
@@ -90,13 +90,13 @@ begin
         end;
 
         LResponse.Id := UserService.RegisterNewUser(Dto);
-        LResponse.Message := 'User successfully created';
+        LResponse.Message := 'User created successfully';
 
-        // Result.Json auto serializa o DTO Record e entrega Content-Type: application/json
+        // Result.Json auto serializes the DTO Record and delivers Content-Type: application/json
         Result := Results.Created('/api/users/' + LResponse.Id, LResponse);
       end);
       
-    // 3. Start e Listen
+    // 3. Start and Listen
     Writeln('Dext Minimal API starting on default port (http://localhost:8080)...');
     App.Run(8080);
     
@@ -105,3 +105,4 @@ begin
       Writeln(E.ClassName, ': ', E.Message);
   end;
 end.
+

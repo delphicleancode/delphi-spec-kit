@@ -1,7 +1,7 @@
-/// <summary>
-///   Exemplo completo de Repository Pattern com FireDAC + Firebird.
-///   Demonstra: conexão Firebird, generators, RETURNING, transactions,
-///   stored procedures, error handling, domains e PSQL.
+﻿/// <summary>
+/// Complete example of Repository Pattern with FireDAC + Firebird.
+/// Demonstrates: Firebird connection, generators, RETURNING, transactions,
+/// stored procedures, error handling, domains and PSQL.
 /// </summary>
 unit Example.Infra.Firebird.Customer.Repository;
 
@@ -16,7 +16,7 @@ uses
 
 type
   // =========================================================================
-  // Exceções de Domínio para Firebird
+  // Domain Exceptions for Firebird
   // =========================================================================
 
   EDatabaseException = class(Exception);
@@ -25,13 +25,13 @@ type
   EForeignKeyViolationException = class(EDatabaseException);
 
   // =========================================================================
-  // Entidade
+  // Entity
   // =========================================================================
 
   TCustomerStatus = (csActive, csInactive, csSuspended);
 
   /// <summary>
-  ///   Entidade de domínio representando um cliente.
+  /// Domain entity representing a customer.
   /// </summary>
   TCustomer = class
   private
@@ -57,7 +57,7 @@ type
   end;
 
   // =========================================================================
-  // Interface do Repository (Domain — camada agnóstica de banco)
+  // Repository Interface (Domain — bank agnostic layer)
   // =========================================================================
 
   ICustomerRepository = interface
@@ -74,24 +74,24 @@ type
   end;
 
   // =========================================================================
-  // Implementação com FireDAC + Firebird (Infrastructure)
+  // Implementation with FireDAC + Firebird (Infrastructure)
   // =========================================================================
 
   /// <summary>
-  ///   Implementação concreta do repository usando FireDAC com Firebird.
-  ///   Demonstra: RETURNING, generators, stored procedures, error handling.
+  /// Concrete implementation of the repository using FireDAC with Firebird.
+  /// Demonstrates: RETURNING, generators, stored procedures, error handling.
   /// </summary>
   TFirebirdCustomerRepository = class(TInterfacedObject, ICustomerRepository)
   private
     FConnection: TFDConnection;
 
     /// <summary>
-    ///   Mapeia um registro do TFDQuery para a entidade TCustomer.
+    /// Maps a TFDQuery record to the TCustomer entity.
     /// </summary>
     function MapToCustomer(AQuery: TFDQuery): TCustomer;
 
     /// <summary>
-    ///   Trata exceções do Firebird e converte em exceções de domínio.
+    /// Handles Firebird exceptions and converts them to domain exceptions.
     /// </summary>
     procedure HandleFirebirdException(AException: EFDDBEngineException);
   public
@@ -110,16 +110,16 @@ type
   end;
 
   // =========================================================================
-  // Factory de Conexão Firebird
+  // Firebird Connection Factory
   // =========================================================================
 
   /// <summary>
-  ///   Factory para criar conexões Firebird configuradas corretamente.
+  /// Factory to create correctly configured Firebird connections.
   /// </summary>
   TFirebirdConnectionFactory = class
   public
     /// <summary>
-    ///   Cria conexão Firebird com configurações recomendadas.
+    /// Creates Firebird connection with recommended settings.
     /// </summary>
     class function CreateConnection(
       const AServer: string;
@@ -135,7 +135,7 @@ uses
   FireDAC.Stan.Error;
 
 const
-  { Nomes de generators — centralizados como constantes }
+  { Generator names — centralized as constants }
   GENERATOR_CUSTOMER_ID = 'GEN_CUSTOMER_ID';
 
 { TCustomer }
@@ -144,7 +144,7 @@ constructor TCustomer.Create(const AName: string);
 begin
   inherited Create;
   if AName.Trim.IsEmpty then
-    raise EArgumentException.Create('Nome do cliente não pode ser vazio');
+    raise EArgumentException.Create('Customer name cannot be empty');
   FName := AName.Trim;
   FStatus := csActive;
 end;
@@ -160,7 +160,7 @@ constructor TFirebirdCustomerRepository.Create(AConnection: TFDConnection);
 begin
   inherited Create;
   if not Assigned(AConnection) then
-    raise EArgumentNilException.Create('AConnection não pode ser nil');
+    raise EArgumentNilException.Create('AConnection cannot be nil');
   FConnection := AConnection;
 end;
 
@@ -169,7 +169,7 @@ begin
   Result := TCustomer.Create(AQuery.FieldByName('name').AsString);
   Result.Id := AQuery.FieldByName('id').AsInteger;
   Result.Cpf := AQuery.FieldByName('cpf').AsString;
-  Result.Email := AQuery.FieldByName('email').AsString;
+  Result.Email := AQuery.FieldByName('e-mail').AsString;
   Result.Status := TCustomerStatus(AQuery.FieldByName('status').AsInteger);
   Result.Notes := AQuery.FieldByName('notes').AsString;
   Result.CreatedAt := AQuery.FieldByName('created_at').AsDateTime;
@@ -181,15 +181,15 @@ begin
   case AException.Kind of
     ekRecordLocked:
       raise ERecordLockedException.Create(
-        'Registro bloqueado por outra transação. Tente novamente.');
+        'Record locked by another transaction. Please try again.');
     ekUKViolated:
       raise EDuplicateRecordException.Create(
-        'Registro duplicado: ' + AException.Message);
+        'Duplicate record:' + AException.Message);
     ekFKViolated:
       raise EForeignKeyViolationException.Create(
-        'Violação de chave estrangeira: ' + AException.Message);
+        'Foreign key violation:' + AException.Message);
   else
-    raise; { Re-propagar exceções não tratadas }
+    raise; { Re-raise unhandled exceptions }
   end;
 end;
 
@@ -202,7 +202,7 @@ begin
   try
     LQuery.Connection := FConnection;
     LQuery.SQL.Text :=
-      'SELECT id, name, cpf, email, status, notes, created_at ' +
+      'SELECT id, name, cpf, email, status, notes, created_at' +
       'FROM customers WHERE id = :id';
     LQuery.ParamByName('id').AsInteger := AId;
     LQuery.Open;
@@ -224,7 +224,7 @@ begin
     try
       LQuery.Connection := FConnection;
       LQuery.SQL.Text :=
-        'SELECT id, name, cpf, email, status, notes, created_at ' +
+        'SELECT id, name, cpf, email, status, notes, created_at' +
         'FROM customers ORDER BY name';
       LQuery.Open;
 
@@ -254,7 +254,7 @@ begin
   try
     LQuery.Connection := FConnection;
     LQuery.SQL.Text :=
-      'SELECT id, name, cpf, email, status, notes, created_at ' +
+      'SELECT id, name, cpf, email, status, notes, created_at' +
       'FROM customers WHERE cpf = :cpf';
     LQuery.ParamByName('cpf').AsString := ACpf;
     LQuery.Open;
@@ -267,7 +267,7 @@ begin
 end;
 
 /// <summary>
-///   Usa Stored Procedure Selectable do Firebird para buscar por status.
+/// Uses Firebird's Stored Procedure Selectable to search for status.
 /// </summary>
 function TFirebirdCustomerRepository.FindByStatus(
   AStatus: TCustomerStatus): TObjectList<TCustomer>;
@@ -279,11 +279,11 @@ begin
   try
     try
       LQuery.Connection := FConnection;
-      { Chamada de Stored Procedure Selectable — tratada como SELECT }
+      { Selectable Stored Procedure call — treated as SELECT }
       LQuery.SQL.Text :=
-        'SELECT O_ID AS id, O_NAME AS name, O_CPF AS cpf, ' +
-        '''  '' AS email, O_STATUS AS status, '''' AS notes, ' +
-        'CURRENT_TIMESTAMP AS created_at ' +
+        'SELECT O_ID AS id, O_NAME AS name, O_CPF AS cpf,' +
+        ''''''''' '''''''' AS email, O_STATUS AS status, '''''''''''''''' AS notes,' +
+        'CURRENT_TIMESTAMP AS created_at' +
         'FROM SP_CUSTOMERS_BY_STATUS(:P_STATUS)';
       LQuery.ParamByName('P_STATUS').AsSmallInt := Ord(AStatus);
       LQuery.Open;
@@ -320,32 +320,32 @@ begin
 end;
 
 /// <summary>
-///   Insere cliente usando INSERT ... RETURNING para obter o ID gerado.
-///   O generator GEN_CUSTOMER_ID é incrementado pela trigger TRG_CUSTOMER_BI.
+/// Inserts customer using INSERT ... RETURNING to obtain the generated ID.
+/// The GEN_CUSTOMER_ID generator is incremented by the TRG_CUSTOMER_BI trigger.
 /// </summary>
 procedure TFirebirdCustomerRepository.Insert(ACustomer: TCustomer);
 var
   LQuery: TFDQuery;
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
 
   LQuery := TFDQuery.Create(nil);
   try
     try
       LQuery.Connection := FConnection;
-      { RETURNING retorna o ID gerado pela trigger/generator }
+      { RETURNING returns the ID generated by the trigger/generator }
       LQuery.SQL.Text :=
-        'INSERT INTO customers (name, cpf, email, status, notes) ' +
-        'VALUES (:name, :cpf, :email, :status, :notes) ' +
+        'INSERT INTO customers (name, cpf, email, status, notes)' +
+        'VALUES (:name, :cpf, :email, :status, :notes)' +
         'RETURNING id, created_at';
       LQuery.ParamByName('name').AsString := ACustomer.Name;
       LQuery.ParamByName('cpf').AsString := ACustomer.Cpf;
-      LQuery.ParamByName('email').AsString := ACustomer.Email;
+      LQuery.ParamByName('e-mail').AsString := ACustomer.Email;
       LQuery.ParamByName('status').AsSmallInt := Ord(ACustomer.Status);
       LQuery.ParamByName('notes').AsString := ACustomer.Notes;
 
-      { IMPORTANTE: usar Open (não ExecSQL) para receber o RETURNING }
+      { IMPORTANT: use Open (not ExecSQL) to receive the RETURNING value }
       LQuery.Open;
       ACustomer.Id := LQuery.FieldByName('id').AsInteger;
       ACustomer.CreatedAt := LQuery.FieldByName('created_at').AsDateTime;
@@ -363,21 +363,21 @@ var
   LQuery: TFDQuery;
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
 
   LQuery := TFDQuery.Create(nil);
   try
     try
       LQuery.Connection := FConnection;
       LQuery.SQL.Text :=
-        'UPDATE customers SET ' +
-        '  name = :name, cpf = :cpf, email = :email, ' +
-        '  status = :status, notes = :notes ' +
+        'UPDATE customers SET' +
+        '  name = :name, cpf = :cpf, email = :email,' +
+        '  status = :status, notes = :notes' +
         'WHERE id = :id';
       LQuery.ParamByName('id').AsInteger := ACustomer.Id;
       LQuery.ParamByName('name').AsString := ACustomer.Name;
       LQuery.ParamByName('cpf').AsString := ACustomer.Cpf;
-      LQuery.ParamByName('email').AsString := ACustomer.Email;
+      LQuery.ParamByName('e-mail').AsString := ACustomer.Email;
       LQuery.ParamByName('status').AsSmallInt := Ord(ACustomer.Status);
       LQuery.ParamByName('notes').AsString := ACustomer.Notes;
       LQuery.ExecSQL;
@@ -411,7 +411,7 @@ begin
 end;
 
 /// <summary>
-///   Desativa cliente via Stored Procedure Executable do Firebird.
+/// Disables client via Firebird's Stored Procedure Executable.
 /// </summary>
 procedure TFirebirdCustomerRepository.Deactivate(AId: Integer);
 var
@@ -421,7 +421,7 @@ begin
   try
     try
       LQuery.Connection := FConnection;
-      { Stored Procedure Executable — usar EXECUTE PROCEDURE }
+      { Executable Stored Procedure — use EXECUTE PROCEDURE }
       LQuery.SQL.Text := 'EXECUTE PROCEDURE SP_DEACTIVATE_CUSTOMER(:P_CUSTOMER_ID)';
       LQuery.ParamByName('P_CUSTOMER_ID').AsInteger := AId;
       LQuery.ExecSQL;
@@ -447,14 +447,14 @@ begin
     Result.Params.UserName := AUserName;
     Result.Params.Password := APassword;
 
-    { Configurações obrigatórias para Firebird }
+    { Mandatory Firebird settings }
     Result.Params.Values['CharacterSet'] := 'UTF8';
     Result.Params.Values['SQLDialect'] := '3';
     Result.Params.Values['Protocol'] := 'TCPIP';
     Result.Params.Values['Port'] := '3050';
     Result.Params.Values['PageSize'] := '16384';
 
-    { Opções FireDAC }
+    { FireDAC options }
     Result.FormatOptions.StrsTrim2Len := True;
     Result.ResourceOptions.AutoReconnect := True;
     Result.TxOptions.Isolation := xiReadCommitted;
@@ -468,7 +468,7 @@ end;
 
 {
   ============================================================================
-  SQL de criação das tabelas e objetos usados neste exemplo:
+  SQL for creating tables and objects used in this example:
   ============================================================================
 
   -- Domains
@@ -482,7 +482,7 @@ end;
   -- Generator
   CREATE GENERATOR GEN_CUSTOMER_ID;
 
-  -- Tabela
+  -- Table
   CREATE TABLE customers (
     id         DM_ID,
     name       DM_NAME,
@@ -497,7 +497,7 @@ end;
 
   CREATE INDEX IDX_CUSTOMER_NAME ON customers (name);
 
-  -- Trigger auto-increment
+  -- Auto-increment trigger
   SET TERM ^;
   CREATE TRIGGER TRG_CUSTOMER_BI FOR customers
     ACTIVE BEFORE INSERT POSITION 0
@@ -540,3 +540,4 @@ end;
 }
 
 end.
+

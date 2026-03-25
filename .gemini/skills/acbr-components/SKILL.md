@@ -1,19 +1,19 @@
+﻿---
+name: ACBr Project Patterns
+description: Architectural, dependency injection and UI patterns for the ACBr Project (Commercial Automation Brazil) ecosystem in Delphi.
 ---
-name: Projeto ACBr Patterns
-description: Padrões arquiteturais, de injeção de dependência e de UI para o ecossistema Projeto ACBr (Automação Comercial Brasil) em Delphi.
----
 
-# Padrões para Projeto ACBr
+# Standards for ACBr Project
 
-O **Projeto ACBr** é vital para emissão de NFe, CTe, NFCe, SAT, TEF e controle de balanças/impressoras fiscais/não fiscais no Brasil. Ele contém componentes fantásticos, porém devido à sua bagagem e histórico de forte acoplamento VCL que acompanha desenvolvedores antigos, as melhores práticas abaixo garantem manutenibilidade nas modernizações.
+The **ACBr Project** is vital for issuing NFe, CTe, NFCe, SAT, TEF and controlling fiscal/non-fiscal scales/printers in Brazil. It contains fantastic components, but due to its background and history of strong VCL coupling that accompanies older developers, the best practices below ensure maintainability in modernizations.
 
-## 1. Regra de Ouro: Sem Acoplamento Visual Forte
+## 1. Rule of Thumb: No Strong Visual Coupling
 
-Não instancie componentes `TACBrNFe`, `TACBrCTe`, `TACBrPosPrinter`, etc., diretamente nos Formulários View da interface (`.dfm`/`.fmx`). Isso quebra a arquitetura limpa, o MVC e dificulta imensamente os testes unitários.
+Do not instantiate components `TACBrNFe`, `TACBrCTe`, `TACBrPosPrinter`, etc., directly in the View Forms of the interface (`.dfm`/`.fmx`). This breaks the clean architecture, MVC and makes unit testing immensely difficult.
 
 ### O Que Fazer?
 
-Crie classes "Wrapper" de Serviço ou Infrasctructure Repositories que injetem (via construtor ou Service Locator) as configurações do sistema para a Engine Físcal.
+Create Service "Wrapper" classes or Infrasctructure Repositories that inject (via constructor or Service Locator) the system configurations to the Fiscal Engine.
 
 ```pascal
 type
@@ -34,14 +34,14 @@ type
   end;
 ```
 
-## 2. Abstraindo Bibliotecas de Assinatura e Criptografia (OpenSSL vs WinCrypt)
+## 2. Abstracting Signing and Cryptography Libraries (OpenSSL vs WinCrypt)
 
-É uma boa prática documentada isolar também as bibliotecas para cada versão de SO caso o projeto seja cross-platform ou suporte VMs (ex Linux Docker vs Windows).
-Configure isso *Sempre via código* dinamicamente dentro do wrapper referenciado na Sessão 1, nunca como design-time fixado, usando `LAcbrNFe.Configuracoes.Geral.SSLLib := libWinCrypt;` (ou OpenSSL).
+It is a documented good practice to also isolate the libraries for each OS version if the project is cross-platform or supports VMs (e.g. Linux Docker vs Windows).
+Configure this *Always via code* dynamically within the wrapper referenced in Session 1, never at fixed design-time, using `LAcbrNFe.Configuracoes.Geral.SSLLib := libWinCrypt;` (or OpenSSL).
 
-## 3. Lidar com Callbacks e Eventos (ex: TEF)
+## 3. Handle Callbacks and Events (ex: TEF)
 
-O ACBrTEFD trabalha fortemente baseado em eventos do VCL (OnExibeMensagem, OnAguardaDigitacao). Implemente-os enviando eventos de barramento nativos ou definindo um "Handler" de UI genérico injetado na classe para que o código do componente permaneça na Camada de Negócios / Gateway, delegando apenas o "Desenhar na Tela" para interfaces específicas que podem ser substituídas em cenários Headless / API REST.
+ACBrTEFD works heavily based on VCL events (OnExibeMensagem, OnAguardaDigitacao). Implement them by sending native bus events or defining a generic UI "Handler" injected into the class so that the component code remains in the Business/Gateway Layer, delegating only the "Draw to Screen" to specific interfaces that can be overridden in Headless/REST API scenarios.
 
 ```pascal
   ITefPresentationHandler = interface
@@ -50,9 +50,9 @@ O ACBrTEFD trabalha fortemente baseado em eventos do VCL (OnExibeMensagem, OnAgu
   end;
 ```
 
-## 4. Gerenciamento de Memória Dinâmico
+## 4. Dynamic Memory Management
 
-Se você instanciar os componentes das sub-funções (ex: ACBrCEP) dinamicamente, evite vazamento de memória.
+If you instantiate sub-function components (e.g. ACBrCEP) dynamically, avoid memory leaks.
 
 ```pascal
 function RetrieveAddress(const AZipCode: string): TAddressResponse;
@@ -62,7 +62,7 @@ begin
   LCepComponent := TACBrCEP.Create(nil);
   try
     LCepComponent.WebService := wsViaCep;
-    // Realiza a lógica
+    // Realiza a logic
     LCepComponent.BuscarPorCEP(AZipCode);
     Result := MapToResponse(LCepComponent.Enderecos[0]);
   finally
@@ -71,16 +71,17 @@ begin
 end;
 ```
 
-## 5. Prefixos dos Componentes
+## 5. Component Prefixes
 
-Ao lidar com os componentes design-time em `DataModules` criados para facilitar eventos, utilize estes mapeamentos:
+When dealing with design-time components in `DataModules` created to facilitate events, use these mappings:
 
-| Componente ACBr | Descrição | Prefixo Típico |
+| ACBr component | Description | Typical Prefix |
 |-----------------|-----------|----------------|
-| `TACBrNFe` | Nota Fiscal Eletrônica | `acbrNfe` |
-| `TACBrNFCe`| Nota de Consumidor | `acbrNfce` |
-| `TACBrCTe` | Conhecimento de Transp. | `acbrCte` |
-| `TACBrBoleto`| Boletos | `acbrBoleto` |
+| `TACBrNFe` | Electronic Invoice | `acbrNfe` |
+| `TACBrNFCe`| Consumer Note | `acbrNfce` |
+| `TACBrCTe` | Knowledge of Transp. | `acbrCte` |
+| `TACBrBoleto`| Bills | `acbrBoleto` |
 | `TACBrTEFD`| TEF | `acbrTef` |
-| `TACBrPosPrinter`| Impressoras (EscPOS) | `acbrPosPrinter`|
-| `TACBrSAT` | Equipamento SAT CF-e | `acbrSat` |
+| `TACBrPosPrinter`| Printers (EscPOS) | `acbrPosPrinter`|
+| `TACBrSAT` | SAT CF-e equipment | `acbrSat` |
+

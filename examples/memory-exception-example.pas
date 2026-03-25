@@ -1,4 +1,4 @@
-unit MeuApp.Application.Billing.Service;
+﻿unit MeuApp.Application.Billing.Service;
 
 interface
 
@@ -8,15 +8,15 @@ uses
   System.Generics.Collections;
 
 type
-  { Exceções de Domínio Personalizadas }
+  { Domain Custom Exceptions }
   EBusinessRuleException = class(Exception);
   EInvalidCustomerException = class(EBusinessRuleException);
   EBillingException = class(Exception);
 
-  { Exceções de Infraestrutura }
+  { Infrastructure Exceptions }
   EDatabaseException = class(Exception);
 
-  { Entidade Simples }
+  { Simple Entity }
   TCustomerInvoice = class
   private
     FId: Integer;
@@ -30,20 +30,20 @@ type
     property CustomerId: Integer read FCustomerId;
   end;
 
-  { Interface de Repositório (Desacoplamento puro e Auto-Memória via ARC) }
+  { Repository Interface (Pure Decoupling and Auto-Memory via ARC) }
   IInvoiceRepository = interface
     ['{F8D58814-1921-438B-B03F-EF8E9DDBB45E}']
     procedure Save(AInvoice: TCustomerInvoice);
   end;
 
-  { Dependência Injetada via ARC com Interface }
+  { Injected Dependency via ARC with Interface }
   IBillingProcessor = interface
     ['{B043BA16-AFBA-44C1-BF16-24835697D5CA}']
     procedure ProcessInvoice(ACustomerId: Integer; AAmount: Double);
     procedure ProcessBatch(AInvoices: TObjectList<TCustomerInvoice>);
   end;
 
-  { Implementação Segura }
+  { Safe Implementation }
   TBillingProcessor = class(TInterfacedObject, IBillingProcessor)
   private
     FRepository: IInvoiceRepository;
@@ -69,10 +69,10 @@ end;
 procedure TCustomerInvoice.Validate;
 begin
   if FCustomerId <= 0 then
-    raise EInvalidCustomerException.Create('Customer ID inválido ou não informado para Billing.');
+    raise EInvalidCustomerException.Create('Invalid or not informed Customer ID for Billing.');
 
   if FAmount <= 0 then
-    raise EBusinessRuleException.Create('O valor do faturamento deve ser maior que zero.');
+    raise EBusinessRuleException.Create('The billing amount must be greater than zero.');
 end;
 
 { TBillingProcessor }
@@ -81,7 +81,7 @@ constructor TBillingProcessor.Create(ARepository: IInvoiceRepository);
 begin
   inherited Create;
   if not Assigned(ARepository) then
-    raise EArgumentNilException.Create('O Repositório IInvoiceRepository é obrigatório.');
+    raise EArgumentNilException.Create('The IInvoiceRepository Repository is required.');
     
   FRepository := ARepository;
 end;
@@ -90,34 +90,34 @@ procedure TBillingProcessor.ProcessInvoice(ACustomerId: Integer; AAmount: Double
 var
   LInvoice: TCustomerInvoice;
 begin
-  // CRIANDO OBJETO: 
-  // Sempre aloque memória e imediatamente invoque try..finally
+  { CREATING OBJECT:
+    Always allocate memory and immediately invoke try..finally }
   LInvoice := TCustomerInvoice.Create(0, ACustomerId, AAmount);
   try
     try
       LInvoice.Validate;
 
-      // Salvamento isolado protegido por Interface/Refcounting
+      { Isolated save protected by Interface/Refcounting }
       FRepository.Save(LInvoice);
       
     except
-      // CAPTURA ESPECÍFICA DE NEGÓCIO
+      { BUSINESS SPECIFIC CAPTURE }
       on E: EBusinessRuleException do
       begin
-        // Exceções de Domínio/Business Rule não precisam estourar aplicação se permitirem contorno
-        raise EBillingException.CreateFmt('Billing falhou nas validações de domínio: %s', [E.Message]);
+        { Domain/Business Rule Exceptions do not need to overflow application if they allow bypass }
+        raise EBillingException.CreateFmt('Billing failed domain validations: %s', [E.Message]);
       end;
 
-      // CAPTURA ESPECÍFICA GENÉRICA PARA LOG
+      { GENERIC SPECIFIC CAPTURE FOR LOG }
       on E: Exception do
       begin
-        // Ex: LogError(E.Message);
-        raise; // Sempre relance os erros sistêmicos sem engolir pra preservar o App Stack!
+        { Ex: LogError(E.Message); }
+        raise; { Always re-raise system errors without swallowing to preserve the App Stack! }
       end;
     end;
 
   finally
-    // Prevenção Perfeita contra Memory Leak:
+    { Perfect Memory Leak Prevention: }
     LInvoice.Free;
   end;
 end;
@@ -126,8 +126,8 @@ procedure TBillingProcessor.ProcessBatch(AInvoices: TObjectList<TCustomerInvoice
 var
   LInvoice: TCustomerInvoice;
 begin
-  // Como TObjectList já cuida da memória dependendo da flag OwnsObjects, 
-  // aqui testamos a gestão sobre laços focados em try..except sem leak.
+  { As TObjectList already takes care of memory depending on the OwnsObjects flag,
+    here we test the management of loops focused on try..except without leaks. }
   if not Assigned(AInvoices) then Exit;
   
   for LInvoice in AInvoices do
@@ -137,13 +137,13 @@ begin
     except
       on E: EBusinessRuleException do
       begin
-        // Tolerância em Lote: apenas ignore o problemático, mas registre
-        // LogWarning('Falha ao processar Batch Item. Skipping.');
+        { Batch Tolerance: just ignore the problematic one, but record }
+        { LogWarning('Failed to process Batch Item. Skipping.'); }
         Continue;
       end;
       on E: Exception do
       begin
-        // Erros graves quebram o batch
+        { Serious errors break the batch }
         raise;
       end;
     end;

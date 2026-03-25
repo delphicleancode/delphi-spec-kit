@@ -1,4 +1,4 @@
-{
+﻿{
   "allowCommands": [
     "boss *",
     "msbuild *"
@@ -8,3 +8,4 @@
     "**/*.key"
   ]
 }
+

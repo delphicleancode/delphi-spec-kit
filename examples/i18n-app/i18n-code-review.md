@@ -3,7 +3,7 @@ Analyzing codebase against AGENTS.md and PRD requirements to find memory leaks a
 Edited I18nApp.Core.LanguageManager.pas
 Edited I18nApp.Core.Resources.pas
 
-Fixed Memory Leak and compatibility parsing issues in Core classes. Adapting Forms to respect RTL modes.
+Fixed Memory Leak and compatibility parsing issues in Core classes. Adapting Forms to respective RTL modes.
 
 Edited I18nApp.View.Main.pas
 Edited I18nApp.View.Cliente.pas
@@ -14,11 +14,11 @@ Code review finished. Fixed major memory leaks and added RTL UI support. Updatin
 
 Edited walkthrough.md
 
-Finalizei o **Code Review** do aplicativo `i18n-app` baseado no PRD e nas regras do Delphi AI Spec-Kit. Realizei a análise e já apliquei as seguintes correções/melhorias de forma proativa no código:
+Finished the **Code Review** of the `i18n-app` application based on PRD and Delphi AI Spec-Kit rules. I carried out the analysis and have already proactively applied the following corrections/improvements to the code:
 
-1. **Memory Leak Crítico no TLanguageManager (Resolvido):**
-A classe `TLanguageManager` não tinha um `destructor` para liberar a lista `FObservers` e do parser `FResources`, sendo uma violação grave de `Memory Management`. Foi adicionado um `destructor Destroy` para limpá-los e evitar vazamento de memória.
-2. **Compatibilidade na Iteração JSON (Resolvida):**
-A extração (`for LPair in LJsonObj`) foi mudada para iteração segura por indexação `for I := 0 to LJsonObj.Count - 1`. Isso garante que o código compile corretamente dependendo da versão do Delphi (antes da 10.4) de acordo com o padrão seguro. Foi embutido um bloco `try/except` silencioso no parse para melhorar a robustez se o arquivo estiver com falhas.
-3. **Suporte a Idiomas RTL (Implementado):**
-Foi solicitado no PRD suporte a Right-to-Left "preparado". Adicionei uma função interna de check ao Core (`IsRTL`) e todos os formulários (`Main`, `Cliente`, `Produto` e `Venda`) agora mudam sua propriedade `BiDiMode` dinamicamente ao traduzir se o idioma for reconhecido como RTL (Ex: Hebraico/Árabe).
+1. **Critical Memory Leak in TLanguageManager (Resolved):**
+The `TLanguageManager` class did not have a `destructor` to free the `FObservers` list and the `FResources` parser, being a serious violation of `Memory Management`. A `destructor Destroy` was added to clean them up and avoid memory leaks.
+2. **JSON Iteration Compatibility (Resolved):**
+Extraction (`for LPair in LJsonObj`) was changed to safe iteration by indexing `for I := 0 to LJsonObj.Count - 1`. This ensures that the code compiles correctly depending on the Delphi version (before 10.4) according to the secure standard. A silent `try/except` block was built into the parse to improve robustness if the file is faulty.
+3. **RTL Language Support (Implemented):**
+"Prepared" Right-to-Left support was requested in the PRD. I added an internal check function to Core (`IsRTL`) and all forms (`Main`, `Cliente`, `Produto` and `Venda`) now change their `BiDiMode` property dynamically when translating if the language is recognized as RTL (Ex: Hebrew/Arabic).

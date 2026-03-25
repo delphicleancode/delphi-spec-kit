@@ -1,12 +1,12 @@
-# Plano Técnico: [Nome da Feature]
+# Technical Plan: [Feature Name]
 
-## Visão Geral
+## Overview
 
-<!-- Resumo de como a feature será implementada tecnicamente -->
+<!-- Summary of how the feature will be technically implemented -->
 
-## Arquitetura
+## Architecture
 
-### Diagrama de Camadas
+### Layer Diagram
 
 ```
 Presentation (VCL/FMX Form)
@@ -21,49 +21,49 @@ Domain (Entity + Interface)
 Infrastructure (Repository FireDAC)
 ```
 
-### Sequência de Operação
+### Operation Sequence
 
 ```
 [Form] → chama → [Service.Create()] → valida → [Repository.Insert()] → [DB]
 ```
 
-## Componentes a Criar
+## Components to Create
 
 ### Domain Layer
 
-| Arquivo | Tipo | Descrição |
+| Archive | Type | Description |
 |---------|------|-----------|
-| `*.Domain.[X].Entity.pas` | Entidade | Classe com propriedades e validações de domínio |
-| `*.Domain.[X].Repository.Intf.pas` | Interface | Contrato de acesso a dados |
+| `*.Domain.[X].Entity.pas` | Entity | Class with domain properties and validations |
+| `*.Domain.[X].Repository.Intf.pas` | Interface | Data access agreement |
 
 ### Application Layer
 
-| Arquivo | Tipo | Descrição |
+| Archive | Type | Description |
 |---------|------|-----------|
-| `*.Application.[X].Service.Intf.pas` | Interface | Contrato do service |
-| `*.Application.[X].Service.pas` | Service | Lógica de negócio com constructor injection |
+| `*.Application.[X].Service.Intf.pas` | Interface | Service contract |
+| `*.Application.[X].Service.pas` | Service | Business logic with constructor injection |
 
 ### Infrastructure Layer
 
-| Arquivo | Tipo | Descrição |
+| Archive | Type | Description |
 |---------|------|-----------|
-| `*.Infra.[X].Repository.pas` | Repository | Implementação FireDAC do repository |
-| `*.Infra.Factory.pas` | Factory | Factory method para criar service e repository |
+| `*.Infra.[X].Repository.pas` | Repository | FireDAC implementation of the repository |
+| `*.Infra.Factory.pas` | Factory | Factory method to create service and repository |
 
 ### Presentation Layer
 
-| Arquivo | Tipo | Descrição |
+| Archive | Type | Description |
 |---------|------|-----------|
-| `*.Presentation.[X].List.pas` | Form | Tela de listagem/pesquisa |
-| `*.Presentation.[X].Edit.pas` | Form | Tela de inclusão/edição |
+| `*.Presentation.[X].List.pas` | Form | Listing/search screen |
+| `*.Presentation.[X].Edit.pas` | Form | Inclusion/editing screen |
 
-## Dependências entre Componentes
+## Dependencies between Components
 
 ```
 [Edit Form] → IService → IRepository → TFDConnection
 ```
 
-## Migração de Banco de Dados
+## Database Migration
 
 ```sql
 -- Migration: YYYY-MM-DD_create_[tabela]
@@ -75,17 +75,17 @@ CREATE TABLE IF NOT EXISTS [tabela] (
 );
 ```
 
-## Riscos e Considerações
+## Risks and Considerations
 
-- [Risco 1 e como mitigar]
-- [Risco 2 e como mitigar]
+- [Risk 1 and how to mitigate]
+- [Risk 2 and how to mitigate]
 
-## Checklist de Conformidade
+## Compliance Checklist
 
-- [ ] Segue SOLID (SRP, OCP, LSP, ISP, DIP)
-- [ ] Clean code (métodos ≤ 20 linhas, nomes descritivos)
-- [ ] Convenções Pascal (prefixos T, I, E, F, A, L)
-- [ ] XMLDoc em APIs públicas
-- [ ] Try/finally para objetos temporários
-- [ ] Guard clauses em vez de nesting
-- [ ] Sem `with`, sem globals, sem catch genérico
+- [ ] Follow SOLID (SRP, OCP, LSP, ISP, DIP)
+- [ ] Clean code (methods ≤ 20 lines, descriptive names)
+- [ ] Pascal conventions (prefixes T, I, E, F, A, L)
+- [ ] XMLDoc in public APIs
+- [ ] Try/finally for temporary objects
+- [ ] Guard clauses instead of nesting
+- [ ] No `with`, no globals, no generic catch

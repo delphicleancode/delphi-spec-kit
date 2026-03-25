@@ -1,7 +1,7 @@
-/// <summary>
-///   Exemplo de unit limpa e bem organizada em Delphi.
-///   Demonstra: organização de seções, enums, interfaces, classes,
-///   properties, XMLDoc, guard clauses e gerenciamento de memória.
+﻿/// <summary>
+/// Example of a clean and well-organized unit in Delphi.
+/// Demonstrates: organization of sections, enums, interfaces, classes,
+/// properties, XMLDoc, guard clauses and memory management.
 /// </summary>
 unit Example.Domain.Product.Entity;
 
@@ -13,14 +13,14 @@ uses
 
 type
   // =========================================================================
-  // 1. Enums e Records primeiro
+  // 1. Enums and Records first
   // =========================================================================
 
   TProductCategory = (pcElectronics, pcClothing, pcFood, pcServices);
 
   TProductStatus = (psActive, psInactive, psDiscontinued);
 
-  /// <summary>Record imutável para representar dimensões do produto.</summary>
+  /// <summary>Immutable record to represent product dimensions.</summary>
   TProductDimensions = record
     Width: Double;
     Height: Double;
@@ -36,7 +36,7 @@ type
   // =========================================================================
 
   /// <summary>
-  ///   Interface para entidades que possuem validação de domínio.
+  /// Interface for entities that have domain validation.
   /// </summary>
   IValidatable = interface
     ['{C3D4E5F6-0003-0003-0003-000000000001}']
@@ -49,8 +49,8 @@ type
   // =========================================================================
 
   /// <summary>
-  ///   Entidade de domínio representando um produto.
-  ///   Implementa IValidatable para validação de domínio.
+  /// Domain entity representing a product.
+  /// Implements IValidatable for domain validation.
   /// </summary>
   TProduct = class(TInterfacedObject, IValidatable)
   private
@@ -72,7 +72,7 @@ type
     constructor Create(const AName: string; APrice: Currency);
     destructor Destroy; override;
 
-    // Métodos de negócio
+    // Business methods
     function IsValid: Boolean;
     function GetValidationErrors: TArray<string>;
     procedure Activate;
@@ -81,7 +81,7 @@ type
     procedure AddTag(const ATag: string);
     function HasTag(const ATag: string): Boolean;
 
-    // Properties por último
+    // Properties last
     property Id: Integer read FId write FId;
     property Name: string read GetName write SetName;
     property Description: string read FDescription write FDescription;
@@ -127,11 +127,11 @@ begin
   inherited Create;
   FTags := TList<string>.Create;
 
-  // Guard clauses no constructor
+  // Guard clauses in the constructor
   if AName.Trim.IsEmpty then
-    raise EArgumentException.Create('Nome do produto não pode ser vazio');
+    raise EArgumentException.Create('Product name cannot be empty');
   if APrice < 0 then
-    raise EArgumentException.Create('Preço não pode ser negativo');
+    raise EArgumentException.Create('Price cannot be negative');
 
   FName := AName.Trim;
   FPrice := APrice;
@@ -153,7 +153,7 @@ end;
 procedure TProduct.SetName(const AValue: string);
 begin
   if AValue.Trim.IsEmpty then
-    raise EArgumentException.Create('Nome do produto não pode ser vazio');
+    raise EArgumentException.Create('Product name cannot be empty');
   FName := AValue.Trim;
 end;
 
@@ -165,7 +165,7 @@ end;
 procedure TProduct.SetPrice(AValue: Currency);
 begin
   if AValue < 0 then
-    raise EArgumentException.Create('Preço não pode ser negativo');
+    raise EArgumentException.Create('Price cannot be negative');
   FPrice := AValue;
 end;
 
@@ -186,15 +186,15 @@ begin
   LErrors := TList<string>.Create;
   try
     if FName.Length < MIN_NAME_LENGTH then
-      LErrors.Add(Format('Nome deve ter pelo menos %d caracteres',
+      LErrors.Add(Format('Name must have at least %d characters',
         [MIN_NAME_LENGTH]));
 
     if FName.Length > MAX_NAME_LENGTH then
-      LErrors.Add(Format('Nome deve ter no máximo %d caracteres',
+      LErrors.Add(Format('Name must have at most %d characters',
         [MAX_NAME_LENGTH]));
 
     if FPrice < 0 then
-      LErrors.Add('Preço não pode ser negativo');
+      LErrors.Add('Price cannot be negative');
 
     Result := LErrors.ToArray;
   finally
@@ -206,7 +206,7 @@ procedure TProduct.Activate;
 begin
   if FStatus = psDiscontinued then
     raise EInvalidOpException.Create(
-      'Produto descontinuado não pode ser reativado');
+      'A discontinued product cannot be reactivated');
   FStatus := psActive;
 end;
 
@@ -223,7 +223,7 @@ end;
 procedure TProduct.AddTag(const ATag: string);
 begin
   if ATag.Trim.IsEmpty then
-    raise EArgumentException.Create('Tag não pode ser vazia');
+    raise EArgumentException.Create('Tag cannot be empty');
   if not HasTag(ATag) then
     FTags.Add(ATag.Trim.ToLower);
 end;
@@ -234,3 +234,4 @@ begin
 end;
 
 end.
+

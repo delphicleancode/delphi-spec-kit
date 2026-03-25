@@ -1,15 +1,15 @@
 ---
 name: Intraweb Framework
-description: Guias e padrões para o uso do framework web stateful Intraweb em projetos Delphi.
+description: Guides and standards for using the Intraweb stateful web framework in Delphi projects.
 ---
 
 # Intraweb Framework - Spec-Kit
 
-Intraweb é um framework VCL-for-the-Web que permite que você crie aplicações web de negócios estado de forma semântica parecida à criação de aplicações Desktop. Ao lidar com o Intraweb no Copilot ou no projeto, considere as seguintes práticas recomendadas para garantir a manutenibilidade e escalabilidade.
+Intraweb is a VCL-for-the-Web framework that allows you to create stateful business web applications in a semantic way similar to creating Desktop applications. When dealing with Intraweb in Copilot or your project, consider the following best practices to ensure maintainability and scalability.
 
-## 1. Sessões (UserSession) e Variáveis Globais
-**Regra de Ouro:** Não use variáveis globais clássicas de unit `var` ou instâncias Singleton para dados de usuários, uma vez que aplicações Intraweb rodam em ambiente Multithread com sessões concorrentes (cada usuário tem a sua).
-- Para manter dados específicos do usuário, utilize estritamente a unidade `UserSessionUnit.pas` (Instância `ServerController.UserSession`).
+## 1. Sessions (UserSession) and Global Variables
+**Golden Rule:** Do not use classic unit `var` global variables or Singleton instances for user data, since Intraweb applications run in a Multithread environment with concurrent sessions (each user has their own).
+- To maintain user-specific data, strictly use the `UserSessionUnit.pas` unit (`ServerController.UserSession` Instance).
 
 ```pascal
 // ❌ RUIM: Uso Incorreto (Variável de escopo global atende todos as sessões, problema de Multithreading)
@@ -20,13 +20,13 @@ var
 UserSession.CustomerId := 10;
 ```
 
-## 2. ServerController e Configuração
-As parametrizações globais do sistema, pool de conexões ao banco e inicializações que não dependem do usuário devem ser resolvidas no objeto `ServerController` (`IWServerController.pas`). Evite tratar injeção de dependências pesadas e escopos de banco direto nos `TIWAppForm`.
+## 2. ServerController and Configuration
+The global system parameters, database connection pool and initializations that do not depend on the user must be resolved in the `ServerController` (`IWServerController.pas`) object. Avoid injecting heavy dependencies and direct database scopes in `TIWAppForm`.
 
-## 3. Interfaces de Usuário Não Bloqueantes (Callbacks Assíncronos)
-No contexto web, você não deve usar código bloqueante para "esperar" o usuário, como chamadas de `ShowMessage`, `InputBox` ou ModalResults clássicos da VCL que dependem do travamento do código na mesma linha.
-- Utilize a propriedade `OnAsyncClick` para atualizações de DOM sem postback na tela toda.
-- No Intraweb versão 15 ou mais recente, explore os recursos de `WebApplication.ShowMessage` combinados com chamadas por Ajax e interrupções seguras de interface web.
+## 3. Non-Blocking User Interfaces (Asynchronous Callbacks)
+In the web context, you should not use blocking code to "wait" for the user, such as `ShowMessage`, `InputBox`, or classic VCL ModalResults calls that rely on code locking on the same line.
+- Use the `OnAsyncClick` property for DOM updates without full-screen postback.
+- In Intraweb version 15 or newer, explore the capabilities of `WebApplication.ShowMessage` combined with Ajax calls and safe web interface interrupts.
 
 ```pascal
 // ❌ RUIM: Bloqueando a thread no Intraweb 
@@ -43,13 +43,13 @@ begin
 end;
 ```
 
-## 4. Separação de Regras e UI
-É fácil construir projetos monstruosos no Intraweb agrupando toda a regra do sistema por de trás do clique (ex: num `iwBtnProcessarAsyncClick`). Siga os princípios de SRP (Single Responsibility Principle):
-- O formulário mapeia para a requisição de Controller e re-renderiza componentes. As regras continuam na camada *Application/Services*.
-- Uma camada Application/Service ou Repositório que for usada no Intraweb **não pode acoplar nem conhecer** o unit `IWApplication` (não use `WebApplication.ShowMessage` dentre os Services de persistência). 
+## 4. Separation of Rules and UI
+It is easy to build monstrous projects on the Intraweb by grouping the entire system rule behind the click (ex: num `iwBtnProcessarAsyncClick`). Follow the SRP (Single Responsibility Principle) principles:
+- The form maps to the Controller request and re-renders components. The rules remain in the *Application/Services* layer.
+- An Application/Service or Repository layer that is used in the Intraweb **cannot couple or know** the `IWApplication` unit (do not use `WebApplication.ShowMessage` among persistence Services).
 
-## 5. Nomenclatura de Componentes Visuais (Prefixos Intraweb)
-Utilize `iw` concatenado com as tipologias nativas:
+## 5. Naming of Visual Components (Intraweb Prefixes)
+Use `iw` concatenated with the native typologies:
 - `TIWButton` -> `iwBtnSave`
 - `TIWEdit` -> `iwEdtName`
 - `TIWLabel` -> `iwLblTitle`
@@ -57,5 +57,5 @@ Utilize `iw` concatenado com as tipologias nativas:
 - `TIWGrid` -> `iwGrdItems`
 - `TIWRegion` -> `iwRegContainer`
 
-## 6. HTML Dinâmico e Custom CSS
-Apesar de ser VCL-like, as estilizações massivas nos componentes criam DOMS grandes na interface. Prefira definir arquivos externos CSS usando a injeção em `ExtraHeader` no formulário e aplique a propriedade `Css` nas tags dos T componentes visuais `TIW*` no lugar de pintar manualmente a cor dos botões e fontes via Inspector de Objetos.
+## 6. Dynamic HTML and Custom CSS
+Despite being VCL-like, the massive stylizations in the components create large DOMS in the interface. Prefer to define external CSS files using `ExtraHeader` injection in the form and apply the `Css` property to the tags of the T visual components `TIW*` instead of manually painting the color of buttons and fonts via the Object Inspector.

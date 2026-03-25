@@ -1,4 +1,4 @@
-program I18nApp;
+﻿program I18nApp;
 
 uses
   Vcl.Forms,
@@ -19,3 +19,4 @@ begin
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;
 end.
+

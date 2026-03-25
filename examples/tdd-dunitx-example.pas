@@ -1,9 +1,9 @@
-unit MeuApp.Application.Order.ServiceTest;
+﻿unit MeuApp.Application.Order.ServiceTest;
 
 // =========================================================================
-// Exemplo canônico de TDD em Delphi com DUnitX
-// Demonstração de Setup, Injeção de Dependências com Fakes (Mocks) locais
-// e uso avançado de métricas de Asserção
+// Canonical example of TDD in Delphi with DUnitX
+// Setup Demonstration, Dependency Injection with local Mocks
+// and advanced use of Assertion metrics
 // =========================================================================
 
 interface
@@ -16,16 +16,16 @@ uses
 
 type
   {===================================================================
-    SUT (System Under Test) e Dependências do Domínio
-    Em um cenário real, estas declarações estariam nas units oficiais.
+    SUT (System Under Test) and Domain Dependencies
+    In a real scenario, these declarations would be in their own units.
    ===================================================================}
 
-  { Exceções mapeadas para uso com Assert.WillRaise }
+  { Exceptions mapped for use with Assert.WillRaise }
   EOrderProcessingException = class(Exception);
   EInvalidCustomerException = class(EOrderProcessingException);
   EStockUnavailableException = class(EOrderProcessingException);
 
-  { Entidade Simplificada }
+  { Simplified Entity }
   TOrder = class
   public
     Id: Integer;
@@ -33,7 +33,7 @@ type
     Total: Double;
   end;
 
-  { Dependência de Infraestrutura Isolada (Abstract) }
+  { Isolated Infrastructure Dependency (Abstract) }
   IInventoryService = interface
     ['{DA47FFEA-5887-4340-8FDB-8F9E4DEF5305}']
     function CheckStock(AOrderId: Integer): Boolean;
@@ -45,7 +45,7 @@ type
     procedure Save(AOrder: TOrder);
   end;
 
-  { Classe que será efetivamente o Foco dos Testes (Target/SUT) }
+  { Class that will effectively be the Test Focus (Target/SUT) }
   TOrderProcessor = class
   private
     FInventoryService: IInventoryService;
@@ -56,7 +56,7 @@ type
   end;
 
   {===================================================================
-    Início do Ambiente de Teste DUnitX
+    Start of DUnitX Test Environment
    ===================================================================}
    
   [TestFixture]
@@ -64,7 +64,7 @@ type
   private
     FSut: TOrderProcessor;
     FOrder: TOrder;
-    // Referências armazenadas para simulação comportamental
+    // References stored for behavioral simulation
     FFakeInventory: IInventoryService;
     FFakeRepository: IOrderRepository;
   public
@@ -87,17 +87,17 @@ type
 implementation
 
 {===================================================================
-  Implementação das Classes DUBLES DE TESTE (Fakes / Mocks)
-  Criamos classes descartáveis apenas no escopo de implementação 
-  desta Unit para fingir a Infraestrutura sem tocar o Banco
+  Implementation of TEST DOUBLE Classes (Fakes / Mocks)
+  Disposable classes scoped to this unit's implementation
+  to simulate Infrastructure without touching the database.
  ===================================================================}
 
 type
   TFakeInventoryService = class(TInterfacedObject, IInventoryService)
   public
-    // Variáveis de Controle (Spies) para Assert
-    HasStock: Boolean;          // Permite mockar o resultado da infra
-    DecreasedOrderId: Integer;  // Espia quem foi atualizado
+    // Control Variables (Spies) for Assert
+    HasStock: Boolean;          // Allows mocking the infrastructure result
+    DecreasedOrderId: Integer;  // Spy: tracks which order ID was updated
     
     function CheckStock(AOrderId: Integer): Boolean;
     procedure DecreaseStock(AOrderId: Integer);
@@ -130,7 +130,7 @@ begin
 end;
 
 {===================================================================
-  Implementação da Classe de Negócio SUT
+  Implementation of the SUT Business Class
  ===================================================================}
 
 constructor TOrderProcessor.Create(AInventory: IInventoryService; ARepository: IOrderRepository);
@@ -142,35 +142,35 @@ end;
 
 procedure TOrderProcessor.Process(AOrder: TOrder);
 begin
-  // Guard Clauses (Testadas via WillRaise)
+  // Guard Clauses (Tested via WillRaise)
   if not Assigned(AOrder) then
-    raise EArgumentNilException.Create('Order não pode ser vazia');
+    raise EArgumentNilException.Create('Order cannot be empty');
     
   if AOrder.CustomerId <= 0 then
-    raise EInvalidCustomerException.Create('Cliente inválido');
+    raise EInvalidCustomerException.Create('Invalid client');
 
   if not FInventoryService.CheckStock(AOrder.Id) then
-    raise EStockUnavailableException.Create('Falta de Estoque para o Pedido');
+    raise EStockUnavailableException.Create('Lack of stock for order');
 
-  // Lógica de Persistência Core Interagindo com Mocks
+  // Core Persistence Logic Interacting with Mocks
   FOrderRepository.Save(AOrder);
   FInventoryService.DecreaseStock(AOrder.Id);
 end;
 
 {===================================================================
-  Implementação dos Cenários de Teste DUnitX
+  Implementation of DUnitX Test Scenarios
  ===================================================================}
 
 procedure TOrderProcessorTests.Setup;
 begin
-  // Arrange global para evitar repetição
+  // Arrange global to avoid repetition
   FFakeInventory := TFakeInventoryService.Create;
   FFakeRepository := TFakeOrderRepository.Create;
   
-  // Injeta Mocks na Classe Real
+  // Inject Mocks into the Real Class
   FSut := TOrderProcessor.Create(FFakeInventory, FFakeRepository);
   
-  // Base Data Padrão
+  // Base Date Standard
   FOrder := TOrder.Create;
   FOrder.Id := 999;
   FOrder.CustomerId := 50;
@@ -179,59 +179,60 @@ end;
 
 procedure TOrderProcessorTests.TearDown;
 begin
-  // Clean Up Manual para vazamentos em TObject
-  // As interfaces de Fake são limpas nativamente por ARC
+  // Clean Up Manual for TObject leaks
+  // Fake interfaces are cleaned up natively by ARC
   FOrder.Free;
   FSut.Free; 
 end;
 
 procedure TOrderProcessorTests.Process_ValidOrderInStock_SavesAndDecreasesStock;
 begin
-  // Arrange Específico: Finge que há estoque
+  // Specific Arrange: Pretend there is stock
   (FFakeInventory as TFakeInventoryService).HasStock := True;
 
   // Act
   FSut.Process(FOrder);
 
-  // Assert
-  // Verifica se o Mock de Banco de Dados foi chamado precisamente 1x
-  Assert.AreEqual(1, (FFakeRepository as TFakeOrderRepository).SavedCallCount, 'Repository Save não foi chamado 1 vez');
-  // Verifica se o OrderId correto foi passado par diminuir o estoque
-  Assert.AreEqual(999, (FFakeInventory as TFakeInventoryService).DecreasedOrderId, 'O Estoque não foi baixado para o Pedido 999');
+  //Assert
+  // Checks if the Database Mock was called precisely 1x
+  Assert.AreEqual(1, (FFakeRepository as TFakeOrderRepository).SavedCallCount, 'Repository Save was not called 1 time');
+  // Checks if the correct OrderId was passed to reduce stock
+  Assert.AreEqual(999, (FFakeInventory as TFakeInventoryService).DecreasedOrderId, 'Stock was not written off for Order 999');
 end;
 
 procedure TOrderProcessorTests.Process_ZeroCustomerId_RaisesInvalidCustomerException;
 begin
   // Arrange
-  FOrder.CustomerId := 0; // Configura o cenário de falha
+  FOrder.CustomerId := 0; // Sets up the failure scenario
 
-  // Act & Assert Simultâneos usando Anonymous Method
+  // Simultaneous Act & Assert using Anonymous Method
   Assert.WillRaise(
     procedure
     begin
       FSut.Process(FOrder);
     end,
-    EInvalidCustomerException, 'Não rejeitou pedido sem cliente válido'
+    EInvalidCustomerException, 'Did not reject order without valid customer'
   );
 end;
 
 procedure TOrderProcessorTests.Process_OutOfStock_RaisesStockUnavailableException;
 begin
   // Arrange
-  (FFakeInventory as TFakeInventoryService).HasStock := False; // Falta estoque
+  (FFakeInventory as TFakeInventoryService).HasStock := False; // No stock available
 
   // Act & Assert
   Assert.WillRaise(
     procedure
     begin
-      FSut.Process(FOrder); // O Processor deve avaliar CheckStock() = False e disparar exceção
+      FSut.Process(FOrder); // The Processor must evaluate CheckStock() = False and raise exception
     end,
-    EStockUnavailableException, 'Permitiu processar pedido sem estoque'
+    EStockUnavailableException, 'Allowed to process orders without stock'
   );
 end;
 
 initialization
-  // Registro Automático do Fixture no DUnitX Core
+  // Automatic Fixture Registration in DUnitX Core
   TDUnitX.RegisterTestFixture(TOrderProcessorTests);
 
 end.
+

@@ -1,29 +1,29 @@
 ---
-description: "Padrões de Threading em Delphi — TThread, TTask, Synchronize/Queue, thread-safety, PPL, cancelamento"
+description: "Threading Patterns in Delphi — TThread, TTask, Synchronize/Queue, thread-safety, PPL, cancellation"
 globs: ["**/*.pas"]
 alwaysApply: false
 ---
 
 # Threading & Multi-Threading — Cursor Rules
 
-Use estas regras ao trabalhar com threads e tarefas assíncronas em Delphi.
+Use these rules when working with threads and asynchronous tasks in Delphi.
 
-## Regra de Ouro
+## Golden Rule
 
-> **NUNCA acesse componentes visuais (VCL/FMX) de uma thread secundária.**
-> Use `TThread.Synchronize` (bloqueante) ou `TThread.Queue` (não-bloqueante).
+> **NEVER access visual components (VCL/FMX) from a secondary thread.**
+> Use `TThread.Synchronize` (blocking) or `TThread.Queue` (non-blocking).
 
-## Abordagens
+## Approaches
 
-| Abordagem | Quando Usar |
+| Approach | When to Use |
 |-----------|-------------|
-| `TThread.CreateAnonymousThread` | Tarefas simples, one-shot |
-| `TTask.Run` (PPL) | Forma moderna, pool gerenciado |
-| `TParallel.For` | Loop paralelo em coleções |
-| `TFuture<T>` | Resultado assíncrono com valor |
-| `TThread` (herança) | Workers permanentes, filas, servidores |
+| `TThread.CreateAnonymousThread` | Simple, one-shot tasks |
+| `TTask.Run` (PPL) | Modern way, managed pool |
+| `TParallel.For` | Parallel loop in collections |
+| `TFuture<T>` | Asynchronous result with value |
+| `TThread` (inheritance) | Permanent workers, queues, servers |
 
-## Atualizar UI a Partir de Thread
+## Update UI from Thread
 
 ```pascal
 { Queue: não-bloqueante (PREFERIR) }
@@ -41,7 +41,7 @@ TThread.Synchronize(nil,
   end);
 ```
 
-## TTask.Run — Forma Moderna
+## TTask.Run — Modern Way
 
 ```pascal
 uses System.Threading;
@@ -61,14 +61,14 @@ TTask.Run(
 
 ## Thread-Safety
 
-| Mecanismo | Quando Usar |
+| Mechanism | When to Use |
 |-----------|-------------|
-| `TCriticalSection` | Seção crítica clássica (Enter/Leave) |
-| `TMonitor` | Lock nativo de objeto (Enter/Exit) |
-| `TInterlocked` | Operações atômicas em Integer/Int64 |
-| `TThreadList<T>` | Lista thread-safe com LockList/UnlockList |
-| `TMultiReadExclusiveWriteSynchronizer` | Cache: muitas leituras, poucas escritas |
-| `TThreadedQueue<T>` | Fila thread-safe (Producer-Consumer) |
+| `TCriticalSection` | Classic critical section (Enter/Leave) |
+| `TMonitor` | Object native lock (Enter/Exit) |
+| `TInterlocked` | Atomic operations on Integer/Int64 |
+| `TThreadList<T>` | Thread-safe list with LockList/UnlockList |
+| `TMultiReadExclusiveWriteSynchronizer` | Cache: many reads, few writes |
+| `TThreadedQueue<T>` | Thread-safe queue (Producer-Consumer) |
 
 ```pascal
 { TCriticalSection — SEMPRE Leave no finally }
@@ -97,15 +97,15 @@ if AToken.IsCancelled then
   Exit;
 ```
 
-## Proibições de Threading
+## Threading Prohibitions
 
-- ❌ Acessar VCL/FMX diretamente de thread secundária
-- ❌ `Sleep()` na main thread (congela a UI!)
+- ❌ Access VCL/FMX directly from secondary thread
+- ❌ `Sleep()` in the main thread (freezes the UI!)
 - ❌ `FreeOnTerminate := True` + `WaitFor` (crash!)
-- ❌ Acessar variáveis compartilhadas sem lock
-- ❌ Ignorar exceções em threads (são silenciosas!)
-- ❌ Criar threads em excesso (usar TTask/Pool)
-- ❌ Locks aninhados em ordem diferente (deadlock!)
+- ❌ Access shared variables without locking
+- ❌ Ignore exceptions in threads (they are silent!)
+- ❌ Create excess threads (use TTask/Pool)
+- ❌ Locks nested in different order (deadlock!)
 - ❌ `TCriticalSection.Leave` fora de `finally`
 
 ## Debugging

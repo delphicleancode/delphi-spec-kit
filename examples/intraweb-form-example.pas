@@ -1,4 +1,4 @@
-unit MeuApp.Presentation.Customer.IntrawebForm;
+﻿unit MeuApp.Presentation.Customer.IntrawebForm;
 
 interface
 
@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, IWAppForm, IWApplication, IWColor, IWTypes,
   Vcl.Controls, IWVCLBaseControl, IWBaseControl, IWBaseHTMLControl, IWControl,
   IWCompButton, IWCompEdit, IWCompLabel, ServerController, 
-  MeuApp.Application.Customer.Service; // Injeção das regras de negócio limpas
+  MeuApp.Application.Customer.Service; // Injects clean business rules
 
 type
   { Forma Intraweb - UI do WebApp (Stateful VCL-Like) }
@@ -16,13 +16,13 @@ type
     iwEdtName: TIWEdit;
     iwBtnSave: TIWButton;
     iwLblMessage: TIWLabel;
-    // Opcional: TTimer (Interrupções e auto renderizações), Callbacks, etc.
+    // Optional: TTimer (Interruptions and auto rendering), Callbacks, etc.
     procedure iwBtnSaveAsyncClick(Sender: TObject; EventParams: TStringList);
     procedure IWAppFormCreate(Sender: TObject);
   private
     FCustomerService: ICustomerService;
   public
-    // Injeção de dependência rudimentar se não usar Container DI
+    // Rudimentary dependency injection if not using Container DI
     constructor Create(AOwner: TComponent; ACustomerService: ICustomerService); reintroduce; overload;
   end;
 
@@ -40,40 +40,41 @@ end;
 
 procedure TIwFormCustomerEdit.IWAppFormCreate(Sender: TObject);
 begin
-  // Verificação de segurança utilizando ServerController de ambiente limpo / Sessão
+  // Security check using clean ServerController / Session
   if UserSession.LoggedUserId <= 0 then
-    WebApplication.Terminate('Acesso Negado ou Sessão Inválida. Relogue.');
+    WebApplication.Terminate('Access Denied or Invalid Session. Relog.');
     
   iwLblMessage.Caption := '';
 end;
 
-{ O clique é capturado de forma Assíncrona (Async), prevenindo o "reload" 
-  da página completa (Postback clássico). Renderiza a interface localmente (AJAX) }
+{ The click is captured asynchronously (Async), preventing a full page reload
+  (classic Postback). Renders the interface locally (AJAX) }
 procedure TIwFormCustomerEdit.iwBtnSaveAsyncClick(Sender: TObject; EventParams: TStringList);
 begin
   if Trim(iwEdtName.Text) = '' then
   begin
     iwLblMessage.Font.Color := clWebRED;
-    iwLblMessage.Caption := 'Preencha o nome do cliente corretamente!';
+    iwLblMessage.Caption := 'Fill in the customer''''s name correctly!';
     Exit;
   end;
   
   try
-    // Invocamos a lógica de aplicação não acoplada à biblioteca Intraweb
+    // We invoke application logic not coupled to the Intraweb library
     FCustomerService.UpdateCustomerName(UserSession.LoggedUserId, iwEdtName.Text);
     
-    // Mostramos ao usuário que deu certo (Render via AJAX).
+    // We show the user that it worked (Render via AJAX).
     iwLblMessage.Font.Color := clWebGREEN;
-    iwLblMessage.Caption := 'Cliente salvo com sucesso via AJAX!';
+    iwLblMessage.Caption := 'Client successfully saved via AJAX!';
     
-    WebApplication.ShowMessage('Ação concluída com sucesso!');
+    WebApplication.ShowMessage('Action completed successfully!');
   except
     on E: Exception do
     begin
       iwLblMessage.Font.Color := clWebRED;
-      iwLblMessage.Caption := 'Houve um erro: ' + E.Message;
+      iwLblMessage.Caption := 'An error occurred: ' + E.Message;
     end;
   end;
 end;
 
 end.
+

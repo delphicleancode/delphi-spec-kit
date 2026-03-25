@@ -1,44 +1,44 @@
 ---
 name: "MySQL Database"
-description: "Padrões de desenvolvimento com MySQL/MariaDB via FireDAC — conexão, stored procedures, AUTO_INCREMENT, JSON, triggers, replication, migrations"
+description: "Development patterns with MySQL/MariaDB via FireDAC — connection, stored procedures, AUTO_INCREMENT, JSON, triggers, replication, migrations"
 ---
 
 # MySQL Database — Skill
 
-Use esta skill ao trabalhar com banco de dados MySQL ou MariaDB em projetos Delphi via FireDAC.
+Use this skill when working with MySQL or MariaDB databases in Delphi projects via FireDAC.
 
-## Quando Usar
+## When to Use
 
-- Ao configurar conexão FireDAC com MySQL ou MariaDB
-- Ao criar tabelas, stored procedures, functions, triggers e views
-- Ao implementar Repositories com FireDAC + MySQL
-- Ao trabalhar com JSON nativo (MySQL 5.7+), Full-Text Search, Partitioning
-- Ao planejar migrações de schema (scripts versionados)
-- Ao desenvolver aplicações web com backend MySQL
+- When configuring FireDAC connection with MySQL or MariaDB
+- When creating tables, stored procedures, functions, triggers and views
+- When implementing Repositories with FireDAC + MySQL
+- When working with native JSON (MySQL 5.7+), Full-Text Search, Partitioning
+- When planning schema migrations (versioned scripts)
+- When developing web applications with MySQL backend
 
-## Versões do MySQL
+## MySQL Versions
 
-| Versão | Novidades Relevantes |
+| Version | Relevant News |
 |--------|----------------------|
-| **5.7** | JSON nativo, Generated Columns, `sys` schema, Group Replication |
-| **8.0** | CTEs recursivas, Window Functions, `DEFAULT (expr)`, Roles, `INVISIBLE` indexes, `NOWAIT`/`SKIP LOCKED` |
+| **5.7** | Native JSON, Generated Columns, `sys` schema, Group Replication |
+| **8.0** | Recursive CTEs, Window Functions, `DEFAULT (expr)`, Roles, `INVISIBLE` indexes, `NOWAIT`/`SKIP LOCKED` |
 | **8.4 LTS** | LTS release, Firewall improvements, Plugin improvements |
 | **9.0+** | Vector type, JavaScript stored programs (preview) |
 
 ### MariaDB
 
-| Versão | Novidades Relevantes |
+| Version | Relevant News |
 |--------|----------------------|
-| **10.2** | CTEs recursivas, Window Functions, `DEFAULT (expr)` |
+| **10.2** | Recursive CTEs, Window Functions, `DEFAULT (expr)` |
 | **10.3** | `INVISIBLE` columns, `INTERSECT`/`EXCEPT`, Sequences |
 | **10.5** | `INET6` type, `JSON_TABLE`, S3 storage engine |
-| **11.0+** | Calendário de versões, UUID v7, `VECTOR` type |
+| **11.0+** | Release Calendar, UUID v7, `VECTOR` type |
 
-> **Recomendação:** Use MySQL 8.0+ ou MariaDB 10.5+ para novos projetos.
+> **Recommendation:** Use MySQL 8.0+ or ​​MariaDB 10.5+ for new projects.
 
-## Conexão FireDAC com MySQL
+## FireDAC connection with MySQL
 
-### Configuração Mínima
+### Minimum Configuration
 
 ```pascal
 unit MeuApp.Infra.Database.MySQL.Connection;
@@ -54,7 +54,7 @@ uses
 
 type
   /// <summary>
-  ///   Factory de conexão MySQL via FireDAC.
+  ///   Factory de connection MySQL via FireDAC.
   /// </summary>
   TMySQLConnectionFactory = class
   public
@@ -89,7 +89,7 @@ begin
     Result.Params.Password := APassword;
 
     { Configurações recomendadas }
-    Result.Params.Values['CharacterSet'] := 'utf8mb4';  // SEMPRE utf8mb4 (suporta emoji/4-byte)
+    Result.Params.Values['CharacterSet'] := 'utf8mb4';  // ALWAYS utf8mb4 (suporta emoji/4-byte)
 
     { Opções do driver FireDAC }
     Result.FormatOptions.StrsTrim2Len := True;
@@ -105,7 +105,7 @@ begin
 end;
 ```
 
-### FDPhysMySQLDriverLink — Configurar Client Library
+### FDPhysMySQLDriverLink — Configure Client Library
 
 ```pascal
 uses
@@ -127,7 +127,7 @@ begin
 end;
 ```
 
-> **ATENÇÃO:** `utf8` no MySQL tem apenas 3 bytes (não suporta emoji 🎉). Use **sempre `utf8mb4`** para charset completo. O `utf8` do MySQL é um alias para `utf8mb3`.
+> **ATTENTION:** `utf8` in MySQL is only 3 bytes (does not support emoji 🎉). **always use `utf8mb4`** for full charset. MySQL's `utf8` is an alias for `utf8mb3`.
 
 ### Connection Pooling
 
@@ -157,36 +157,36 @@ Result.Params.Values['SSL_cert'] := '/path/to/client-cert.pem';
 Result.Params.Values['SSL_key'] := '/path/to/client-key.pem';
 ```
 
-## Tipos de Dados — Mapeamento MySQL ↔ Delphi
+## Data Types — MySQL Mapping ↔ Delphi
 
-| MySQL | Delphi (FireDAC) | Observação |
+| MySQL | Delphi (FireDAC) | Note |
 |-------|------------------|------------|
 | `INT` / `INTEGER` | `ftInteger` / `AsInteger` | 32-bit signed |
 | `BIGINT` | `ftLargeint` / `AsLargeInt` | 64-bit |
 | `SMALLINT` | `ftSmallint` / `AsSmallInt` | 16-bit |
-| `TINYINT` | `ftSmallint` / `AsSmallInt` | 8-bit (não existe `ftByte`) |
-| `TINYINT(1)` | `ftBoolean` / `AsBoolean` | Convenção MySQL para Boolean |
-| `VARCHAR(N)` | `ftString` / `AsString` | Texto limitado |
-| `TEXT` | `ftMemo` / `AsString` | Texto longo (até 64KB) |
-| `LONGTEXT` | `ftMemo` / `AsString` | Texto muito longo (até 4GB) |
-| `DECIMAL(P,S)` | `ftBCD` / `AsCurrency` | Valores monetários |
+| `TINYINT` | `ftSmallint` / `AsSmallInt` | 8-bit (`ftByte` does not exist) |
+| `TINYINT(1)` | `ftBoolean` / `AsBoolean` | MySQL Convention for Boolean |
+| `VARCHAR(N)` | `ftString` / `AsString` | Limited text |
+| `TEXT` | `ftMemo` / `AsString` | Long text (up to 64KB) |
+| `LONGTEXT` | `ftMemo` / `AsString` | Very long text (up to 4GB) |
+| `DECIMAL(P,S)` | `ftBCD` / `AsCurrency` | Monetary values ​​|
 | `DOUBLE` | `ftFloat` / `AsFloat` | Ponto flutuante |
 | `FLOAT` | `ftSingle` / `AsSingle` | 32-bit float |
-| `DATE` | `ftDate` / `AsDateTime` | Apenas data |
-| `TIME` | `ftTime` / `AsDateTime` | Apenas hora |
-| `DATETIME` | `ftDateTime` / `AsDateTime` | Data + Hora (sem timezone) |
+| `DATE` | `ftDate` / `AsDateTime` | Date only |
+| `TIME` | `ftTime` / `AsDateTime` | Just in time |
+| `DATETIME` | `ftDateTime` / `AsDateTime` | Date + Time (without timezone) |
 | `TIMESTAMP` | `ftDateTime` / `AsDateTime` | Data + Hora (auto-update, UTC) |
-| `BOOLEAN` / `BOOL` | `ftBoolean` / `AsBoolean` | Alias para `TINYINT(1)` |
-| `JSON` | `ftMemo` / `AsString` | JSON nativo (MySQL 5.7+) |
-| `BLOB` | `ftBlob` / `AsBytes` | Dados binários |
-| `LONGBLOB` | `ftBlob` / `AsBytes` | Binário grande (até 4GB) |
-| `ENUM(...)` | `ftString` / `AsString` | Até 65535 valores |
-| `SET(...)` | `ftString` / `AsString` | Combinação de valores |
-| `CHAR(36)` | `ftString` / `AsString` | UUID como string |
+| `BOOLEAN` / `BOOL` | `ftBoolean` / `AsBoolean` | Alias ​​for `TINYINT(1)` |
+| `JSON` | `ftMemo` / `AsString` | Native JSON (MySQL 5.7+) |
+| `BLOB` | `ftBlob` / `AsBytes` | Binary data |
+| `LONGBLOB` | `ftBlob` / `AsBytes` | Large binary (up to 4GB) |
+| `ENUM(...)` | `ftString` / `AsString` | Up to 65535 values ​​|
+| `SET(...)` | `ftString` / `AsString` | Combination of values ​​|
+| `CHAR(36)` | `ftString` / `AsString` | UUID as string |
 
 ## AUTO_INCREMENT
 
-### Tabela com AUTO_INCREMENT
+### Table with AUTO_INCREMENT
 
 ```sql
 CREATE TABLE customers (
@@ -196,11 +196,11 @@ CREATE TABLE customers (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
-### Obter o ID Gerado no Delphi
+### Get the ID Generated in Delphi
 
 ```pascal
 /// <summary>
-///   Insere cliente e obtém o id gerado pelo AUTO_INCREMENT.
+///   Insere customer e obtém o id gerado pelo AUTO_INCREMENT.
 ///   MySQL NÃO suporta RETURNING — usar LAST_INSERT_ID().
 /// </summary>
 procedure TMySQLCustomerRepository.Insert(ACustomer: TCustomer);
@@ -234,7 +234,7 @@ begin
 end;
 ```
 
-> **⚠️ ATENÇÃO:** MySQL **NÃO** suporta `RETURNING`. Usar `LAST_INSERT_ID()` ou `FConnection.GetLastAutoGenValue('')`. Esta é uma **diferença crítica** em relação a Firebird e PostgreSQL.
+> **⚠️ ATTENTION:** MySQL **DOES NOT** support `RETURNING`. Use `LAST_INSERT_ID()` or `FConnection.GetLastAutoGenValue('')`. This is a **critical difference** compared to Firebird and PostgreSQL.
 
 ## UPSERT — INSERT ... ON DUPLICATE KEY UPDATE
 
@@ -256,7 +256,7 @@ ON DUPLICATE KEY UPDATE
   status = new_data.status;
 ```
 
-**No Delphi:**
+**In Delphi:**
 
 ```pascal
 procedure TMySQLCustomerRepository.Upsert(ACustomer: TCustomer);
@@ -287,9 +287,9 @@ begin
 end;
 ```
 
-## JSON Nativo (MySQL 5.7+)
+## Native JSON (MySQL 5.7+)
 
-### Armazenamento e Consulta
+### Storage and Query
 
 ```sql
 -- Tabela com coluna JSON
@@ -320,7 +320,7 @@ ALTER TABLE customer_settings
   ADD INDEX idx_theme (theme);
 ```
 
-**No Delphi:**
+**In Delphi:**
 
 ```pascal
 { Inserir JSON }
@@ -357,7 +357,7 @@ SELECT * FROM products
 WHERE MATCH(name, description) AGAINST('+camisa +azul -infantil' IN BOOLEAN MODE);
 ```
 
-## Stored Procedures e Functions
+## Stored Procedures and Functions
 
 ```sql
 -- Procedure (equivale a Executable no Firebird)
@@ -386,7 +386,7 @@ END //
 DELIMITER ;
 ```
 
-**Chamar no Delphi:**
+**Call in Delphi:**
 
 ```pascal
 { Procedure }
@@ -401,9 +401,9 @@ LQuery.Open;
 LFullName := LQuery.FieldByName('full_name').AsString;
 ```
 
-> **Nota:** MySQL Procedures são chamadas com `CALL`, Functions com `SELECT`. Procedures podem retornar result sets via `SELECT` dentro do corpo.
+> **Note:** MySQL Procedures are called with `CALL`, Functions with `SELECT`. Procedures can return result sets via `SELECT` inside the body.
 
-## ENUM e SET
+## ENUM and SET
 
 ```sql
 -- ENUM: valor único de uma lista
@@ -425,7 +425,7 @@ CREATE TABLE products (
 INSERT INTO products (name, tags) VALUES ('Camisa', 'new,featured');
 ```
 
-**No Delphi (mapear para enum Pascal):**
+**In Delphi (map to Pascal enum):**
 
 ```pascal
 type
@@ -443,7 +443,7 @@ LOrder.Status := StringToOrderStatus(LQuery.FieldByName('status').AsString);
 LQuery.ParamByName('status').AsString := ORDER_STATUS_NAMES[AOrder.Status];
 ```
 
-## Triggers
+##Triggers
 
 ```sql
 DELIMITER //
@@ -469,20 +469,20 @@ END //
 DELIMITER ;
 ```
 
-## Transactions e Isolation Levels
+## Transactions and Isolation Levels
 
-### Níveis de Isolamento no MySQL
+### Isolation Levels in MySQL
 
-| Nível | FireDAC | Uso |
+| Level | FireDAC | Usage |
 |-------|---------|-----|
-| **Read Uncommitted** | `xiDirtyRead` | Quase nunca — lê dados não commitados |
-| **Read Committed** | `xiReadCommitted` | ✅ Padrão recomendado |
-| **Repeatable Read** | `xiRepeatableRead` | Padrão do InnoDB — snapshot no início da tx |
-| **Serializable** | `xiSerializable` | Máxima consistência (locks implícitos) |
+| **Read Uncommitted** | `xiDirtyRead` | Almost never — reads uncommitted data |
+| **Read Committed** | `xiReadCommitted` | ✅ Recommended pattern |
+| **Repeatable Read** | `xiRepeatableRead` | InnoDB default — snapshot at start of tx |
+| **Serializable** | `xiSerializable` | Maximum consistency (implicit locks) |
 
-> **Nota:** O isolamento padrão do InnoDB é `REPEATABLE READ`, diferente de Firebird/PostgreSQL que usam `READ COMMITTED`.
+> **Note:** InnoDB's default isolation is `REPEATABLE READ`, unlike Firebird/PostgreSQL which use `READ COMMITTED`.
 
-### Transação Explícita
+### Explicit Transaction
 
 ```pascal
 procedure ExecuteInTransaction(AConnection: TFDConnection; AProc: TProc);
@@ -523,15 +523,15 @@ end;
 
 | Feature | InnoDB | MyISAM |
 |---------|--------|--------|
-| Transactions | ✅ Sim | ❌ Não |
-| Foreign Keys | ✅ Sim | ❌ Não |
-| Row-level Locking | ✅ Sim | ❌ Table-level |
-| Full-Text Search | ✅ Sim (5.6+) | ✅ Sim |
-| Crash Recovery | ✅ Sim | ❌ Não |
+| Transactions | ✅ Yes | ❌ No |
+| Foreign Keys | ✅ Yes | ❌ No |
+| Row-level Locking | ✅ Yes | ❌ Table-level |
+| Full-Text Search | ✅ Yes (5.6+) | ✅ Yes |
+| Crash Recovery | ✅ Yes | ❌ No |
 
-> **Regra:** Use **sempre InnoDB** (`ENGINE=InnoDB`). Nunca MyISAM em novos projetos.
+> **Rule:** Use **always InnoDB** (`ENGINE=InnoDB`). Never MyISAM in new projects.
 
-## Criação de Schema — Script de Migração
+## Schema Creation — Migration Script
 
 ```sql
 /* migration_001_initial_schema.sql */
@@ -609,7 +609,7 @@ END //
 DELIMITER ;
 ```
 
-## Migração de Schema no Delphi
+## Schema migration in Delphi
 
 ```pascal
 /// <summary>
@@ -658,7 +658,7 @@ begin
 end;
 ```
 
-## Tratamento de Erros MySQL
+## MySQL Error Handling
 
 ```pascal
 except
@@ -699,7 +699,7 @@ except
 end;
 ```
 
-## CTEs e Window Functions (MySQL 8.0+)
+## CTEs and Window Functions (MySQL 8.0+)
 
 ```sql
 -- CTE (MySQL 8.0+)
@@ -732,7 +732,7 @@ FROM (
 ) ranked;
 ```
 
-## UUID como Primary Key
+## UUID as Primary Key
 
 ```sql
 -- Gerar UUID no MySQL
@@ -747,7 +747,7 @@ CREATE TABLE sessions (
 -- MySQL < 8.0: gerar no Delphi e enviar como parâmetro
 ```
 
-**No Delphi:**
+**In Delphi:**
 
 ```pascal
 uses
@@ -776,27 +776,27 @@ PARTITION BY RANGE (YEAR(order_date)) (
 );
 ```
 
-## Diferenças Chave: MySQL vs Firebird vs PostgreSQL
+## Key Differences: MySQL vs Firebird vs PostgreSQL
 
 | Feature | MySQL | Firebird | PostgreSQL |
 |---------|-------|----------|------------|
 | Auto-increment | `AUTO_INCREMENT` | Generator + BI Trigger | `SERIAL` / `IDENTITY` |
-| Obter ID gerado | `LAST_INSERT_ID()` | `RETURNING id` | `RETURNING id` |
-| UPSERT | `ON DUPLICATE KEY UPDATE` | Não nativo (FB5 parcial) | `ON CONFLICT` |
-| JSON | `JSON` (5.7+) | Não nativo | `JSONB` (indexável) |
-| Full-Text Search | `FULLTEXT` index | Não nativo | `tsvector` |
-| ENUM | `ENUM(...)` nativo | Domain + CHECK | `CREATE TYPE` |
-| Embedded | Não | Sim (fbclient.dll) | Não |
+| Get generated ID | `LAST_INSERT_ID()` | `RETURNING id` | `RETURNING id` |
+| UPSERT | `ON DUPLICATE KEY UPDATE` | Non-native (partial FB5) | `ON CONFLICT` |
+| JSON | `JSON` (5.7+) | Non-native | `JSONB` (indexable) |
+| Full-Text Search | `FULLTEXT` index | Non-native | `tsvector` |
+| ENUM | `ENUM(...)` native | Domain + CHECK | `CREATE TYPE` |
+| Embedded | No | Yes (fbclient.dll) | No |
 | Engine Choice | InnoDB, MyISAM, etc. | Single engine | Single engine |
-| Charset recomendado | `utf8mb4` | `UTF8` | `UTF8` |
-| Driver FireDAC | `MySQL` | `FB` | `PG` |
+| Recommended Charset | `utf8mb4` | `UTF8` | `UTF8` |
+| FireDAC Driver | `MySQL` | `FB` | `PG` |
 | Client Library | `libmysql.dll` | `fbclient.dll` | `libpq.dll` |
 | Default Isolation | Repeatable Read | Read Committed | Read Committed |
-| Stored Procs | `CALL sp()` | `EXECUTE PROCEDURE` | `CALL sp()` (PG 11+) |
-| Windows Functions | 8.0+ | 3.0+ (básico) | Amplo |
-| CTEs | 8.0+ | 3.0+ | Todas versões |
+| StoredProcs | `CALL sp()` | `EXECUTE PROCEDURE` | `CALL sp()` (PG 11+) |
+| Windows Functions | 8.0+ | 3.0+ (basic) | Ample |
+| CTEs | 8.0+ | 3.0+ | All versions |
 
-## Anti-Patterns MySQL a Evitar
+## MySQL Anti-Patterns to Avoid
 
 ```pascal
 // ❌ Concatenar SQL
@@ -806,13 +806,13 @@ LQuery.SQL.Text := 'SELECT * FROM customers WHERE name = ''' + AName + '''';
 LQuery.SQL.Text := 'SELECT * FROM customers WHERE name = :name';
 LQuery.ParamByName('name').AsString := AName;
 
-// ❌ Usar utf8 (3 bytes, não suporta emoji)
+// ❌ Usar utf8 (3 bytes, not suporta emoji)
 Result.Params.Values['CharacterSet'] := 'utf8';
 
 // ✅ Usar utf8mb4 (4 bytes, suporte completo)
 Result.Params.Values['CharacterSet'] := 'utf8mb4';
 
-// ❌ Tentar usar RETURNING (não existe no MySQL!)
+// ❌ Tentar usar RETURNING (not existe no MySQL!)
 LQuery.SQL.Text := 'INSERT INTO ... RETURNING id';
 
 // ✅ Usar LAST_INSERT_ID()
@@ -829,24 +829,24 @@ CREATE TABLE t (...) ENGINE=InnoDB;
 // ❌ SELECT * sem LIMIT
 LQuery.SQL.Text := 'SELECT * FROM orders';
 
-// ✅ LIMIT para paginação
+// ✅ LIMIT para paginaction
 LQuery.SQL.Text := 'SELECT id, customer_id, total FROM orders LIMIT :limit OFFSET :offset';
 
 // ❌ Ignorar índices em colunas de WHERE/JOIN
 // ✅ Criar índices para colunas usadas em filtros
 ```
 
-## Checklist MySQL
+## MySQL Checklist
 
-- [ ] Driver `MySQL` configurado no FireDAC?
-- [ ] `CharacterSet := 'utf8mb4'` (NÃO `utf8`)?
-- [ ] `libmysql.dll` (32/64-bit) no PATH ou `VendorLib`?
-- [ ] Tabelas criadas com `ENGINE=InnoDB`?
-- [ ] `AUTO_INCREMENT` nas PKs com `LAST_INSERT_ID()` no Delphi?
-- [ ] Queries parametrizadas (sem concatenação)?
-- [ ] Transactions explícitas para operações compostas?
-- [ ] Erros tratados via `EFDDBEngineException.Kind`?
-- [ ] Índices criados para colunas em WHERE e JOIN?
-- [ ] Foreign Keys com `ON DELETE`/`ON UPDATE` apropriados?
-- [ ] `COLLATE utf8mb4_unicode_ci` nas tabelas para comparação correta?
-- [ ] `information_schema` para verificar metadata?
+- [ ] Driver `MySQL` configured on FireDAC?
+- [ ] `CharacterSet := 'utf8mb4'` (NOT `utf8`)?
+- [ ] `libmysql.dll` (32/64-bit) in PATH or `VendorLib`?
+- [ ] Tables created with `ENGINE=InnoDB`?
+- [ ] `AUTO_INCREMENT` in PKs with `LAST_INSERT_ID()` in Delphi?
+- [ ] Parameterized queries (without concatenation)?
+- [ ] Explicit transactions for compound operations?
+- [ ] Errors handled via `EFDDBEngineException.Kind`?
+- [ ] Indexes created for columns in WHERE and JOIN?
+- [ ] Foreign Keys with appropriate `ON DELETE`/`ON UPDATE`?
+- [ ] `COLLATE utf8mb4_unicode_ci` in the tables for correct comparison?
+- [ ] `information_schema` to check metadata?

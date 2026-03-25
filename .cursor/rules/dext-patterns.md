@@ -1,17 +1,17 @@
 ---
-description: "Dext Framework - Padrões de Minimal API, Injeção de Dependência, Model Binding e Entity ORM"
+description: "Dext Framework - Minimal API, Dependency Injection, Model Binding and Entity ORM Patterns"
 globs: ["**/*.pas"]
 alwaysApply: false
 ---
 
 # Dext Framework — Cursor Rules
 
-Use estas regras ao desenvolver APIs REST ou aplicações usando o **Dext Framework** (https://github.com/cesarliws/dext), focado em padrões .NET para Delphi.
+Use these rules when developing REST APIs or applications using the **Dext Framework** (https://github.com/cesarliws/dext), focused on .NET standards for Delphi.
 
-## Estrutura de Rotas (Minimal API)
+## Route Structure (Minimal API)
 
-- Configure rotas usando a sintaxe fluente e concisa com `App.Builder.MapGet` e `MapPost`.
-- Prefira DTOs como parâmetros das funções anônimas para usar o *Model Binding* automático.
+- Configure routes using fluent and concise syntax with `App.Builder.MapGet` and `MapPost`.
+- Prefer DTOs as parameters of anonymous functions to use automatic *Model Binding*.
 
 ```pascal
 var App := WebApplication;
@@ -31,10 +31,10 @@ Builder.MapPost<TUserDto, IEmailService, IResult>('/register',
   end);
 ```
 
-## Injeção de Dependências (DI)
+## Dependency Injection (DI)
 
-- O Dext resolve as dependências automaticamente nos endpoints de Minimal API.
-- Registre os serviços antes do mapeamento de rotas.
+- Dext automatically resolves dependencies on Minimal API endpoints.
+- Register services before route mapping.
 
 ```pascal
 App.Services.AddSingleton<IEmailService, TEmailService>;
@@ -43,12 +43,12 @@ App.Services.AddScoped<ICustomerRepository, TCustomerRepository>;
 
 ## Dext.Entity (ORM)
 
-- O ORM usa a Fluent Query API. Evite strings mágicas de SQL.
-- Modelos são Code-First com classes puras. Use atributos `[DbType]` ou `[Tabela/Campo]` dependendo da versão.
-- Use as Expressões de Query (Smart Properties) para filtros (ex: `U.Age > 18`).
+- The ORM uses the Fluent Query API. Avoid magic SQL strings.
+- Models are Code-First with pure classes. Use `[DbType]` or `[Tabela/Campo]` attributes depending on the version.
+- Use Query Expressions (Smart Properties) for filters (ex: `U.Age > 18`).
 
 ```pascal
-// Consulta com Dext.Entity
+//Query with Dext.Entity
 var Orders := DbContext.Orders
   .Where((O.Status = TOrderStatus.Paid) and (O.Total > 1000))
   .Include('Customer')
@@ -62,14 +62,14 @@ DbContext.Products
   .Execute;
 ```
 
-## Asserções e Respostas (Fluent API)
+## Assertions and Responses (Fluent API)
 
-- O Dext trata a serialização nativamente. Entregue Records/Class ou use `Results.Ok(...)`, `Results.Created(...)`.
-- Utilize os blocos `TAsyncTask.Run` para processamento background retornando Threads reais na UI thread usando `.OnComplete`.
+- Dext handles serialization natively. Deliver Records/Class or use `Results.Ok(...)`, `Results.Created(...)`.
+- Use `TAsyncTask.Run` blocks for background processing returning real Threads in the UI thread using `.OnComplete`.
 
-## Proibições para Dext Framework
+## Prohibitions for Dext Framework
 
-- ❌ Não construa Queries concatenando strings. Use a Fluent Query API do Dext.Entity (`.Where`, `.Select`).
-- ❌ Não instancie Services manualmente. Use a injeção do Container em `App.Services`.
-- ❌ Não use bibliotecas antigas de JSON se a performance for crítica, o Dext lida com serialização UTF-8 internamente em Minimal APIs.
-- ❌ Não confunda os componentes DevExpress com este framework Dext (Core/ORM/Web).
+- ❌ Do not build Queries by concatenating strings. Use Dext.Entity's Fluent Query API (`.Where`, `.Select`).
+- ❌ Do not instantiate Services manually. Use Container injection in `App.Services`.
+- ❌ Don't use old JSON libraries if performance is critical, Dext handles UTF-8 serialization internally in Minimal APIs.
+- ❌ Don't confuse DevExpress components with this Dext framework (Core/ORM/Web).

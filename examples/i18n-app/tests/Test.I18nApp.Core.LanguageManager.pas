@@ -1,4 +1,4 @@
-unit Test.I18nApp.Core.LanguageManager;
+﻿unit Test.I18nApp.Core.LanguageManager;
 
 interface
 
@@ -69,11 +69,11 @@ procedure TTestLanguageManager.GetInstance_Always_ReturnsSameSingleton;
 var
   LInstance1, LInstance2: TLanguageManager;
 begin
-  // Action
+  //Action
   LInstance1 := TLanguageManager.GetInstance;
   LInstance2 := TLanguageManager.GetInstance;
 
-  // Assert
+  //Assert
   Assert.AreSame(LInstance1, LInstance2);
 end;
 
@@ -90,7 +90,7 @@ begin
   // Action - Initial is usually pt-BR. Changing to en-US.
   LManager.SetLanguage('en-US');
 
-  // Assert
+  //Assert
   Assert.AreEqual(1, LFakeObserver.CallCount);
   Assert.AreEqual('en-US', LFakeObserver.NotifiedLanguage);
   
@@ -113,8 +113,8 @@ begin
   // Action - Changing to SAME language
   LManager.SetLanguage(LInitialLang);
 
-  // Assert
-  Assert.AreEqual(0, LFakeObserver.CallCount, 'Observer should not be notified if language state hasn''t changed.');
+  //Assert
+  Assert.AreEqual(0, LFakeObserver.CallCount, 'Observer should not be notified if language state hasn''''t changed.');
   
   // Cleanup
   LManager.UnregisterObserver(LFakeObserver);
@@ -128,10 +128,10 @@ begin
   LManager := TLanguageManager.GetInstance;
   LManager.SetLanguage('ar-SA');
   
-  // Action
+  //Action
   var LRTL := LManager.IsRTL;
 
-  // Assert
+  //Assert
   Assert.IsTrue(LRTL, 'Arabic language (ar-SA) should be parsed as RTL');
 end;
 
@@ -143,10 +143,10 @@ begin
   LManager := TLanguageManager.GetInstance;
   LManager.SetLanguage('pt-BR');
   
-  // Action
+  //Action
   var LRTL := LManager.IsRTL;
 
-  // Assert
+  //Assert
   Assert.IsFalse(LRTL, 'Portuguese (pt-BR) is not RTL');
 end;
 
@@ -154,3 +154,4 @@ initialization
   TDUnitX.RegisterTestFixture(TTestLanguageManager);
 
 end.
+

@@ -1,7 +1,7 @@
-/// <summary>
-///   Exemplo completo de Repository Pattern com FireDAC + PostgreSQL.
-///   Demonstra: conexão PostgreSQL, IDENTITY, RETURNING, UPSERT, JSONB,
-///   Full-Text Search, PL/pgSQL functions, CTE, error handling e ENUM mapping.
+﻿/// <summary>
+/// Complete Repository Pattern example with FireDAC + PostgreSQL.
+/// Demonstrates: PostgreSQL connection, IDENTITY, RETURNING, UPSERT, JSONB,
+/// Full-Text Search, PL/pgSQL functions, CTE, error handling and ENUM mapping.
 /// </summary>
 unit Example.Infra.PostgreSQL.Customer.Repository;
 
@@ -16,7 +16,7 @@ uses
 
 type
   // =========================================================================
-  // Exceções de Domínio para PostgreSQL
+  // Domain Exceptions for PostgreSQL
   // =========================================================================
 
   EDatabaseException = class(Exception);
@@ -25,13 +25,13 @@ type
   EConnectionLostException = class(EDatabaseException);
 
   // =========================================================================
-  // Entidade
+  // Entity
   // =========================================================================
 
   TCustomerStatus = (csActive, csInactive, csSuspended);
 
   /// <summary>
-  ///   Entidade de domínio representando um cliente.
+  /// Domain entity representing a customer.
   /// </summary>
   TCustomer = class
   private
@@ -41,7 +41,7 @@ type
     FEmail: string;
     FStatus: TCustomerStatus;
     FNotes: string;
-    FMetadata: string;  { JSONB como string }
+    FMetadata: string;  { JSONB as string }
     FCreatedAt: TDateTime;
     FUpdatedAt: TDateTime;
   public
@@ -61,7 +61,7 @@ type
   end;
 
   // =========================================================================
-  // Interface do Repository (Domain)
+  // Repository Interface (Domain)
   // =========================================================================
 
   ICustomerRepository = interface
@@ -79,12 +79,12 @@ type
   end;
 
   // =========================================================================
-  // Implementação com FireDAC + PostgreSQL (Infrastructure)
+  // Implementation with FireDAC + PostgreSQL (Infrastructure)
   // =========================================================================
 
   /// <summary>
-  ///   Implementação concreta do repository usando FireDAC com PostgreSQL.
-  ///   Demonstra: IDENTITY, RETURNING, UPSERT, JSONB, search, ENUM mapping.
+  /// Concrete implementation of the repository using FireDAC with PostgreSQL.
+  /// Demonstrates: IDENTITY, RETURNING, UPSERT, JSONB, search, ENUM mapping.
   /// </summary>
   TPostgreSQLCustomerRepository = class(TInterfacedObject, ICustomerRepository)
   private
@@ -109,7 +109,7 @@ type
   end;
 
   // =========================================================================
-  // Factory de Conexão PostgreSQL
+  // PostgreSQL Connection Factory
   // =========================================================================
 
   TPostgreSQLConnectionFactory = class
@@ -124,7 +124,7 @@ type
   end;
 
   // =========================================================================
-  // Helpers para ENUM mapping
+  // Helpers for ENUM mapping
   // =========================================================================
 
   TCustomerStatusHelper = record helper for TCustomerStatus
@@ -156,7 +156,7 @@ begin
   for LStatus := Low(TCustomerStatus) to High(TCustomerStatus) do
     if SameText(CUSTOMER_STATUS_NAMES[LStatus], AValue) then
       Exit(LStatus);
-  raise EArgumentException.CreateFmt('Status de cliente inválido: "%s"', [AValue]);
+  raise EArgumentException.CreateFmt('Invalid client status: "%s"', [AValue]);
 end;
 
 { TCustomer }
@@ -165,7 +165,7 @@ constructor TCustomer.Create(const AName: string);
 begin
   inherited Create;
   if AName.Trim.IsEmpty then
-    raise EArgumentException.Create('Nome do cliente não pode ser vazio');
+    raise EArgumentException.Create('Customer name cannot be empty');
   FName := AName.Trim;
   FStatus := csActive;
   FMetadata := '{}';
@@ -182,7 +182,7 @@ constructor TPostgreSQLCustomerRepository.Create(AConnection: TFDConnection);
 begin
   inherited Create;
   if not Assigned(AConnection) then
-    raise EArgumentNilException.Create('AConnection não pode ser nil');
+    raise EArgumentNilException.Create('AConnection cannot be nil');
   FConnection := AConnection;
 end;
 
@@ -191,7 +191,7 @@ begin
   Result := TCustomer.Create(AQuery.FieldByName('name').AsString);
   Result.Id := AQuery.FieldByName('id').AsInteger;
   Result.Cpf := AQuery.FieldByName('cpf').AsString;
-  Result.Email := AQuery.FieldByName('email').AsString;
+  Result.Email := AQuery.FieldByName('e-mail').AsString;
   Result.Status := TCustomerStatus.FromString(AQuery.FieldByName('status').AsString);
   Result.Notes := AQuery.FieldByName('notes').AsString;
   Result.Metadata := AQuery.FieldByName('metadata').AsString;
@@ -205,13 +205,13 @@ begin
   case AException.Kind of
     ekUKViolated:
       raise EDuplicateRecordException.Create(
-        'Registro duplicado: ' + AException.Message);
+        'Duplicate record:' + AException.Message);
     ekFKViolated:
       raise EForeignKeyViolationException.Create(
-        'Violação de chave estrangeira: ' + AException.Message);
+        'Foreign key violation:' + AException.Message);
     ekServerGone:
       raise EConnectionLostException.Create(
-        'Conexão com PostgreSQL perdida: ' + AException.Message);
+        'Connection to PostgreSQL lost:' + AException.Message);
   else
     raise;
   end;
@@ -226,7 +226,7 @@ begin
   try
     LQuery.Connection := FConnection;
     LQuery.SQL.Text :=
-      'SELECT id, name, cpf, email, status::TEXT, notes, ' +
+      'SELECT id, name, cpf, email, status::TEXT, notes,' +
       '  metadata::TEXT, created_at, updated_at ' +
       'FROM customers WHERE id = :id';
     LQuery.ParamByName('id').AsInteger := AId;
@@ -240,7 +240,7 @@ begin
 end;
 
 /// <summary>
-///   Busca paginada de clientes (LIMIT/OFFSET nativo do PostgreSQL).
+/// Paginated customer search (Limit/Offset native to PostgreSQL).
 /// </summary>
 function TPostgreSQLCustomerRepository.FindAll(
   ALimit, AOffset: Integer): TObjectList<TCustomer>;
@@ -253,9 +253,9 @@ begin
     try
       LQuery.Connection := FConnection;
       LQuery.SQL.Text :=
-        'SELECT id, name, cpf, email, status::TEXT, notes, ' +
+        'SELECT id, name, cpf, email, status::TEXT, notes,' +
         '  metadata::TEXT, created_at, updated_at ' +
-        'FROM customers ' +
+        'FROM customers' +
         'ORDER BY name ' +
         'LIMIT :limit OFFSET :offset';
       LQuery.ParamByName('limit').AsInteger := ALimit;
@@ -288,7 +288,7 @@ begin
   try
     LQuery.Connection := FConnection;
     LQuery.SQL.Text :=
-      'SELECT id, name, cpf, email, status::TEXT, notes, ' +
+      'SELECT id, name, cpf, email, status::TEXT, notes,' +
       '  metadata::TEXT, created_at, updated_at ' +
       'FROM customers WHERE cpf = :cpf';
     LQuery.ParamByName('cpf').AsString := ACpf;
@@ -302,8 +302,8 @@ begin
 end;
 
 /// <summary>
-///   Busca textual usando Full-Text Search com tsvector.
-///   Requer índice GIN na coluna search_vector.
+/// Textual search using Full-Text Search with tsvector.
+/// Requires GIN index on search_vector column.
 /// </summary>
 function TPostgreSQLCustomerRepository.Search(
   const ASearchTerm: string; ALimit: Integer): TObjectList<TCustomer>;
@@ -318,12 +318,12 @@ begin
   try
     try
       LQuery.Connection := FConnection;
-      { Busca com ILIKE para nomes (simples e eficaz) }
+      { Search with ILIKE for names (simple and effective) }
       LQuery.SQL.Text :=
-        'SELECT id, name, cpf, email, status::TEXT, notes, ' +
+        'SELECT id, name, cpf, email, status::TEXT, notes,' +
         '  metadata::TEXT, created_at, updated_at ' +
-        'FROM customers ' +
-        'WHERE name ILIKE :term OR cpf ILIKE :term OR email ILIKE :term ' +
+        'FROM customers' +
+        'WHERE name ILIKE :term OR cpf ILIKE :term OR email ILIKE :term' +
         'ORDER BY name ' +
         'LIMIT :limit';
       LQuery.ParamByName('term').AsString := '%' + ASearchTerm + '%';
@@ -362,32 +362,32 @@ begin
 end;
 
 /// <summary>
-///   Insere cliente usando INSERT ... RETURNING para obter o id e timestamps
-///   gerados por IDENTITY e DEFAULT NOW().
+/// Insert customer using INSERT ... RETURNING to get the id and timestamps
+/// generated by IDENTITY and DEFAULT NOW().
 /// </summary>
 procedure TPostgreSQLCustomerRepository.Insert(ACustomer: TCustomer);
 var
   LQuery: TFDQuery;
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
 
   LQuery := TFDQuery.Create(nil);
   try
     try
       LQuery.Connection := FConnection;
       LQuery.SQL.Text :=
-        'INSERT INTO customers (name, cpf, email, status, notes, metadata) ' +
-        'VALUES (:name, :cpf, :email, :status::customer_status, :notes, :metadata::jsonb) ' +
+        'INSERT INTO customers (name, cpf, email, status, notes, metadata)' +
+        'VALUES (:name, :cpf, :email, :status::customer_status, :notes, :metadata::jsonb)' +
         'RETURNING id, created_at, updated_at';
       LQuery.ParamByName('name').AsString := ACustomer.Name;
       LQuery.ParamByName('cpf').AsString := ACustomer.Cpf;
-      LQuery.ParamByName('email').AsString := ACustomer.Email;
+      LQuery.ParamByName('e-mail').AsString := ACustomer.Email;
       LQuery.ParamByName('status').AsString := ACustomer.Status.ToString;
       LQuery.ParamByName('notes').AsString := ACustomer.Notes;
       LQuery.ParamByName('metadata').AsString := ACustomer.Metadata;
 
-      { RETURNING: usar Open para receber os campos gerados }
+      { RETURNING: use Open to receive the generated fields }
       LQuery.Open;
       ACustomer.Id := LQuery.FieldByName('id').AsInteger;
       ACustomer.CreatedAt := LQuery.FieldByName('created_at').AsDateTime;
@@ -406,24 +406,24 @@ var
   LQuery: TFDQuery;
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
 
   LQuery := TFDQuery.Create(nil);
   try
     try
       LQuery.Connection := FConnection;
-      { updated_at é atualizado automaticamente pela trigger trg_customer_updated }
+      { updated_at is updated automatically by the trg_customer_updated trigger }
       LQuery.SQL.Text :=
-        'UPDATE customers SET ' +
-        '  name = :name, cpf = :cpf, email = :email, ' +
-        '  status = :status::customer_status, ' +
-        '  notes = :notes, metadata = :metadata::jsonb ' +
-        'WHERE id = :id ' +
+        'UPDATE customers SET' +
+        '  name = :name, cpf = :cpf, email = :email,' +
+        '  status = :status::customer_status,' +
+        '  notes = :notes, metadata = :metadata::jsonb' +
+        'WHERE id = :id' +
         'RETURNING updated_at';
       LQuery.ParamByName('id').AsInteger := ACustomer.Id;
       LQuery.ParamByName('name').AsString := ACustomer.Name;
       LQuery.ParamByName('cpf').AsString := ACustomer.Cpf;
-      LQuery.ParamByName('email').AsString := ACustomer.Email;
+      LQuery.ParamByName('e-mail').AsString := ACustomer.Email;
       LQuery.ParamByName('status').AsString := ACustomer.Status.ToString;
       LQuery.ParamByName('notes').AsString := ACustomer.Notes;
       LQuery.ParamByName('metadata').AsString := ACustomer.Metadata;
@@ -439,33 +439,33 @@ begin
 end;
 
 /// <summary>
-///   Insere ou atualiza o cliente com base no CPF (UPSERT).
-///   Usa INSERT ... ON CONFLICT — recurso nativo do PostgreSQL.
+/// Insert or update the customer based on the CPF (UPSERT).
+/// Uses INSERT ... ON CONFLICT — native PostgreSQL feature.
 /// </summary>
 procedure TPostgreSQLCustomerRepository.Upsert(ACustomer: TCustomer);
 var
   LQuery: TFDQuery;
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
 
   LQuery := TFDQuery.Create(nil);
   try
     try
       LQuery.Connection := FConnection;
       LQuery.SQL.Text :=
-        'INSERT INTO customers (name, cpf, email, status, notes, metadata) ' +
-        'VALUES (:name, :cpf, :email, :status::customer_status, :notes, :metadata::jsonb) ' +
-        'ON CONFLICT (cpf) DO UPDATE SET ' +
+        'INSERT INTO customers (name, cpf, email, status, notes, metadata)' +
+        'VALUES (:name, :cpf, :email, :status::customer_status, :notes, :metadata::jsonb)' +
+        'ON CONFLICT (cpf) OF UPDATE SET' +
         '  name = EXCLUDED.name, ' +
-        '  email = EXCLUDED.email, ' +
-        '  status = EXCLUDED.status, ' +
-        '  notes = EXCLUDED.notes, ' +
+        '  email = EXCLUDED.email,' +
+        '  status = EXCLUDED.status,' +
+        '  notes = EXCLUDED.notes,' +
         '  metadata = EXCLUDED.metadata ' +
         'RETURNING id, created_at, updated_at';
       LQuery.ParamByName('name').AsString := ACustomer.Name;
       LQuery.ParamByName('cpf').AsString := ACustomer.Cpf;
-      LQuery.ParamByName('email').AsString := ACustomer.Email;
+      LQuery.ParamByName('e-mail').AsString := ACustomer.Email;
       LQuery.ParamByName('status').AsString := ACustomer.Status.ToString;
       LQuery.ParamByName('notes').AsString := ACustomer.Notes;
       LQuery.ParamByName('metadata').AsString := ACustomer.Metadata;
@@ -503,7 +503,7 @@ begin
 end;
 
 /// <summary>
-///   Desativa cliente via CALL (PostgreSQL Procedure — PG 11+).
+/// Disables client via CALL (PostgreSQL Procedure — PG 11+).
 /// </summary>
 procedure TPostgreSQLCustomerRepository.Deactivate(AId: Integer);
 var
@@ -513,7 +513,7 @@ begin
   try
     try
       LQuery.Connection := FConnection;
-      { CALL para PostgreSQL Procedure (PG 11+) }
+      { CALL for PostgreSQL Procedure (PG 11+) }
       LQuery.SQL.Text := 'CALL sp_deactivate_customer(:p_id)';
       LQuery.ParamByName('p_id').AsInteger := AId;
       LQuery.ExecSQL;
@@ -541,10 +541,10 @@ begin
     Result.Params.UserName := AUserName;
     Result.Params.Password := APassword;
 
-    { Configurações recomendadas }
+    { Recommended settings }
     Result.Params.Values['CharacterSet'] := 'UTF8';
 
-    { Opções FireDAC }
+    { FireDAC options }
     Result.FormatOptions.StrsTrim2Len := True;
     Result.ResourceOptions.AutoReconnect := True;
     Result.TxOptions.Isolation := xiReadCommitted;
@@ -558,13 +558,13 @@ end;
 
 {
   ============================================================================
-  SQL de criação do schema usado neste exemplo:
+  SQL for creating the schema used in this example:
   ============================================================================
 
   -- ENUM type
   CREATE TYPE customer_status AS ENUM ('active', 'inactive', 'suspended');
 
-  -- Tabela com IDENTITY e JSONB
+  -- Table with IDENTITY and JSONB
   CREATE TABLE IF NOT EXISTS customers (
     id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name       VARCHAR(100) NOT NULL,
@@ -577,11 +577,11 @@ end;
     updated_at TIMESTAMPTZ DEFAULT NOW()
   );
 
-  -- Indices
+  -- Indexes
   CREATE INDEX idx_customer_name ON customers (name);
   CREATE INDEX idx_customer_cpf ON customers (cpf);
 
-  -- Trigger de updated_at automático
+  -- Automatic updated_at trigger
   CREATE OR REPLACE FUNCTION update_updated_at_column()
   RETURNS TRIGGER AS $$
   BEGIN
@@ -607,3 +607,4 @@ end;
 }
 
 end.
+

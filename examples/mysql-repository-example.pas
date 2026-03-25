@@ -1,7 +1,7 @@
-/// <summary>
-///   Exemplo completo de Repository Pattern com FireDAC + MySQL.
-///   Demonstra: AUTO_INCREMENT, LAST_INSERT_ID(), ON DUPLICATE KEY UPDATE,
-///   JSON nativo, CALL procedure, FULLTEXT search, error handling.
+﻿/// <summary>
+/// Complete Repository Pattern example with FireDAC + MySQL.
+/// Demonstrates: AUTO_INCREMENT, LAST_INSERT_ID(), ON DUPLICATE KEY UPDATE,
+/// Native JSON, CALL procedure, FULLTEXT search, error handling.
 /// </summary>
 unit Example.Infra.MySQL.Customer.Repository;
 
@@ -16,7 +16,7 @@ uses
 
 type
   // =========================================================================
-  // Exceções de Domínio para MySQL
+  //Domain Exceptions for MySQL
   // =========================================================================
 
   EDatabaseException = class(Exception);
@@ -25,7 +25,7 @@ type
   EConnectionLostException = class(EDatabaseException);
 
   // =========================================================================
-  // Entidade
+  // Entity
   // =========================================================================
 
   TCustomerStatus = (csActive, csInactive, csSuspended);
@@ -38,7 +38,7 @@ type
     FEmail: string;
     FStatus: TCustomerStatus;
     FNotes: string;
-    FMetadata: string;  { JSON como string }
+    FMetadata: string;  { JSON as string }
     FCreatedAt: TDateTime;
     FUpdatedAt: TDateTime;
   public
@@ -57,7 +57,7 @@ type
   end;
 
   // =========================================================================
-  // Interface do Repository (Domain)
+  // Repository Interface (Domain)
   // =========================================================================
 
   ICustomerRepository = interface
@@ -74,7 +74,7 @@ type
   end;
 
   // =========================================================================
-  // Implementação com FireDAC + MySQL (Infrastructure)
+  // Implementation with FireDAC + MySQL (Infrastructure)
   // =========================================================================
 
   TMySQLCustomerRepository = class(TInterfacedObject, ICustomerRepository)
@@ -97,7 +97,7 @@ type
   end;
 
   // =========================================================================
-  // Factory de Conexão MySQL
+  // MySQL Connection Factory
   // =========================================================================
 
   TMySQLConnectionFactory = class
@@ -122,7 +122,7 @@ constructor TCustomer.Create(const AName: string);
 begin
   inherited Create;
   if AName.Trim.IsEmpty then
-    raise EArgumentException.Create('Nome do cliente não pode ser vazio');
+    raise EArgumentException.Create('Customer name cannot be empty');
   FName := AName.Trim;
   FStatus := csActive;
 end;
@@ -138,7 +138,7 @@ constructor TMySQLCustomerRepository.Create(AConnection: TFDConnection);
 begin
   inherited Create;
   if not Assigned(AConnection) then
-    raise EArgumentNilException.Create('AConnection não pode ser nil');
+    raise EArgumentNilException.Create('AConnection cannot be nil');
   FConnection := AConnection;
 end;
 
@@ -147,7 +147,7 @@ begin
   Result := TCustomer.Create(AQuery.FieldByName('name').AsString);
   Result.Id := AQuery.FieldByName('id').AsInteger;
   Result.Cpf := AQuery.FieldByName('cpf').AsString;
-  Result.Email := AQuery.FieldByName('email').AsString;
+  Result.Email := AQuery.FieldByName('e-mail').AsString;
   Result.Status := TCustomerStatus(AQuery.FieldByName('status').AsSmallInt);
   Result.Notes := AQuery.FieldByName('notes').AsString;
 
@@ -164,13 +164,13 @@ begin
   case AException.Kind of
     ekUKViolated:
       raise EDuplicateRecordException.Create(
-        'Registro duplicado: ' + AException.Message);
+        'Duplicate record:' + AException.Message);
     ekFKViolated:
       raise EForeignKeyViolationException.Create(
-        'Violação de chave estrangeira: ' + AException.Message);
+        'Foreign key violation:' + AException.Message);
     ekServerGone:
       raise EConnectionLostException.Create(
-        'Conexão com MySQL perdida: ' + AException.Message);
+        'Connection to MySQL lost:' + AException.Message);
   else
     raise;
   end;
@@ -185,7 +185,7 @@ begin
   try
     LQuery.Connection := FConnection;
     LQuery.SQL.Text :=
-      'SELECT id, name, cpf, email, status, notes, ' +
+      'SELECT id, name, cpf, email, status, notes,' +
       '  metadata, created_at, updated_at ' +
       'FROM customers WHERE id = :id';
     LQuery.ParamByName('id').AsInteger := AId;
@@ -209,7 +209,7 @@ begin
     try
       LQuery.Connection := FConnection;
       LQuery.SQL.Text :=
-        'SELECT id, name, cpf, email, status, notes, ' +
+        'SELECT id, name, cpf, email, status, notes,' +
         '  metadata, created_at, updated_at ' +
         'FROM customers ORDER BY name LIMIT :limit OFFSET :offset';
       LQuery.ParamByName('limit').AsInteger := ALimit;
@@ -242,7 +242,7 @@ begin
   try
     LQuery.Connection := FConnection;
     LQuery.SQL.Text :=
-      'SELECT id, name, cpf, email, status, notes, ' +
+      'SELECT id, name, cpf, email, status, notes,' +
       '  metadata, created_at, updated_at ' +
       'FROM customers WHERE cpf = :cpf';
     LQuery.ParamByName('cpf').AsString := ACpf;
@@ -256,7 +256,7 @@ begin
 end;
 
 /// <summary>
-///   Busca textual usando LIKE (simples) ou FULLTEXT (se índice disponível).
+/// Textual search using LIKE (simple) or FULLTEXT (if index available).
 /// </summary>
 function TMySQLCustomerRepository.Search(
   const ASearchTerm: string; ALimit: Integer): TObjectList<TCustomer>;
@@ -272,10 +272,10 @@ begin
     try
       LQuery.Connection := FConnection;
       LQuery.SQL.Text :=
-        'SELECT id, name, cpf, email, status, notes, ' +
+        'SELECT id, name, cpf, email, status, notes,' +
         '  metadata, created_at, updated_at ' +
-        'FROM customers ' +
-        'WHERE name LIKE :term OR cpf LIKE :term OR email LIKE :term ' +
+        'FROM customers' +
+        'WHERE name LIKE :term OR cpf LIKE :term OR email LIKE :term' +
         'ORDER BY name LIMIT :limit';
       LQuery.ParamByName('term').AsString := '%' + ASearchTerm + '%';
       LQuery.ParamByName('limit').AsInteger := ALimit;
@@ -296,34 +296,34 @@ begin
 end;
 
 /// <summary>
-///   Insere cliente usando AUTO_INCREMENT + LAST_INSERT_ID().
-///   MySQL NÃO suporta RETURNING — diferença crítica vs Firebird/PG.
+/// Inserts customer using AUTO_INCREMENT + LAST_INSERT_ID().
+/// MySQL DOES NOT support RETURNING — critical difference vs Firebird/PG.
 /// </summary>
 procedure TMySQLCustomerRepository.Insert(ACustomer: TCustomer);
 var
   LQuery: TFDQuery;
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
 
   LQuery := TFDQuery.Create(nil);
   try
     try
       LQuery.Connection := FConnection;
 
-      { INSERT — sem RETURNING (não existe no MySQL!) }
+      { INSERT — no RETURNING (does not exist in MySQL!) }
       LQuery.SQL.Text :=
-        'INSERT INTO customers (name, cpf, email, status, notes, metadata) ' +
+        'INSERT INTO customers (name, cpf, email, status, notes, metadata)' +
         'VALUES (:name, :cpf, :email, :status, :notes, :metadata)';
       LQuery.ParamByName('name').AsString := ACustomer.Name;
       LQuery.ParamByName('cpf').AsString := ACustomer.Cpf;
-      LQuery.ParamByName('email').AsString := ACustomer.Email;
+      LQuery.ParamByName('e-mail').AsString := ACustomer.Email;
       LQuery.ParamByName('status').AsSmallInt := Ord(ACustomer.Status);
       LQuery.ParamByName('notes').AsString := ACustomer.Notes;
       LQuery.ParamByName('metadata').AsString := ACustomer.Metadata;
       LQuery.ExecSQL;
 
-      { Obter ID gerado via LAST_INSERT_ID() }
+      { Get generated ID via LAST_INSERT_ID() }
       LQuery.SQL.Text := 'SELECT LAST_INSERT_ID() AS new_id';
       LQuery.Open;
       ACustomer.Id := LQuery.FieldByName('new_id').AsInteger;
@@ -341,22 +341,22 @@ var
   LQuery: TFDQuery;
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
 
   LQuery := TFDQuery.Create(nil);
   try
     try
       LQuery.Connection := FConnection;
-      { updated_at é atualizado automaticamente via ON UPDATE CURRENT_TIMESTAMP }
+      { updated_at is updated automatically via ON UPDATE CURRENT_TIMESTAMP }
       LQuery.SQL.Text :=
-        'UPDATE customers SET ' +
-        '  name = :name, cpf = :cpf, email = :email, ' +
-        '  status = :status, notes = :notes, metadata = :metadata ' +
+        'UPDATE customers SET' +
+        '  name = :name, cpf = :cpf, email = :email,' +
+        '  status = :status, notes = :notes, metadata = :metadata' +
         'WHERE id = :id';
       LQuery.ParamByName('id').AsInteger := ACustomer.Id;
       LQuery.ParamByName('name').AsString := ACustomer.Name;
       LQuery.ParamByName('cpf').AsString := ACustomer.Cpf;
-      LQuery.ParamByName('email').AsString := ACustomer.Email;
+      LQuery.ParamByName('e-mail').AsString := ACustomer.Email;
       LQuery.ParamByName('status').AsSmallInt := Ord(ACustomer.Status);
       LQuery.ParamByName('notes').AsString := ACustomer.Notes;
       LQuery.ParamByName('metadata').AsString := ACustomer.Metadata;
@@ -371,38 +371,38 @@ begin
 end;
 
 /// <summary>
-///   Insere ou atualiza com base no CPF (UPSERT).
-///   Usa INSERT ... ON DUPLICATE KEY UPDATE — recurso nativo do MySQL.
+/// Insert or update based on CPF (UPSERT).
+/// Uses INSERT ... ON DUPLICATE KEY UPDATE — native MySQL feature.
 /// </summary>
 procedure TMySQLCustomerRepository.Upsert(ACustomer: TCustomer);
 var
   LQuery: TFDQuery;
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
 
   LQuery := TFDQuery.Create(nil);
   try
     try
       LQuery.Connection := FConnection;
       LQuery.SQL.Text :=
-        'INSERT INTO customers (name, cpf, email, status, notes, metadata) ' +
-        'VALUES (:name, :cpf, :email, :status, :notes, :metadata) ' +
-        'ON DUPLICATE KEY UPDATE ' +
-        '  name = VALUES(name), ' +
-        '  email = VALUES(email), ' +
-        '  status = VALUES(status), ' +
-        '  notes = VALUES(notes), ' +
+        'INSERT INTO customers (name, cpf, email, status, notes, metadata)' +
+        'VALUES (:name, :cpf, :email, :status, :notes, :metadata)' +
+        'ON DUPLICATE KEY UPDATE' +
+        '  name = VALUES(name),' +
+        '  email = VALUES(email),' +
+        '  status = VALUES(status),' +
+        '  notes = VALUES(notes),' +
         '  metadata = VALUES(metadata)';
       LQuery.ParamByName('name').AsString := ACustomer.Name;
       LQuery.ParamByName('cpf').AsString := ACustomer.Cpf;
-      LQuery.ParamByName('email').AsString := ACustomer.Email;
+      LQuery.ParamByName('e-mail').AsString := ACustomer.Email;
       LQuery.ParamByName('status').AsSmallInt := Ord(ACustomer.Status);
       LQuery.ParamByName('notes').AsString := ACustomer.Notes;
       LQuery.ParamByName('metadata').AsString := ACustomer.Metadata;
       LQuery.ExecSQL;
 
-      { Obter ID }
+      { Get ID }
       LQuery.SQL.Text := 'SELECT LAST_INSERT_ID() AS new_id';
       LQuery.Open;
       ACustomer.Id := LQuery.FieldByName('new_id').AsInteger;
@@ -436,7 +436,7 @@ begin
 end;
 
 /// <summary>
-///   Desativa cliente via CALL (MySQL Stored Procedure).
+/// Disables client via CALL (MySQL Stored Procedure).
 /// </summary>
 procedure TMySQLCustomerRepository.Deactivate(AId: Integer);
 var
@@ -473,7 +473,7 @@ begin
     Result.Params.UserName := AUserName;
     Result.Params.Password := APassword;
 
-    { utf8mb4 SEMPRE — utf8 do MySQL só tem 3 bytes! }
+    { utf8mb4 ALWAYS — MySQL's utf8 only has 3 bytes! }
     Result.Params.Values['CharacterSet'] := 'utf8mb4';
 
     Result.FormatOptions.StrsTrim2Len := True;
@@ -489,7 +489,7 @@ end;
 
 {
   ============================================================================
-  SQL de criação do schema usado neste exemplo:
+  SQL for creating the schema used in this example:
   ============================================================================
 
   CREATE TABLE IF NOT EXISTS customers (
@@ -518,3 +518,4 @@ end;
 }
 
 end.
+

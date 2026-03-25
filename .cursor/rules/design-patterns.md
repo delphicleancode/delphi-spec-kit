@@ -1,33 +1,33 @@
 ---
-description: "Design Patterns (GoF) em Delphi — Creational, Structural e Behavioral com Object Pascal"
+description: "Design Patterns (GoF) in Delphi — Creational, Structural and Behavioral with Object Pascal"
 globs: ["**/*.pas"]
 alwaysApply: false
 ---
 
-# Design Patterns GoF — Cursor Rules para Delphi
+# Design Patterns GoF — Cursor Rules for Delphi
 
-Use estas regras ao implementar padrões de projeto em Object Pascal / Delphi.
+Use these rules when implementing design patterns in Object Pascal/Delphi.
 
 ---
 
-## 🏗️ Padrões Criacionais (Creational)
+## 🏗️ Creational Patterns
 
 ### Factory Method
 
 ```pascal
-// Interface do produto
+//Product Interface
 IButton = interface
   ['{GUID}']
   procedure Render;
 end;
 
-// Creator abstrato
+//Abstract Creator
 TButtonFactory = class abstract
 public
   function CreateButton: IButton; virtual; abstract;
 end;
 
-// Implementações concretas
+//Concrete implementations
 TVCLButton = class(TInterfacedObject, IButton)
   procedure Render;
 end;
@@ -40,14 +40,14 @@ end;
 ### Abstract Factory
 
 ```pascal
-// Interface da fábrica abstrata
+//Abstract factory interface
 IUIFactory = interface
   ['{GUID}']
   function CreateButton: IButton;
   function CreateDialog: IDialog;
 end;
 
-// Fábricas concretas por plataforma
+//Concrete factories by platform
 TVCLFactory = class(TInterfacedObject, IUIFactory)
   function CreateButton: IButton;
   function CreateDialog: IDialog;
@@ -62,7 +62,7 @@ end;
 ### Singleton
 
 ```pascal
-// Singleton thread-safe em Delphi
+//Singleton thread-safe em Delphi
 TAppConfig = class
 private
   class var FInstance: TAppConfig;
@@ -81,12 +81,12 @@ begin
 end;
 ```
 
-> ⚠️ Para ambientes multi-thread use `TCriticalSection` ao criar a instância.
+> ⚠️ For multi-threaded environments use `TCriticalSection` when creating the instance.
 
 ### Builder
 
 ```pascal
-// Builder para construção de queries complexas
+//Builder for building complex queries
 TQueryBuilder = class
 private
   FSql: TStringBuilder;
@@ -101,7 +101,7 @@ public
   function Build: string;
 end;
 
-// Uso fluente (Fluent Interface)
+//Fluent use (Fluent Interface)
 var LSql: string;
 begin
   LSql := TQueryBuilder.Create
@@ -113,12 +113,12 @@ begin
 end;
 ```
 
-> ⚠️ Always `try..finally Builder.Free` para instâncias builder criadas manualmente.
+> ⚠️ Always `try..finally Builder.Free` for manually created builder instances.
 
 ### Prototype
 
 ```pascal
-// Clonable através de interface
+//Clonable via interface
 IClonable = interface
   ['{GUID}']
   function Clone: TObject;
@@ -144,17 +144,17 @@ end;
 
 ---
 
-## 🔧 Padrões Estruturais (Structural)
+## 🔧 Structural Patterns
 
 ### Adapter
 
 ```pascal
-// Sistema legado com interface incompatível
+//Legacy system with incompatible interface
 TOldPaymentGateway = class
   procedure ProcessarPagamento(AValor: Double; ACartao: string);
 end;
 
-// Interface nova esperada pelo domínio
+//New interface expected by the domain
 IPaymentGateway = interface
   ['{GUID}']
   procedure ProcessPayment(AAmount: Currency; const ACardToken: string);
@@ -178,7 +178,7 @@ end;
 ### Decorator
 
 ```pascal
-// Adiciona comportamento sem herança
+//Adds behavior without inheritance
 ILogger = interface
   ['{GUID}']
   procedure Log(const AMessage: string);
@@ -188,7 +188,7 @@ TConsoleLogger = class(TInterfacedObject, ILogger)
   procedure Log(const AMessage: string);
 end;
 
-// Decorator que adiciona timestamp
+//Decorator that adds timestamp
 TTimestampLoggerDecorator = class(TInterfacedObject, ILogger)
 private
   FInner: ILogger;
@@ -206,7 +206,7 @@ end;
 ### Facade
 
 ```pascal
-// Simplifica subsistema complexo de emissão de NF-e
+//Simplifies complex NF-e issuance subsystem
 TNFeFacade = class
 private
   FXmlBuilder: TNFeXmlBuilder;
@@ -216,7 +216,7 @@ private
 public
   constructor Create(ARepo: INFeRepository);
   destructor Destroy; override;
-  /// <summary>Emite NF-e ocultando toda a complexidade dos subsistemas.</summary>
+  ///<summary>Issues NF-e hiding all the complexity of the subsystems.</summary>
   procedure EmitirNFe(ANFe: TNFe);
 end;
 ```
@@ -224,7 +224,7 @@ end;
 ### Proxy
 
 ```pascal
-// Proxy de acesso controlado (autorização)
+//Controlled access proxy (authorization)
 ICustomerRepository = interface ... end;
 
 TSecureCustomerRepositoryProxy = class(TInterfacedObject, ICustomerRepository)
@@ -248,7 +248,7 @@ end;
 ### Composite
 
 ```pascal
-// Componente folha ou contêiner — trata uniformemente
+//Leaf or container component — treats evenly
 IMenuComponent = interface
   ['{GUID}']
   procedure Render;
@@ -260,7 +260,7 @@ TMenuItem = class(TInterfacedObject, IMenuComponent)   // Folha
   function GetLabel: string;
 end;
 
-TMenuGroup = class(TInterfacedObject, IMenuComponent)  // Contêiner
+TMenuGroup = class(TInterfacedObject, IMenuComponent)  //Container
 private
   FChildren: TList<IMenuComponent>;
 public
@@ -274,12 +274,12 @@ end;
 
 ---
 
-## 🎭 Padrões Comportamentais (Behavioral)
+## 🎭 Behavioral Patterns
 
 ### Strategy
 
 ```pascal
-// Varia o algoritmo de cálculo sem mudar o contexto
+//Vary the calculation algorithm without changing the context
 ITaxStrategy = interface
   ['{GUID}']
   function Calculate(ABaseValue: Currency): Currency;
@@ -296,7 +296,7 @@ TLucroPresumidoStrategy = class(TInterfacedObject, ITaxStrategy)
   function GetName: string;
 end;
 
-// Contexto que usa a strategy
+//Context using strategy
 TOrderCalculator = class
 private
   FTaxStrategy: ITaxStrategy;
@@ -309,7 +309,7 @@ end;
 ### Observer
 
 ```pascal
-// Notificação desacoplada de eventos de domínio
+//Decoupled notification of domain events
 IOrderObserver = interface
   ['{GUID}']
   procedure OnOrderPlaced(AOrder: TOrder);
@@ -326,20 +326,20 @@ public
   procedure Notify(AOrder: TOrder);
 end;
 
-// Observers concretos
+//Observers concretos
 TEmailNotifier = class(TInterfacedObject, IOrderObserver)
-  procedure OnOrderPlaced(AOrder: TOrder);  // envia e-mail
+  procedure OnOrderPlaced(AOrder: TOrder);  //send email
 end;
 
 TStockUpdater = class(TInterfacedObject, IOrderObserver)
-  procedure OnOrderPlaced(AOrder: TOrder);  // atualiza estoque
+  procedure OnOrderPlaced(AOrder: TOrder);  //updates stock
 end;
 ```
 
 ### Command
 
 ```pascal
-// Encapsula ações como objetos (undo/redo, filas)
+//Encapsulates actions as objects (undo/redo, queues)
 ICommand = interface
   ['{GUID}']
   procedure Execute;
@@ -357,7 +357,7 @@ public
   procedure Undo;
 end;
 
-// CommandBus / History
+//CommandBus / History
 TCommandHistory = class
 private
   FHistory: TStack<ICommand>;
@@ -370,16 +370,16 @@ end;
 ### Template Method
 
 ```pascal
-// Define o esqueleto do algoritmo — subclasses preenchem as lacunas
+//Defines the skeleton of the algorithm — subclasses fill in the gaps
 TReportGenerator = class abstract
 public
-  // Template Method: define a sequência
+  //Template Method: defines the sequence
   procedure GenerateReport(const AFilePath: string);
 protected
   procedure LoadData; virtual; abstract;
   procedure ProcessData; virtual; abstract;
   procedure WriteOutput(const AFilePath: string); virtual; abstract;
-  procedure SendNotification; virtual;  // hook com implementação padrão
+  procedure SendNotification; virtual;  //hook with default implementation
 end;
 
 procedure TReportGenerator.GenerateReport(const AFilePath: string);
@@ -401,7 +401,7 @@ end;
 ### Chain of Responsibility
 
 ```pascal
-// Passa a requisição pela cadeia até alguém tratar
+//Pass the request through the chain until someone handles it
 IRequestHandler = interface
   ['{GUID}']
   procedure SetNext(AHandler: IRequestHandler);
@@ -432,7 +432,7 @@ end;
 ### State
 
 ```pascal
-// Comportamento varia conforme o estado interno
+//Behavior varies depending on internal state
 IOrderState = interface
   ['{GUID}']
   procedure Confirm(AOrder: TOrder);
@@ -450,7 +450,7 @@ TOrder = class
 private
   FState: IOrderState;
 public
-  procedure Confirm;  // delega para FState.Confirm(Self)
+  procedure Confirm;  //delegation for FState.Confirm(Self)
   procedure Ship;
   procedure Cancel;
   procedure SetState(AState: IOrderState);
@@ -459,12 +459,12 @@ end;
 
 ---
 
-## ✅ Checklist — Design Patterns em Delphi
+## ✅ Checklist — Design Patterns in Delphi
 
-- [ ] Definir interface antes de implementar (`I` prefix)
-- [ ] Injetar dependências via construtor (nunca hardcoded)
-- [ ] Usar `TInterfacedObject` em todas as implementações de interface
-- [ ] Padrões Creational criam objetos — não misturar com lógica de negócio
-- [ ] Padrões Behavioral preferem interfaces a herança
-- [ ] Evitar `with`, variáveis globais e acoplamento direto em qualquer padrão
-- [ ] Cobrir cada padrão com testes DUnitX usando Fakes
+- [ ] Define interface before implementing (`I` prefix)
+- [ ] Inject dependencies via constructor (never hardcoded)
+- [ ] Use `TInterfacedObject` in all interface implementations
+- [ ] Creational patterns create objects — don't mix with business logic
+- [ ] Behavioral patterns prefer interfaces to inheritance
+- [ ] Avoid `with`, global variables and direct coupling in any pattern
+- [ ] Cover each pattern with DUnitX tests using Fakes

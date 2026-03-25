@@ -1,7 +1,7 @@
-/// <summary>
-///   Exemplo completo de Threading & Multi-Threading em Delphi.
-///   Demonstra: TThread, TTask, Synchronize/Queue, TCriticalSection,
-///   TInterlocked, TParallel.For, BackgroundWorker genérico, Producer-Consumer.
+﻿/// <summary>
+/// Complete example of Threading & Multi-Threading in Delphi.
+/// Demonstrates: TThread, TTask, Synchronize/Queue, TCriticalSection,
+/// TInterlocked, TParallel.For, Generic BackgroundWorker, Producer-Consumer.
 /// </summary>
 unit Example.Threading.Patterns;
 
@@ -16,13 +16,13 @@ uses
 
 type
   // =========================================================================
-  // Exceções de Domínio
+  // Domain Exceptions
   // =========================================================================
 
   EOperationCancelledException = class(Exception);
 
   // =========================================================================
-  // 1. Token de Cancelamento (thread-safe via TInterlocked)
+  // 1. Cancellation Token (thread-safe via TInterlocked)
   // =========================================================================
 
   ICancellationToken = interface
@@ -42,12 +42,12 @@ type
   end;
 
   // =========================================================================
-  // 2. Background Worker Genérico (TTask + Queue)
+  // 2. Generic Background Worker (TTask + Queue)
   // =========================================================================
 
   /// <summary>
-  ///   Executa trabalho pesado em background e retorna o resultado na main thread.
-  ///   Usa TTask.Run internamente — gerenciado pelo ThreadPool do sistema.
+  /// Performs heavy work in the background and returns the result on the main thread.
+  /// Uses TTask.Run internally — managed by the system ThreadPool.
   /// </summary>
   TBackgroundWorker<T> = class
   public
@@ -91,7 +91,7 @@ type
   end;
 
   // =========================================================================
-  // 5. Worker Thread com Fila (Producer-Consumer)
+  // 5. Worker Thread with Queue (Producer-Consumer)
   // =========================================================================
 
   TWorkItem = record
@@ -113,12 +113,12 @@ type
   end;
 
   // =========================================================================
-  // 6. Demonstração de Padrões de Threading
+  // 6. Threading Patterns Demonstration
   // =========================================================================
 
   TThreadingDemo = class
   public
-    { 1. Anonymous Thread simples }
+    { 1. Simple Anonymous Thread }
     class procedure DemoAnonymousThread;
 
     { 2. TTask.Run (PPL) }
@@ -130,13 +130,13 @@ type
     { 4. TFuture<T> }
     class procedure DemoFuture;
 
-    { 5. BackgroundWorker genérico }
+    { 5. Generic BackgroundWorker }
     class procedure DemoBackgroundWorker;
 
     { 6. Producer-Consumer }
     class procedure DemoProducerConsumer;
 
-    { 7. Múltiplas tasks com WaitForAll }
+    { 7. Multiple tasks with WaitForAll }
     class procedure DemoWaitForAll;
   end;
 
@@ -157,7 +157,7 @@ end;
 procedure TCancellationToken.ThrowIfCancelled;
 begin
   if IsCancelled then
-    raise EOperationCancelledException.Create('Operação cancelada pelo usuário');
+    raise EOperationCancelledException.Create('Operation canceled by user');
 end;
 
 { TBackgroundWorker<T> }
@@ -173,10 +173,10 @@ begin
       LResult: T;
     begin
       try
-        { Executar trabalho pesado em thread do pool }
+        { Execute heavy work in the thread pool }
         LResult := AWorkFunc();
 
-        { Retornar resultado na main thread }
+        { Return result on the main thread }
         TThread.Queue(nil,
           procedure
           begin
@@ -324,7 +324,7 @@ begin
       { Processar item }
       TInterlocked.Increment(FProcessedCount);
 
-      { Notificar via Queue (não-bloqueante) }
+      { Notify via Queue (non-blocking) }
       if Assigned(FOnItemProcessed) then
         TThread.Queue(nil,
           procedure
@@ -344,21 +344,21 @@ begin
     begin
       TThread.NameThreadForDebugging('AnonymousDemo');
       try
-        { Trabalho pesado em background }
+        { Heavy work in background }
         Sleep(2000);
 
-        { ✅ Atualizar UI via Queue }
+        { ✅ Update UI via Queue }
         TThread.Queue(nil,
           procedure
           begin
-            // lblStatus.Caption := 'Concluído!';
+            // lblStatus.Caption := 'Done!';
           end);
       except
         on E: Exception do
           TThread.Queue(nil,
             procedure
             begin
-              // ShowMessage('Erro: ' + E.Message);
+              // ShowMessage('Error: ' + E.Message);
             end);
       end;
     end).Start;
@@ -370,13 +370,13 @@ begin
     procedure
     begin
       TThread.NameThreadForDebugging('TaskRunDemo');
-      { Executado no ThreadPool gerenciado }
+      { Executed on the managed ThreadPool }
       Sleep(1000);
 
       TThread.Queue(nil,
         procedure
         begin
-          // lblStatus.Caption := 'Task concluída';
+          // lblStatus.Caption := 'Task completed';
         end);
     end);
 end;
@@ -390,12 +390,12 @@ begin
   TParallel.For(1, 100,
     procedure(AIndex: Integer)
     begin
-      { Cada iteração pode rodar em thread diferente }
-      { Proteger acesso a variáveis compartilhadas! }
+      { Each iteration can run on a different thread }
+      { Protect access to shared variables! }
       TInterlocked.Increment(LTotal);
     end);
 
-  { Aqui LTotal = 100 (TParallel.For é síncrono - bloqueia até acabar) }
+  { Here LTotal = 100 (TParallel.For is synchronous — blocks until done) }
 end;
 
 class procedure TThreadingDemo.DemoFuture;
@@ -412,10 +412,10 @@ begin
 
   LFuture.Start;
 
-  { Fazer outros trabalhos enquanto o future roda... }
+  { Do other work while the future runs... }
 
-  { .Value bloqueia até o resultado estar disponível }
-  // ShowMessage('Resultado: ' + LFuture.Value.ToString);
+  { .Value blocks until the result is available }
+  // ShowMessage('Result:' + LFuture.Value.ToString);
 end;
 
 class procedure TThreadingDemo.DemoBackgroundWorker;
@@ -423,19 +423,19 @@ begin
   TBackgroundWorker<Integer>.Execute(
     function: Integer
     begin
-      { Trabalho pesado em background }
+      { Heavy work in background }
       Sleep(3000);
       Result := 42;
     end,
     procedure(AResult: Integer)
     begin
-      { Sucesso - executado na main thread }
-      // ShowMessage('Resultado: ' + AResult.ToString);
+      { Success — executed on the main thread }
+      // ShowMessage('Result:' + AResult.ToString);
     end,
     procedure(AErrorMsg: string)
     begin
-      { Erro - executado na main thread }
-      // ShowMessage('Erro: ' + AErrorMsg);
+      { Error — executed on the main thread }
+      // ShowMessage('Error: ' + AErrorMsg);
     end);
 end;
 
@@ -452,7 +452,7 @@ begin
     try
       LWorker.Start;
 
-      { Produzir 10 itens }
+      { Produce 10 items }
       for I := 1 to 10 do
       begin
         LItem.Id := I;
@@ -460,10 +460,10 @@ begin
         LQueue.PushItem(LItem);
       end;
 
-      { Aguardar processamento }
+      { Wait for processing }
       Sleep(2000);
 
-      { Parar worker }
+      { Stop worker }
       LWorker.Terminate;
       LWorker.WaitFor;
     finally
@@ -503,8 +503,9 @@ begin
   LTask2.Start;
   LTask3.Start;
 
-  { Aguardar todas (timeout 10s) }
+  { Wait for all (10s timeout) }
   TTask.WaitForAll([LTask1, LTask2, LTask3], 10000);
 end;
 
 end.
+

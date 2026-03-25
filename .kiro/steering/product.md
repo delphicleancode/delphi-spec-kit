@@ -1,21 +1,21 @@
-# Produto — Delphi Spec-Kit
+# Product — Delphi Spec-Kit
 
-## Propósito
+## Purpose
 
-Este spec-kit fornece as regras, convenções e padrões para desenvolvimento de aplicações **Delphi (Object Pascal)** com auxílio de assistentes de IA. Ele garante que todo código gerado siga:
+This spec-kit provides the rules, conventions and standards for developing **Delphi (Object Pascal)** applications with the help of AI wizards. It ensures that all generated code follows:
 
-- **Object Pascal Style Guide** (PascalCase, prefixos obrigatórios)
-- **Princípios SOLID** (SRP, OCP, LSP, ISP, DIP)
-- **Clean Code** (métodos curtos, nomes descritivos, guard clauses)
-- **Arquitetura em Camadas** (Domain, Application, Infrastructure, Presentation)
+- **Object Pascal Style Guide** (PascalCase, prefixes required)
+- **SOLID Principles** (SRP, OCP, LSP, ISP, DIP)
+- **Clean Code** (short methods, descriptive names, guard clauses)
+- **Layered Architecture** (Domain, Application, Infrastructure, Presentation)
 
-## Público-Alvo
+## Target Audience
 
-- Desenvolvedores Delphi que utilizam IA para acelerar o desenvolvimento
-- Equipes que desejam manter consistência de código em projetos compartilhados
-- Instrutores e palestrantes demonstrando boas práticas Delphi com IA
+- Delphi developers using AI to accelerate development
+- Teams that want to maintain code consistency across shared projects
+- Instructors and speakers demonstrating Delphi best practices with AI
 
-## Referências
+## References
 
-- `AGENTS.md` na raiz do projeto contém a referência completa de todas as regras
-- Exemplos de código em `examples/` demonstram os padrões aplicados
+- `AGENTS.md` in the project root contains the complete reference of all rules
+- Code examples in `examples/` demonstrate the applied patterns

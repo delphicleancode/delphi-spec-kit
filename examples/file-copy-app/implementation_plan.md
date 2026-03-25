@@ -1,39 +1,39 @@
-# Aplicação Delphi para Copiar Arquivos
+# Delphi Application to Copy Files
 
-Criar uma aplicação VCL simples para copiar arquivos de uma pasta para outra, seguindo as convenções do Delphi AI Spec-Kit.
+Create a simple VCL application to copy files from one folder to another, following Delphi AI Spec-Kit conventions.
 
 ## Proposed Changes
 
-### Projeto FileCopy
+### FileCopy Project
 
-Todos os arquivos serão criados em `examples/file-copy-app/`.
+All files will be created in `examples/file-copy-app/`.
 
 #### [NEW] [FileCopy.dpr](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.dpr)
-Arquivo de projeto Delphi.
+Delphi project file.
 
 #### [NEW] [FileCopy.Main.View.pas](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.Main.View.pas)
-Form principal com:
-- `TEdit` + `TButton` para selecionar pasta de origem (com `TFileOpenDialog`)
-- `TEdit` + `TButton` para selecionar pasta de destino
-- `TListBox` para exibir os arquivos da pasta de origem
-- `TButton` para copiar todos os arquivos
-- `TProgressBar` para indicar progresso da cópia
-- `TStatusBar` para mensagens de status
+Main form with:
+- `TEdit` + `TButton` to select source folder (with `TFileOpenDialog`)
+- `TEdit` + `TButton` to select destination folder
+- `TListBox` to display files from the source folder
+- `TButton` to copy all files
+- `TProgressBar` to indicate copy progress
+- `TStatusBar` for status messages
 
 #### [NEW] [FileCopy.Main.View.dfm](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.Main.View.dfm)
-Definição visual do form (layout organizado com painéis).
+Visual definition of the form (layout organized with panels).
 
 #### [NEW] [FileCopy.Service.Copier.pas](file:///c:/i9/Palestras/ACBr/delphi-spec-kit/examples/file-copy-app/FileCopy.Service.Copier.pas)
-Service isolado com a lógica de cópia, separando da UI (SRP):
+Service isolated with copy logic, separating from the UI (SRP):
 - `IFileCopierService` — interface
-- `TFileCopierService` — implementação usando `TFile.Copy`
-- Callback `TOnFileCopied` para reportar progresso
+- `TFileCopierService` — implementation using `TFile.Copy`
+- Callback `TOnFileCopied` to report progress
 
 ## Verification Plan
 
 ### Manual Verification
-1. Abrir `FileCopy.dpr` no RAD Studio
-2. Compilar e executar (F9)
-3. Selecionar uma pasta de origem com arquivos
-4. Selecionar uma pasta de destino
-5. Clicar em "Copiar" e verificar que os arquivos são copiados e o progresso é exibido
+1. Open `FileCopy.dpr` in RAD Studio
+2. Compile and Run (F9)
+3. Select a source folder with files
+4. Select a destination folder
+5. Click "Copy" and check that the files are copied and the progress is displayed

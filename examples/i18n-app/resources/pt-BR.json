@@ -1,4 +1,4 @@
-{
+﻿{
   "app.title": "Sistema de Vendas Internacional",
   "menu.file": "Arquivo",
   "menu.file.exit": "Sair",
@@ -42,3 +42,4 @@
   "sale.btn.save": "Salvar Venda",
   "sale.btn.delete": "Cancelar"
 }
+

@@ -1,49 +1,49 @@
 ---
 name: "DevExpress/DEXT Components"
-description: "Padrões para uso de componentes DevExpress (DEXT) em aplicações Delphi VCL"
+description: "Standards for using DevExpress (DEXT) components in Delphi VCL applications"
 ---
 
 # DevExpress (DEXT) Components — Skill
 
-Use esta skill ao desenvolver interfaces ricas com componentes **DevExpress** (DEXT) para Delphi VCL.
+Use this skill when developing rich interfaces with **DevExpress** (DEXT) components for Delphi VCL.
 
-## Quando Usar
+## When to Use
 
-- Ao criar grids avançados com `TcxGrid`
-- Ao usar `TcxDBTreeList` para estruturas hierárquicas
-- Ao implementar layout managers (`TdxLayoutControl`)
-- Ao customizar skins e themes
+- When creating advanced grids with `TcxGrid`
+- When using `TcxDBTreeList` for hierarchical structures
+- When implementing layout managers (`TdxLayoutControl`)
+- When customizing skins and themes
 
-## Componentes Principais
+## Main Components
 
-| Componente | Uso | Prefixo |
+| Component | Usage | Prefix |
 |-----------|-----|---------|
-| `TcxGrid` | Grid avançado com agrupamento, filtros, sumários | `grd` |
-| `TcxGridDBTableView` | View tabular data-aware | `tvw` |
-| `TcxGridDBBandedTableView` | View com bandas/colunas agrupadas | `btvw` |
-| `TcxGridDBCardView` | View de cards | `cvw` |
+| `TcxGrid` | Advanced grid with grouping, filters, summaries | `grd` |
+| `TcxGridDBTableView` | Data-aware tabular view | `tvw` |
+| `TcxGridDBBandedTableView` | View with grouped bands/columns | `btvw` |
+| `TcxGridDBCardView` | Card view | `cvw` |
 | `TcxDBTreeList` | TreeList data-aware | `trl` |
-| `TdxLayoutControl` | Layout manager responsivo | `lyt` |
+| `TdxLayoutControl` | Responsive layout manager | `lyt` |
 | `TdxLayoutGroup` | Grupo dentro de layout | `lgrp` |
-| `TdxLayoutItem` | Item dentro de layout | `litm` |
+| `TdxLayoutItem` | Item within layout | `litm` |
 | `TcxDBTextEdit` | Edit text data-aware | `edt` |
 | `TcxDBComboBox` | ComboBox data-aware | `cmb` |
 | `TcxDBDateEdit` | Date picker data-aware | `dte` |
-| `TcxDBCurrencyEdit` | Editor monetário data-aware | `cur` |
+| `TcxDBCurrencyEdit` | Data-aware currency editor | `cur` |
 | `TcxDBCheckBox` | Checkbox data-aware | `chk` |
 | `TcxDBLookupComboBox` | Lookup combo data-aware | `lcb` |
 | `TcxDBMemo` | Memo data-aware | `mmo` |
-| `TdxBarManager` | Barra de ferramentas/ribbon | `bar` |
+| `TdxBarManager` | Toolbar/ribbon | `bar` |
 | `TdxRibbon` | Ribbon UI | `rbn` |
-| `TdxNavBar` | Barra de navegação | `nav` |
-| `TdxSkinController` | Controller de skins | `skn` |
-| `TcxPageControl` | PageControl avançado | `pgc` |
-| `TcxGroupBox` | GroupBox estilizado | `grp` |
+| `TdxNavBar` | Navigation Bar | `nav` |
+| `TdxSkinController` | Skin controller | `skn` |
+| `TcxPageControl` | Advanced PageControl | `pgc` |
+| `TcxGroupBox` | Styled GroupBox | `grp` |
 
-## Configuração de TcxGrid
+## TcxGrid Configuration
 
 ```pascal
-// Criação programática de colunas
+//Programmatic column creation
 procedure TfrmCustomerList.ConfigureGrid;
 var
   LView: TcxGridDBTableView;
@@ -51,18 +51,18 @@ begin
   LView := grdCustomers.Views[0] as TcxGridDBTableView;
   LView.DataController.DataSource := dsCustomers;
 
-  // Configurar comportamento
-  LView.OptionsData.Editing := False;        // Somente leitura
+  //Configure behavior
+  LView.OptionsData.Editing := False;        //Read only
   LView.OptionsData.Deleting := False;
   LView.OptionsData.Inserting := False;
-  LView.OptionsView.GroupByBox := True;       // Agrupamento visual
-  LView.OptionsView.Footer := True;          // Rodapé com sumários
-  LView.OptionsView.Indicator := True;       // Indicador de linha
+  LView.OptionsView.GroupByBox := True;       //Visual grouping
+  LView.OptionsView.Footer := True;          //Footer with summaries
+  LView.OptionsView.Indicator := True;       //Line indicator
   LView.OptionsCustomize.ColumnFiltering := True;
   LView.OptionsCustomize.ColumnSorting := True;
   LView.OptionsSelection.MultiSelect := True;
 
-  // Configurar colunas individualmente
+  //Configure columns individually
   ConfigureColumn(LView.GetColumnByFieldName('name'), 'Nome', 200);
   ConfigureColumn(LView.GetColumnByFieldName('cpf'), 'CPF', 120);
   ConfigureColumn(LView.GetColumnByFieldName('email'), 'E-mail', 250);
@@ -78,10 +78,10 @@ begin
 end;
 ```
 
-## Sumários no Grid
+## Summaries in the Grid
 
 ```pascal
-// Sumário no Footer
+//Footer Summary
 procedure ConfigureFooterSummary(AView: TcxGridDBTableView);
 var
   LSummary: TcxGridDBTableSummaryItem;
@@ -104,25 +104,25 @@ begin
 end;
 ```
 
-## TdxLayoutControl (Layout Responsivo)
+## TdxLayoutControl (Responsive Layout)
 
 ```pascal
-// Organização de formulário com LayoutControl
-// Vantagens: responsivo, reposiciona automaticamente, visual consistente
+//Form organization with LayoutControl
+//Advantages: responsive, automatically repositions, consistent look
 
 procedure TfrmCustomerEdit.ConfigureLayout;
 begin
   lytMain.BeginUpdate;
   try
-    // Grupo de dados pessoais
+    //Personal data group
     lgrpPersonal.Caption := 'Dados Pessoais';
     lgrpPersonal.LayoutDirection := ldHorizontal;
 
-    // Grupo de endereço
+    //Address group
     lgrpAddress.Caption := 'Endereço';
     lgrpAddress.LayoutDirection := ldHorizontal;
 
-    // Configurar itens
+    //Configure items
     litmName.Control := edtName;
     litmName.CaptionOptions.Text := 'Nome:';
     litmName.CaptionOptions.Width := 80;
@@ -132,33 +132,33 @@ begin
 end;
 ```
 
-## Skinning / Temas
+## Skinning / Themes
 
 ```pascal
-// Aplicar skin globalmente
+//Apply skin globally
 uses
   dxSkinsCore,
-  dxSkinOffice2019Colorful;  // Skin específico
+  dxSkinOffice2019Colorful;  //Specific skin
 
 procedure TfrmMain.ApplySkin;
 begin
-  // Via SkinController (recomendado)
+  //Via SkinController (recommended)
   sknController.NativeStyle := False;
   sknController.SkinName := 'Office2019Colorful';
 
-  // OU programaticamente
+  //OR programmatically
   cxLookAndFeelController.NativeStyle := False;
   cxLookAndFeelController.SkinName := 'Office2019Colorful';
 end;
 
-// Skins populares: 'Office2019Colorful', 'WXI', 'Metropolis',
-// 'MetropolisDark', 'TheBezier', 'Fluent', 'Office2019DarkGray'
+//Skins populares: 'Office2019Colorful', 'WXI', 'Metropolis',
+//'MetropolisDark', 'TheBezier', 'Fluent', 'Office2019DarkGray'
 ```
 
-## Filtros no Grid
+## Filters in the Grid
 
 ```pascal
-// Filtro programático
+//Programmatic filter
 procedure TfrmCustomerList.ApplyFilter(const AField, AValue: string);
 var
   LView: TcxGridDBTableView;
@@ -174,7 +174,7 @@ begin
   LView.DataController.Filter.Active := True;
 end;
 
-// Limpar filtro
+//Clean filter
 procedure TfrmCustomerList.ClearFilter;
 begin
   (grdCustomers.Views[0] as TcxGridDBTableView)
@@ -182,25 +182,25 @@ begin
 end;
 ```
 
-## Exportação de Grid
+## Grid Export
 
 ```pascal
 uses
   cxGridExportLink;
 
-// Exportar para Excel
+//Export to Excel
 procedure TfrmCustomerList.ExportToExcel;
 begin
   cxGridExportLink.ExportGridToXLSX(
     'customers.xlsx',
     grdCustomers,
     False,   // AExpand
-    True,    // AUseNativeFormat
-    True     // AShowProgress
+    True,    //AUseNativeFormat
+    True     //AShowProgress
   );
 end;
 
-// Exportar para PDF
+//Export to PDF
 procedure TfrmCustomerList.ExportToPDF;
 begin
   cxGridExportLink.ExportGridToPDF(
@@ -210,25 +210,25 @@ begin
 end;
 ```
 
-## Convenções DEXT
+## DEXT Conventions
 
-| Aspecto | Convenção |
+| Appearance | Convention |
 |---------|-----------|
-| **Prefixos** | Seguir tabela acima (`grd`, `tvw`, `lyt`, etc.) |
-| **Skins** | Usar `TdxSkinController` no form principal |
-| **Layout** | Preferir `TdxLayoutControl` a posicionamento manual |
-| **Grid** | Configurar no `FormCreate`, nunca no design-time para colunas dinâmicas |
-| **Filtros** | Usar `DataController.Filter` — não filtrar via SQL quando possível |
-| **Sumários** | Configurar `FooterSummaryItems` ao invés de calcular manualmente |
-| **Exports** | Usar `cxGridExportLink` — não reimplementar exportação |
+| **Prefixes** | Follow the table above (`grd`, `tvw`, `lyt`, etc.) |
+| **Skins** | Use `TdxSkinController` in the main form |
+| **Layout** | Prefer `TdxLayoutControl` to manual positioning |
+| **Grid** | Configure at `FormCreate`, never at design-time for dynamic columns |
+| **Filters** | Use `DataController.Filter` — do not filter via SQL when possible |
+| **Summaries** | Configure `FooterSummaryItems` instead of calculating manually |
+| **Exports** | Use `cxGridExportLink` — do not redeploy export |
 
-## Checklist para Projetos DEXT
+## Checklist for DEXT Projects
 
-- [ ] `TdxSkinController` configurado no form principal?
-- [ ] Grids configurados com `OptionsData` (read-only quando apropriado)?
-- [ ] Sumários de footer configurados com formatos BR (`R$ #,##0.00`)?
-- [ ] `TdxLayoutControl` usado para formulários de edição?
-- [ ] Colunas do grid com `Caption`, `Width` e `Alignment`?
-- [ ] Filtros usando `DataController.Filter` (não SQL)?
-- [ ] Exportação via `cxGridExportLink`?
-- [ ] Prefixos de componentes seguindo a tabela padrão?
+- [ ] `TdxSkinController` configured in the main form?
+- [ ] Grids configured with `OptionsData` (read-only when appropriate)?
+- [ ] Footer summaries configured with BR formats (`R$ #,##0.00`)?
+- [ ] `TdxLayoutControl` used for editing forms?
+- [ ] Grid columns with `Caption`, `Width` and `Alignment`?
+- [ ] Filters using `DataController.Filter` (not SQL)?
+- [ ] Export via `cxGridExportLink`?
+- [ ] Component prefixes following the standard table?

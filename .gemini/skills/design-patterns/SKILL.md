@@ -1,30 +1,30 @@
 ---
 name: "Design Patterns GoF — Delphi"
-description: "Implementação dos 23 padrões GoF (Gang of Four) em Object Pascal / Delphi com interfaces, TInterfacedObject e princípios SOLID. Cobre Creational, Structural e Behavioral patterns."
+description: "Implementation of the 23 GoF (Gang of Four) patterns in Object Pascal / Delphi with interfaces, TInterfacedObject and SOLID principles. Covers Creational, Structural and Behavioral patterns."
 ---
 
-# Design Patterns GoF em Delphi — Skill
+# Design Patterns GoF in Delphi — Skill
 
-Use esta skill quando o usuário solicitar implementação de padrões de projeto (Design Patterns) em Delphi. Aplique sempre junto com as convenções de nomenclatura (T/I/E/F/A/L) e gerenciamento de memória (try..finally).
+Use this skill when the user requests implementation of design patterns in Delphi. Always apply together with naming conventions (T/I/E/F/A/L) and memory management (try..finally).
 
-## Quando Usar
+## When to Use
 
-- Criar `Factory`, `Abstract Factory` ou `Builder` para criação de objetos complexos
-- Implementar `Strategy` para variar algoritmos (cálculo de frete, impostos, exportação)
-- Usar `Observer` para notificações desacopladas (Domain Events)
-- Aplicar `Command` para undo/redo, filas de tarefas ou auditoria
-- Usar `Decorator` para adicionar responsabilidades sem herança
-- Implementar `Adapter` para integração com sistemas legados
-- Usar `Facade` para simplificar subsistemas complexos (ex: emissão NFe)
-- Aplicar `Template Method` para algoritmos com variações (relatórios, exportações)
-- Usar `State` para comportamento que muda conforme o estado do objeto
-- Usar `Chain of Responsibility` para pipelines de validação ou processamento
+- Create `Factory`, `Abstract Factory` or `Builder` for creating complex objects
+- Implement `Strategy` to vary algorithms (calculation of freight, taxes, export)
+- Use `Observer` for decoupled notifications (Domain Events)
+- Apply `Command` for undo/redo, job queues or auditing
+- Use `Decorator` to add responsibilities without inheritance
+- Implement `Adapter` for integration with legacy systems
+- Use `Facade` to simplify complex subsystems (e.g. NFe emission)
+- Apply `Template Method` to algorithms with variations (reports, exports)
+- Use `State` for behavior that changes depending on the state of the object
+- Use `Chain of Responsibility` for validation or processing pipelines
 
 ---
 
-## 🏗️ Padrões Criacionais (Creational)
+## 🏗️ Creational Patterns
 
-### Singleton — Configuração Global
+### Singleton — Global Configuration
 
 ```pascal
 unit MeuApp.Infra.AppConfig;
@@ -71,7 +71,7 @@ finalization
 end.
 ```
 
-### Factory Method — Criação com Polimorfismo
+### Factory Method — Creation with Polymorphism
 
 ```pascal
 unit MeuApp.Domain.Report.Factory;
@@ -114,7 +114,7 @@ begin
 end;
 ```
 
-### Abstract Factory — Família de Objetos Relacionados
+### Abstract Factory — Family of Related Objects
 
 ```pascal
 unit MeuApp.Infra.UI.Factory;
@@ -147,7 +147,7 @@ type
   end;
 ```
 
-### Builder — Construção Passo a Passo
+### Builder — Step by Step Construction
 
 ```pascal
 unit MeuApp.Infra.Query.Builder;
@@ -251,9 +251,9 @@ end;
 
 ---
 
-## 🔧 Padrões Estruturais (Structural)
+## 🔧 Structural Patterns
 
-### Adapter — Integração com Legado
+### Adapter — Legacy Integration
 
 ```pascal
 unit MeuApp.Infra.Payment.Adapter;
@@ -261,7 +261,7 @@ unit MeuApp.Infra.Payment.Adapter;
 interface
 
 type
-  // Sistema legado — não pode ser alterado
+  // Sistema legado — not pode ser alterado
   TLegacyPaymentGateway = class
     procedure ProcessarPagamento(AValor: Double; ACodigoCartao: string);
   end;
@@ -304,7 +304,7 @@ begin
 end;
 ```
 
-### Decorator — Extensão sem Herança
+### Decorator — Extension without Inheritance
 
 ```pascal
 unit MeuApp.Infra.Logger.Decorators;
@@ -359,7 +359,7 @@ begin
 end;
 ```
 
-### Facade — Simplificando Subsistemas
+### Facade — Simplifying Subsystems
 
 ```pascal
 unit MeuApp.Application.NFe.Facade;
@@ -373,7 +373,7 @@ uses
 type
   /// <summary>
   ///   Fachada que simplifica o processo completo de emissão de NF-e,
-  ///   ocultando XML, assinatura digital e comunicação com SEFAZ.
+  ///   ocultando XML, assinatura digital e comunicaction com SEFAZ.
   /// </summary>
   TNFeFacade = class
   private
@@ -395,7 +395,7 @@ type
   end;
 ```
 
-### Proxy — Controlo de Acesso
+### Proxy — Access Control
 
 ```pascal
 unit MeuApp.Infra.Customer.Repository.Proxy;
@@ -409,7 +409,7 @@ uses
 
 type
   /// <summary>
-  ///   Proxy de segurança que verifica permissões antes de delegar ao repositório real.
+  ///   Proxy de segurança que verifica permissões before de delegar ao repositório real.
   /// </summary>
   TSecureCustomerRepositoryProxy = class(TInterfacedObject, ICustomerRepository)
   private
@@ -443,9 +443,9 @@ end;
 
 ---
 
-## 🎭 Padrões Comportamentais (Behavioral)
+## 🎭 Behavioral Patterns
 
-### Strategy — Variação de Algoritmos
+### Strategy — Variation of Algorithms
 
 ```pascal
 unit MeuApp.Domain.Tax.Strategies;
@@ -504,7 +504,7 @@ begin
 end;
 ```
 
-### Observer — Eventos de Domínio
+### Observer — Domain Events
 
 ```pascal
 unit MeuApp.Domain.Order.Events;
@@ -536,7 +536,7 @@ type
 
   // Observers concretos
   TEmailOrderNotifier = class(TInterfacedObject, IOrderEventObserver)
-    procedure OnOrderPlaced(AOrder: TOrder);    // envia confirmação por e-mail
+    procedure OnOrderPlaced(AOrder: TOrder);    // envia confirmaction por e-mail
     procedure OnOrderCancelled(AOrder: TOrder); // envia aviso de cancelamento
   end;
 
@@ -568,7 +568,7 @@ begin
 end;
 ```
 
-### Command — Ações Encapsuláveis
+### Command — Wrapping Actions
 
 ```pascal
 unit MeuApp.Application.Commands;
@@ -628,7 +628,7 @@ type
   end;
 ```
 
-### Template Method — Esqueleto de Algoritmo
+### Template Method — Algorithm Skeleton
 
 ```pascal
 unit MeuApp.Application.Report.Generator;
@@ -643,20 +643,20 @@ type
   end;
 
   /// <summary>
-  ///   Base abstrata que define o esqueleto do algoritmo de geração de relatório.
+  ///   Base abstrata que define o esqueleto do algoritmo de geraction de relatório.
   ///   Subclasses implementam os passos variáveis.
   /// </summary>
   TReportGenerator = class abstract
   protected
     FData: TReportData;
     procedure LoadData; virtual; abstract;
-    procedure ValidateData; virtual;           // hook com implementação padrão
+    procedure ValidateData; virtual;           // hook com implementaction default
     procedure ProcessData; virtual; abstract;
     procedure FormatOutput; virtual; abstract;
     procedure SaveOutput(const APath: string); virtual; abstract;
-    procedure SendNotification; virtual;       // hook opcional — padrão: noop
+    procedure SendNotification; virtual;       // hook opcional — default: noop
   public
-    // Template Method — não pode ser sobrescrito (final)
+    // Template Method — not pode ser sobrescrito (final)
     procedure Generate(AData: TReportData; const ASavePath: string);
   end;
 
@@ -692,11 +692,11 @@ end;
 
 procedure TReportGenerator.SendNotification;
 begin
-  // Hook padrão: vazio. Subclasses podem sobrescrever para enviar e-mail etc.
+  // Hook default: vazio. Subclasses podem sobrescrever para enviar e-mail etc.
 end;
 ```
 
-### Chain of Responsibility — Pipeline de Validação
+### Chain of Responsibility — Validation Pipeline
 
 ```pascal
 unit MeuApp.Application.Validation.Chain;
@@ -761,7 +761,7 @@ begin
 end;
 ```
 
-### State — Comportamento por Estado
+### State — Behavior by State
 
 ```pascal
 unit MeuApp.Domain.Order.States;
@@ -832,32 +832,32 @@ end;
 
 ---
 
-## 📌 Guia de Escolha do Padrão Correto
+## 📌 Guide to Choosing the Right Pattern
 
-| Necessidade | Padrão |
+| Need | Standard |
 |---|---|
-| Criar objetos com variação de tipo | Factory Method / Abstract Factory |
-| Criar objetos complexos passo a passo | Builder |
-| Garantir instância única global | Singleton |
-| Copiar objetos | Prototype |
-| Adaptar interface incompatível | Adapter |
-| Adicionar responsabilidades dinamicamente | Decorator |
-| Simplificar sistema complexo | Facade |
-| Controlar acesso a um objeto | Proxy |
-| Compor objetos em estrutura de árvore | Composite |
-| Variar algoritmo sem mudar o contexto | Strategy |
-| Notificar múltiplos objetos sobre mudanças | Observer |
-| Encapsular ações com undo/redo | Command |
-| Algoritmo com variações | Template Method |
-| Passar requisição por cadeia de handlers | Chain of Responsibility |
-| Comportamento que muda com o estado | State |
+| Create objects with type variation | Factory Method / Abstract Factory |
+| Create complex objects step by step | Builder |
+| Ensure Global Single Instance | Singleton |
+| Copy objects | Prototype |
+| Adapt incompatible interface | Adapter |
+| Add responsibilities dynamically | Decorator |
+| Simplify complex system | Facade |
+| Control access to an object | Proxy |
+| Compose objects in tree structure | Composite |
+| Vary algorithm without changing context | Strategy |
+| Notify multiple objects about changes | Observer |
+| Encapsulate actions with undo/redo | Command |
+| Algorithm with variations | Template Method |
+| Pass request through handler chain | Chain of Responsibility |
+| Behavior that changes with the state | State |
 
-## ✅ Checklist Final
+## ✅ Final Checklist
 
-- [ ] Toda dependência injetada via construtor (DIP)
-- [ ] Toda implementação de interface usa `TInterfacedObject` (ARC)
-- [ ] Nenhum `.Create` sem `try..finally` (exceto em interfaces ARC)
-- [ ] Cada classe tem uma única responsabilidade (SRP)
-- [ ] Testes DUnitX cobrem cada padrão com Fakes/Stubs
-- [ ] XMLDoc em português nos métodos públicos
-- [ ] Prefixos: `T` classe, `I` interface, `E` exception, `F` field, `A` param, `L` local
+- [ ] All dependencies injected via constructor (DIP)
+- [ ] Every interface implementation uses `TInterfacedObject` (ARC)
+- [ ] No `.Create` without `try..finally` (except on ARC interfaces)
+- [ ] Each class has a single responsibility (SRP)
+- [ ] DUnitX tests cover each pattern with Fakes/Stubs
+- [ ] XMLDoc in Portuguese in public methods
+- [ ] Prefixes: `T` class, `I` interface, `E` exception, `F` field, `A` param, `L` location

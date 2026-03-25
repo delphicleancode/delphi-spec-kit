@@ -1,30 +1,30 @@
 ---
-description: Boas práticas de gerenciamento de memória, prevenção de memory leaks e tratamento de exceções em Delphi
+description: Good memory management practices, memory leak prevention and exception handling in Delphi
 ---
 
-# 🧠 Gerenciamento de Memória e Exceções em Delphi
+# 🧠 Memory and Exceptions Management in Delphi
 
 ## Contexto
 
-Delphi possui um **gerenciamento de memória manual** para instâncias de classes (não derivadas de interfaces) e usa **ARC (Automatic Reference Counting)** apenas para interfaces (`IInterface`), Strings, Arrays Dinâmicos e tipos anônimos. Tratamento pobre de exceções e esquecimento da liberação da memória resultam em **Memory Leaks** crônicos, falhas catastróficas em produção e instabilidade sistêmica.
+Delphi has **manual memory management** for class instances (not derived from interfaces) and uses **ARC (Automatic Reference Counting)** only for interfaces (`IInterface`), Strings, Dynamic Arrays and anonymous types. Poor exception handling and forgetting to release memory result in chronic **Memory Leaks**, catastrophic production failures and systemic instability.
 
-Como a IA, você deve proativamente garantir que todo objeto criado seja liberado independentemente de fluxos de erro.
+Like AI, you must proactively ensure that every object you create is freed regardless of error streams.
 
-## Objetivos desta Skill
+## Objectives of this Skill
 
-- Ensinar como gerar blocos seguros de `try..finally`.
-- Prevenir Memory Leaks orientando sobre `Free` e `FreeAndNil`.
-- Promover o uso de Interfaces para automação de memória.
-- Instituir o tratamento defensivo e tipado de Exceções (`try..except`).
-- Introduzir Exceções de Domínio customizadas.
+- Teach how to generate safe blocks of `try..finally`.
+- Prevent Memory Leaks by advising on `Free` and `FreeAndNil`.
+- Promote the use of Interfaces for memory automation.
+- Institute defensive and typed handling of Exceptions (`try..except`).
+- Introduce custom Domain Exceptions.
 
 ---
 
-## 🛑 Gerenciamento de Memória: Regras Críticas
+## 🛑 Memory Management: Critical Rules
 
-### 1. O Padrão Ouro: `try..finally`
-Sempre que uma instância de objeto for criada e não tiver um Owner que a gerencie, instancie em um bloco `try..finally`.
-O `try` deve ocorrer **IMEDIATAMENTE** na linha subsequente à criação.
+### 1. The Gold Standard: `try..finally`
+Whenever an object instance is created and does not have an Owner who manages it, instantiate it in a `try..finally` block.
+`try` must occur **IMMEDIATELY** on the line following creation.
 
 ```pascal
 var
@@ -40,8 +40,8 @@ begin
 end;
 ```
 
-**Anti-Pattern (NÃO USE):**
-Código entre o `Create` e o `try` pode gerar uma exceção, vazando o objeto recém-criado.
+**Anti-Pattern (DO NOT USE):**
+Code between `Create` and `try` may generate an exception, leaking the newly created object.
 ```pascal
   // ERRADO - vazamento em potencial!
   LList := TStringList.Create;
@@ -50,8 +50,8 @@ Código entre o `Create` e o `try` pode gerar uma exceção, vazando o objeto re
     // ...
 ```
 
-### 2. Múltiplos Objetos no Mesmo Bloco
-Ao alocar múltiplos recursos temporários em um mesmo método, não aninhe dezenas de `try..finally` caso não seja estritamente necessário. Mas cuide para inicializar todos com `nil` antes se houver chance de vazamento, ou aninhe com prudência. O padrão ideal é liberação sequencial garantida, mas o aninhamento estrito é o mais seguro para alocações encadeadas:
+### 2. Multiple Objects in the Same Block
+When allocating multiple temporary resources in the same method, do not nest dozens of `try..finally` if it is not strictly necessary. But be careful to initialize them all with `nil` beforehand if there is a chance of leakage, or nest them prudently. The ideal pattern is guaranteed sequential release, but strict nesting is safest for chained allocations:
 
 ```pascal
 var
@@ -72,12 +72,12 @@ begin
 end;
 ```
 
-### 3. Evite Criar Objetos para Passagem Simples
-Se uma API recebe um parâmetro de classe, declare uma interface ou instancie antes do método com `try..finally`. Nunca passe um `.Create` inline para um parâmetro num método se não tiver garantia absoluta de que a função consumidora irá liberar a memória.
+### 3. Avoid Creating Objects for Single Passage
+If an API takes a class parameter, declare an interface or instantiate it before the method with `try..finally`. Never pass an inline `.Create` to a parameter in a method if you do not have an absolute guarantee that the consuming function will free the memory.
 
 ### 4. Garbage Collection via Intefaces
-Para Injeção de Dependências, Patterns de Repositório/Serviço ou Classes Funcionais Temporárias, use herança de `TInterfacedObject` vinculada a uma `Interface`.
-O Delphi eliminará a instância quando o contador de referências chegar a zero.
+For Dependency Injection, Repository/Service Patterns or Temporary Functional Classes, use inheritance from `TInterfacedObject` linked to a `Interface`.
+Delphi will kill the instance when the reference counter reaches zero.
 ```pascal
 var
   LService: ICustomerService;
@@ -91,23 +91,23 @@ end;
 
 ---
 
-## 🚨 Tratamento de Exceções: O Padrão Transparente
+## 🚨 Exception Handling: The Transparent Standard
 
-### 1. Capturas Específicas, Não Genéricas
-Use `try..except` primariamente para interceptar erros recuperáveis, logar falhas sem interromper loops, ou transformar exceções de infraestrutura em exceções de domínio mais semânticas.
-Nunca "Cale" (Swallow) uma exceção sem justificativa lógica.
+### 1. Specific, Not Generic Catches
+Use `try..except` primarily to trap recoverable errors, log failures without breaking loops, or transform infrastructure exceptions into more semantic domain exceptions.
+Never "Swallow" an exception without logical justification.
 
 ```pascal
 try
   PerformDatabaseCommit;
 except
-  // Captura ESPECÍFICA de banco de dados
+  // Captura ESPECÍFICA de banco de data
   on E: EFDDBEngineException do
   begin
     Logger.Error('Falha no banco de dados [Cód: %d]: %s', [E.ErrorCode, E.Message]);
     raise EDatabaseConnectionException.Create('Serviço temporariamente indisponível.');
   end;
-  // Captura ESPECÍFICA de validação
+  // Captura ESPECÍFICA de validation
   on E: EValidationException do
   begin
     ShowWarning(E.Message);
@@ -115,8 +115,8 @@ except
 end;
 ```
 
-**Anti-Pattern (NÃO USE):**
-Isto cega o rastreio da aplicação (esconde `AccessViolations` e `Out of Memory`).
+**Anti-Pattern (DO NOT USE):**
+This blinds the application trace (hides `AccessViolations` and `Out of Memory`).
 ```pascal
 try
   ProcessData;
@@ -125,8 +125,8 @@ except
 end;
 ```
 
-### 2. Criação de Exceções Baseadas na Lógica de Negócios (DDD)
-Não use `raise Exception.Create(str)`. Declare exceções coesas para permitir interceptação elegante pelas camadas superiores (Controllers REST, Interface UI).
+### 2. Creating Exceptions Based on Business Logic (DDD)
+Do not use `raise Exception.Create(str)`. Declare cohesive exceptions to enable elegant interception by upper layers (REST Controllers, UI Interface).
 
 ```pascal
 type
@@ -139,8 +139,8 @@ type
   EDatabaseConnectionException = class(EInfrastructureException);
 ```
 
-### 3. Encapsulando Erros e `Raise` sem Modificar Contexto
-Se precisar apenas realizar um log pontual mas quiser que a exceção flua naturalmente para a UI global, utilize apenas `raise;` puro.
+### 3. Encapsulating Errors and `Raise` without Modifying Context
+If you only need to perform a one-off log but want the exception to flow naturally to the global UI, just use pure `raise;`.
 
 ```pascal
 try
@@ -149,17 +149,17 @@ except
   on E: Exception do
   begin
     Logger.LogError('Critical failure', E);
-    raise; // REPROJETA a exceção original com a mesma stack-trace
+    raise; // REPROJETA a exception original com a mesma stack-trace
   end;
 end;
 ```
 
 ---
 
-## 💡 Fluxo de Ação da IA
+## 💡 AI Action Flow
 
-Quando solicitado a escrever/refatorar código:
-1. Revise se cada `TObject.Create` resultará numa desalocação (`.Free` ou Ownership de terceiros).
-2. Injete `try..finally` se notar código legado sem ele.
-3. Se gerar Serviços, recomende Injeção de Dependências por Interfaces (`IService`) para simplificar varredura de lixo (GC).
-4. Em lógicas que possam falhar, crie Exceções Tipológicas para validar fluxo e prevenir condicionais espaguete de código de erro (`if return = -1 then`).
+When asked to write/refactor code:
+1. Review whether each `TObject.Create` will result in a deallocation (`.Free` or Third-Party Ownership).
+2. Inject `try..finally` if you notice legacy code without it.
+3. If you generate Services, recommend Dependency Injection via Interfaces (`IService`) to simplify garbage scanning (GC).
+4. In logic that may fail, create Typological Exceptions to validate flow and prevent error code spaghetti conditionals (`if return = -1 then`).

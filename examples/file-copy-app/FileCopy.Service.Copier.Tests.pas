@@ -1,6 +1,6 @@
-/// <summary>
-///   Testes unitários DUnitX para TFileCopierService.
-///   Utiliza diretórios temporários criados e destruídos em cada teste.
+﻿/// <summary>
+/// DUnitX unit tests for TFileCopierService.
+/// Uses temporary directories created and destroyed in each test.
 /// </summary>
 unit FileCopy.Service.Copier.Tests;
 
@@ -82,8 +82,8 @@ var
 begin
   for I := 1 to ACount do
   begin
-    LFilePath := TPath.Combine(FSourceDir, Format('arquivo_%d.txt', [I]));
-    TFile.WriteAllText(LFilePath, Format('Conteúdo do arquivo %d', [I]));
+    LFilePath := TPath.Combine(FSourceDir, Format('file_%d.txt', [I]));
+    TFile.WriteAllText(LFilePath, Format('Contents of the %d file', [I]));
   end;
 end;
 
@@ -112,7 +112,7 @@ begin
   Assert.WillRaise(
     procedure
     begin
-      FService.ListFiles('C:\caminho\inexistente\xyz');
+      FService.ListFiles('C:\path\nonexistent\xyz');
     end,
     EDirectoryNotFoundException);
 end;
@@ -136,7 +136,7 @@ begin
   Assert.WillRaise(
     procedure
     begin
-      FService.CopyFiles('C:\caminho\inexistente\xyz', FDestDir);
+      FService.CopyFiles('C:\path\nonexistent\xyz', FDestDir);
     end,
     EDirectoryNotFoundException);
 end;
@@ -172,9 +172,9 @@ begin
       LLastTotal := ATotal;
     end);
 
-  Assert.AreEqual(3, LCallbackCount, 'Callback deveria ser chamado 3 vezes');
-  Assert.AreEqual(3, LLastCurrent, 'Último ACurrent deveria ser 3');
-  Assert.AreEqual(3, LLastTotal, 'ATotal deveria ser 3');
+  Assert.AreEqual(3, LCallbackCount, 'Callback should be called 3 times');
+  Assert.AreEqual(3, LLastCurrent, 'Last ACurrent should be 3');
+  Assert.AreEqual(3, LLastTotal, 'ATotal should be 3');
 end;
 
 procedure TFileCopierServiceTest.CopyFiles_EmptySource_ReturnsZero;
@@ -193,16 +193,17 @@ var
 begin
   CreateTempFiles(1);
   TDirectory.CreateDirectory(FDestDir);
-  LDestFile := TPath.Combine(FDestDir, 'arquivo_1.txt');
-  TFile.WriteAllText(LDestFile, 'conteúdo antigo');
+  LDestFile := TPath.Combine(FDestDir, 'file_1.txt');
+  TFile.WriteAllText(LDestFile, 'old content');
 
   FService.CopyFiles(FSourceDir, FDestDir);
 
   LContent := TFile.ReadAllText(LDestFile);
-  Assert.AreEqual('Conteúdo do arquivo 1', LContent);
+  Assert.AreEqual('File content 1', LContent);
 end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFileCopierServiceTest);
 
 end.
+

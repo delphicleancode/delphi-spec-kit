@@ -1,6 +1,6 @@
-/// <summary>
-///   Service responsável pela lógica de cópia de arquivos entre diretórios.
-///   Segue o princípio SRP: a lógica de cópia fica isolada da UI.
+﻿/// <summary>
+/// Service responsible for the logic of copying files between directories.
+/// Follows the SRP principle: the copy logic is isolated from the UI.
 /// </summary>
 unit FileCopy.Service.Copier;
 
@@ -12,33 +12,33 @@ uses
   System.Types;
 
 type
-  /// <summary>Callback invocado após copiar cada arquivo.</summary>
-  /// <param name="AFileName">Nome do arquivo copiado</param>
-  /// <param name="ACurrent">Índice atual (1-based)</param>
-  /// <param name="ATotal">Total de arquivos</param>
+  /// <summary>Callback invoked after copying each file.</summary>
+  /// <param name="AFileName">Name of the copied file</param>
+  /// <param name="ACurrent">Current index (1-based)</param>
+  /// <param name="ATotal">Total files</param>
   TOnFileCopied = reference to procedure(const AFileName: string;
     ACurrent, ATotal: Integer);
 
-  /// <summary>Interface do serviço de cópia de arquivos.</summary>
+  /// <summary>File copy service interface.</summary>
   IFileCopierService = interface
     ['{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}']
     /// <summary>
-    ///   Lista os arquivos encontrados no diretório de origem.
+    /// Lists files found in the source directory.
     /// </summary>
     function ListFiles(const ASourceDir: string): TStringDynArray;
 
     /// <summary>
-    ///   Copia todos os arquivos do diretório de origem para o destino.
+    /// Copies all files from the source directory to the destination.
     /// </summary>
-    /// <param name="ASourceDir">Caminho da pasta de origem</param>
-    /// <param name="ADestDir">Caminho da pasta de destino</param>
-    /// <param name="AOnFileCopied">Callback de progresso (opcional)</param>
-    /// <returns>Quantidade de arquivos copiados com sucesso</returns>
+    /// <param name="ASourceDir">Source folder path</param>
+    /// <param name="ADestDir">Destination folder path</param>
+    /// <param name="AOnFileCopied">Progress callback (optional)</param>
+    /// <returns>Number of files copied successfully</returns>
     function CopyFiles(const ASourceDir, ADestDir: string;
       AOnFileCopied: TOnFileCopied = nil): Integer;
   end;
 
-  /// <summary>Implementação concreta do serviço de cópia.</summary>
+  /// <summary>Concrete implementation of the copy service.</summary>
   TFileCopierService = class(TInterfacedObject, IFileCopierService)
   public
     function ListFiles(const ASourceDir: string): TStringDynArray;
@@ -54,7 +54,7 @@ function TFileCopierService.ListFiles(const ASourceDir: string): TStringDynArray
 begin
   if not TDirectory.Exists(ASourceDir) then
     raise EDirectoryNotFoundException.CreateFmt(
-      'Diretório de origem não encontrado: %s', [ASourceDir]);
+      'Source directory not found: %s', [ASourceDir]);
 
   Result := TDirectory.GetFiles(ASourceDir);
 end;
@@ -69,7 +69,7 @@ var
 begin
   if not TDirectory.Exists(ASourceDir) then
     raise EDirectoryNotFoundException.CreateFmt(
-      'Diretório de origem não encontrado: %s', [ASourceDir]);
+      'Source directory not found: %s', [ASourceDir]);
 
   if not TDirectory.Exists(ADestDir) then
     TDirectory.CreateDirectory(ADestDir);
@@ -91,3 +91,4 @@ begin
 end;
 
 end.
+

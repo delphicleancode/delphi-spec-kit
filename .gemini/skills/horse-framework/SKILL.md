@@ -1,27 +1,27 @@
 ---
 name: "Horse Framework"
-description: "Padrões para desenvolvimento de APIs REST com Horse framework em Delphi"
+description: "Patterns for developing REST APIs with Horse framework in Delphi"
 ---
 
 # Horse Framework — Skill
 
-Use esta skill ao criar APIs REST com o framework **Horse** em Delphi.
+Use this skill when creating REST APIs with the **Horse** framework in Delphi.
 
-## Quando Usar
+## When to Use
 
-- Ao criar um novo projeto de API REST
-- Ao adicionar rotas e endpoints
-- Ao implementar middleware (JWT, CORS, logging)
-- Ao integrar Horse com FireDAC
+- When creating a new REST API project
+- When adding routes and endpoints
+- When implementing middleware (JWT, CORS, logging)
+- When integrating Horse with FireDAC
 
-## Sobre o Horse
+## About Horse
 
-Horse é um framework REST minimalista e performático para Delphi, inspirado no Express.js (Node.js). Usa o conceito de middleware chain e é extremamente simples de configurar.
+Horse is a minimalist and performant REST framework for Delphi, inspired by Express.js (Node.js). It uses the middleware chain concept and is extremely simple to configure.
 
-- **Repositório:** [github.com/HashLoad/horse](https://github.com/HashLoad/horse)
-- **Instalação:** Boss (`boss install horse`) ou manual
+- **Repository:** [github.com/HashLoad/horse](https://github.com/HashLoad/horse)
+- **Installation:** Boss (`boss install horse`) or manual
 
-## Estrutura de Projeto
+## Project Structure
 
 ```
 src/
@@ -45,7 +45,7 @@ src/
     └── MeuApp.Config.Server.pas
 ```
 
-## Configuração Básica do Servidor
+## Basic Server Configuration
 
 ```pascal
 program MeuApp;
@@ -78,7 +78,7 @@ begin
 end.
 ```
 
-## Padrão de Controller
+## Controller Pattern
 
 ```pascal
 unit MeuApp.Controller.Customer;
@@ -168,7 +168,7 @@ begin
 end;
 ```
 
-## Middleware Personalizado
+## Custom Middleware
 
 ```pascal
 unit MeuApp.Middleware.Auth;
@@ -211,7 +211,7 @@ end;
 end.
 ```
 
-## Middleware de Logger
+## Logger Middleware
 
 ```pascal
 unit MeuApp.Middleware.Logger;
@@ -249,36 +249,36 @@ end;
 end.
 ```
 
-## Convenções para Horse
+## Conventions for Horse
 
-| Aspecto | Convenção |
+| Appearance | Convention |
 |---------|-----------|
 | **URLs** | Kebab-case, plural: `/api/customers`, `/api/order-items` |
-| **Métodos HTTP** | GET (listar/buscar), POST (criar), PUT (atualizar), DELETE (remover) |
+| **HTTP Methods** | GET (list/search), POST (create), PUT (update), DELETE (remove) |
 | **Status** | 200 OK, 201 Created, 400 Bad Request, 404 Not Found, 500 Internal |
-| **Response** | Sempre JSON via `Jhonson` middleware |
-| **Controller** | Class methods estáticos com `RegisterRoutes` |
-| **Middleware** | Procedures standalone ou class methods |
-| **Parâmetros** | Path: `AReq.Params['id']`, Query: `AReq.Query['search']` |
+| **Response** | Always JSON via `Jhonson` middleware |
+| **Controller** | Static class methods with `RegisterRoutes` |
+| **Middleware** | Standalone procedures or class methods |
+| **Parameters** | Path: `AReq.Params['id']`, Query: `AReq.Query['search']` |
 
-## Pacotes Complementares Horse
+## Horse Add-on Packages
 
-| Pacote | Uso | Instalação Boss |
+| Package | Usage | Boss Installation |
 |--------|-----|-----------------|
 | `horse-jhonson` | JSON middleware | `boss install horse-jhonson` |
 | `horse-cors` | CORS | `boss install horse-cors` |
-| `horse-jwt` | Autenticação JWT | `boss install horse-jwt` |
+| `horse-jwt` | JWT Authentication | `boss install horse-jwt` |
 | `horse-basic-auth` | Basic Auth | `boss install horse-basic-auth` |
 | `horse-handle-exception` | Error handler | `boss install horse-handle-exception` |
 | `horse-octet-stream` | Upload/download | `boss install horse-octet-stream` |
 
-## Checklist para Projetos Horse
+## Checklist for Horse Projects
 
-- [ ] `Jhonson` middleware registrado para JSON automático?
-- [ ] `CORS` middleware registrado?
-- [ ] `HandleException` middleware para error handling?
-- [ ] Rotas seguem convenção RESTful (plural, kebab-case)?
-- [ ] Controllers usam Services (não acessam repositório direto)?
-- [ ] Guard clauses nos handlers antes da lógica?
-- [ ] Status HTTP corretos nas respostas?
-- [ ] Testes de integração com `TRESTClient` simulando chamadas?
+- [ ] `Jhonson` registered middleware for automatic JSON?
+- [ ] `CORS` registered middleware?
+- [ ] `HandleException` middleware for error handling?
+- [ ] Routes follow RESTful convention (plural, kebab-case)?
+- [ ] Controllers use Services (do not access direct repository)?
+- [ ] Guard clauses in handlers before logic?
+- [ ] Correct HTTP status in responses?
+- [ ] Integration tests with `TRESTClient` simulating calls?

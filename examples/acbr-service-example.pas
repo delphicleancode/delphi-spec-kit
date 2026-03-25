@@ -1,6 +1,6 @@
-/// <summary>
-///   Exemplo conceitual mostrando como isolar um componente nativo (TACBrNFe)
-///   em uma classe de serviço, seguindo o padrão Adapter e princípios SOLID sem acoplar a UI.
+﻿/// <summary>
+/// Conceptual example showing how to isolate a native component (TACBrNFe)
+/// in a service class, following the Adapter pattern and SOLID principles without coupling the UI.
 /// </summary>
 unit App.Infrastructure.Fiscal.NFe;
 
@@ -9,11 +9,11 @@ interface
 uses
   System.SysUtils,
   System.Classes,
-  // Simulando a unit do ACBr
+  // Simulating the ACBr unit
   ACBrNFe, pcnConversao, pcnConversaoNFe;
 
 type
-  // DTO Agnóstico do Domínio (Não conhece o componente VCL do ACBr)
+  // Domain Agnostic DTO (Does not know the ACBr VCL component)
   TInvoiceModel = record
     GuidId: string;
     InvoiceNumber: Integer;
@@ -29,23 +29,23 @@ type
     ErrorMessage: string;
   end;
 
-  // Interface do Domínio Application
+  // Application Domain Interface
   INFeService = interface
     ['{D7A0AE5D-EEDA-4C72-AF20-9D727ED9C133}']
     function SendInvoice(const AInvoice: TInvoiceModel): TInvoiceResult;
   end;
 
-  // Interface de Configuração Externa (Injection)
+  // External Configuration Interface (Injection)
   IAppConfig = interface
     function GetCertificateSerial: string;
     function GetEnvironment: Integer; // 1-Producao, 2-Homologacao
   end;
 
-  // Implementação - Gateway para o Componente de Terceiro (ACBr)
+  // Implementation - Gateway to the Third Party Component (ACBr)
   TACBrNFeService = class(TInterfacedObject, INFeService)
   private
     FConfig: IAppConfig;
-    // O Componente existe na Camada Infra, gerenciado internamente
+    // The Component exists in the Infra Layer, managed internally
     FAcbrNFe: TACBrNFe;
     
     procedure ApplySettings;
@@ -66,8 +66,8 @@ begin
   inherited Create;
   FConfig := AConfig;
   
-  // O componente é gerado de forma desvinculada de Form/DataModule visual.
-  // Permite uso em APIs REST, Windows Services ou Daemons.
+  // The component is generated independently of the visual Form/DataModule.
+  // Allows use in REST APIs, Windows Services or Daemons.
   FAcbrNFe := TACBrNFe.Create(nil);
   ApplySettings;
 end;
@@ -80,7 +80,7 @@ end;
 
 procedure TACBrNFeService.ApplySettings;
 begin
-  // Configurações via código limpo, lidas de fonte externa confiável
+  // Settings via clean code, read from trusted external source
   FAcbrNFe.Configuracoes.Certificados.NumeroSerie := FConfig.GetCertificateSerial;
   FAcbrNFe.Configuracoes.Geral.SSLLib := libWinCrypt;
   FAcbrNFe.Configuracoes.Geral.Salvar := True;
@@ -97,8 +97,8 @@ begin
   
   with FAcbrNFe.NotasFiscais.Add.NFe do
   begin
-    // Mapeamento Domínio DTO -> Objeto ACBrNat
-    Ide.natOp := 'VENDA DE MERCADORIA';
+    // DTO Domain Mapping -> ACBrNat Object
+    Ide.natOp := 'MERCHANDISE SALE';
     Ide.nNF := AInvoice.InvoiceNumber;
     
     Dest.xNome := AInvoice.CustomerName;
@@ -106,7 +106,7 @@ begin
     
     Total.ICMSTot.vNF := AInvoice.TotalAmount;
     
-    // etc... em ambiente real isso seria longo
+    // etc... in a real environment this would be long
   end;
 end;
 
@@ -115,10 +115,10 @@ begin
   try
     BuildXml(AInvoice);
     
-    // Lote 1 para enviar Assinado e Valido
+    // Batch 1 to send Signed and Valid
     FAcbrNFe.Enviar(1, False, True); 
     
-    // Tratando a resposta agnósticamente
+    // Treating the response agnostically
     Result.Success := True;
     Result.ReceiptNumber := FAcbrNFe.WebServices.Retorno.Recibo;
     Result.XmlPath := FAcbrNFe.NotasFiscais.Items[0].NomeArq;
@@ -127,10 +127,11 @@ begin
     on E: Exception do
     begin
       Result.Success := False;
-      Result.ErrorMessage := 'Erro na emissão ACBr: ' + E.Message;
-      // Ideal é possuir LoggerService aqui para auditoria
+      Result.ErrorMessage := 'Error in ACBr emission:' + E.Message;
+      // Ideally, you should have LoggerService here for auditing
     end;
   end;
 end;
 
 end.
+

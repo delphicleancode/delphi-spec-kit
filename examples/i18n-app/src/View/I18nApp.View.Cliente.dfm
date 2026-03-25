@@ -1,7 +1,7 @@
-object ClienteForm: TClienteForm
+﻿object ClienteForm: TClienteForm
   Left = 0
   Top = 0
-  Caption = 'Cadastro de Clientes'
+  Caption = 'Customer Registration'
   ClientHeight = 300
   ClientWidth = 400
   Color = clBtnFace
@@ -36,14 +36,14 @@ object ClienteForm: TClienteForm
     Top = 120
     Width = 39
     Height = 13
-    Caption = 'E-mail *'
+    Caption = 'Email *'
   end
   object lblCreated: TLabel
     Left = 24
     Top = 168
     Width = 47
     Height = 13
-    Caption = 'Criado em'
+    Caption = 'Created in'
   end
   object edtId: TEdit
     Left = 24
@@ -95,7 +95,7 @@ object ClienteForm: TClienteForm
       Top = 8
       Width = 75
       Height = 25
-      Caption = 'Salvar'
+      Caption = 'Save'
       TabOrder = 1
     end
     object btnDelete: TButton
@@ -103,8 +103,9 @@ object ClienteForm: TClienteForm
       Top = 8
       Width = 75
       Height = 25
-      Caption = 'Excluir'
+      Caption = 'Delete'
       TabOrder = 2
     end
   end
 end
+

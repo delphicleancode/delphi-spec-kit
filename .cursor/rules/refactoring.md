@@ -1,40 +1,40 @@
 ---
-description: "Refatoração de código Delphi — técnicas para melhorar legibilidade, remover code smells e aplicar padrões sem alterar o comportamento"
+description: "Delphi code refactoring — techniques to improve readability, remove code smells and apply patterns without changing behavior"
 globs: ["**/*.pas"]
 alwaysApply: false
 ---
 
-# Refatoração de Código Delphi — Cursor Rules
+# Delphi Code Refactoring — Cursor Rules
 
-Use estas regras ao detectar ou corrigir code smells em Object Pascal. A refatoração **não muda o comportamento** — apenas melhora a estrutura interna.
+Use these rules when detecting or fixing code smells in Object Pascal. Refactoring **doesn't change behavior** — it just improves the internal structure.
 
 ---
 
-## 🔴 Code Smells que Exigem Refatoração Imediata
+## 🔴 Code Smells that Require Immediate Refactoring
 
-| Code Smell | Sintoma | Técnica |
+| Code Smell | Symptom | Technique |
 |---|---|---|
-| Método longo | > 20 linhas | Extract Method |
-| Classe inchada | > 300 linhas / múltiplas responsabilidades | Extract Class |
-| Números mágicos | `if Age > 18` | Replace with Constant |
-| Nesting profundo | `if...if...if` acima de 2 níveis | Replace with Guard Clauses |
-| Código duplicado | Mesmo bloco em ≥ 2 lugares | Extract Method / Pull Up |
-| Parâmetros em excesso | Método com > 4 parâmetros | Introduce Parameter Object |
-| Lógica de UI misturada | Negócio em `OnClick` | Move Method to Service |
+| Long method | > 20 lines | Extract Method |
+| Bloated class | > 300 lines / multiple responsibilities | Extract Class |
+| Magic numbers | `if Age > 18` | Replace with Constant |
+| Deep Nesting | `if...if...if` above 2 levels | Replace with Guard Clauses |
+| Duplicate code | Same block in ≥ 2 places | Extract Method / Pull Up |
+| Excessive parameters | Method with > 4 parameters | Introduce Parameter Object |
+| Mixed UI logic | Business in `OnClick` | Move Method to Service |
 | `with` statement | `with DataSet do...` | Remove With |
-| Variável temporária desnecessária | Usada apenas uma vez | Inline Temp |
-| Condicional com tipo | `if Obj is TSubClass then` | Replace Conditional with Polymorphism |
-| Cadeia de mensagens | `A.B.C.D.Execute` | Law of Demeter / Introduce Method |
-| Comentário explicando o quê | O código deveria se auto-explicar | Rename + Extract Method |
+| Unnecessary temporary variable | Used only once | Inline Temp |
+| Conditional with type | `if Obj is TSubClass then` | Replace Conditional with Polymorphism |
+| Message chain | `A.B.C.D.Execute` | Law of Demeter / Introduce Method |
+| Comment explaining what | The code should explain itself | Rename + Extract Method |
 
 ---
 
 ## ✂️ Extract Method
 
-Extraia blocos de código com propósito próprio em métodos nomeados.
+Extract purposeful blocks of code into named methods.
 
 ```pascal
-// ❌ ANTES — método longo sem separação de responsabilidades
+// ❌ ANTES — método longo sem separaction de responsabilidades
 procedure TOrderService.PlaceOrder(AOrder: TOrder);
 var
   LTotal: Currency;
@@ -68,7 +68,7 @@ begin
   FRepository.Save(AOrder);
 end;
 
-// ✅ DEPOIS — cada responsabilidade em seu próprio método
+// ✅ DEPOIS — cada responsibility em seu próprio método
 procedure TOrderService.PlaceOrder(AOrder: TOrder);
 begin
   ValidateStock(AOrder);
@@ -119,26 +119,26 @@ end;
 
 ## 🏛️ Extract Class
 
-Quando uma classe acumula responsabilidades demais, extraia as responsabilidades coesas.
+When a class accumulates too many responsibilities, extract the cohesive responsibilities.
 
 ```pascal
-// ❌ ANTES — TCustomer com muita responsabilidade
+// ❌ ANTES — TCustomer com muita responsibility
 TCustomer = class
-  // Dados do cliente
+  // Data do customer
   FName: string;
   FEmail: string;
-  // Dados de endereço
+  // Data de address
   FStreet: string;
   FCity: string;
   FZipCode: string;
   FState: string;
-  // Dados de contato
+  // Data de contact
   FPhone: string;
   FCellPhone: string;
-  // Lógica de validação de endereço
+  // Logic de validation de address
   function IsValidZipCode: Boolean;
   function GetFullAddress: string;
-  // Lógica de validação de contato
+  // Logic de validation de contact
   function HasValidPhone: Boolean;
 end;
 
@@ -170,7 +170,7 @@ public
   property Email: string read FEmail write FEmail;
 end;
 
-TCustomer = class           // agora coesa — apenas dados do cliente
+TCustomer = class           // agora coesa — only data do customer
 private
   FName: string;
   FAddress: TAddress;       // composição
@@ -188,7 +188,7 @@ end;
 
 ## 🛡️ Replace Nested Conditionals with Guard Clauses
 
-Elimina nesting eliminando casos especiais cedo.
+Eliminates nesting by eliminating special cases early.
 
 ```pascal
 // ❌ ANTES — nesting dificulta leitura
@@ -202,7 +202,7 @@ begin
       begin
         if APayment.Customer.IsActive then
         begin
-          // lógica real aqui... enterrada em 4 níveis
+          // logic real aqui... enterrada em 4 níveis
           FGateway.Process(APayment);
         end;
       end;
@@ -222,7 +222,7 @@ begin
   if not APayment.Customer.IsActive then
     raise EBusinessRuleException.Create('Cliente inativo');
 
-  // lógica real — sem nesting, direto ao ponto
+  // logic real — sem nesting, direto ao ponto
   FGateway.Process(APayment);
 end;
 ```
@@ -259,7 +259,7 @@ if APassword.Length < MINIMUM_PASSWORD_LENGTH then
 
 ## 🎭 Replace Conditional with Polymorphism
 
-Substitui cadeias de `if/case` por polimorfismo via interfaces.
+Replaces `if/case` strings with polymorphism via interfaces.
 
 ```pascal
 // ❌ ANTES — switch no tipo viola OCP
@@ -294,7 +294,7 @@ end;
 
 ## 📦 Introduce Parameter Object
 
-Agrupa parâmetros relacionados em um Record ou classe.
+Groups related parameters into a Record or class.
 
 ```pascal
 // ❌ ANTES — método com 6 parâmetros
@@ -324,7 +324,7 @@ function SearchCustomers(ACriteria: TCustomerSearchCriteria): TObjectList<TCusto
 
 ## 🔗 Remove `with` Statement
 
-O `with` esconde o contexto e dificulta debug e refatoração.
+`with` hides the context and makes debugging and refactoring difficult.
 
 ```pascal
 // ❌ ANTES — com `with`
@@ -360,7 +360,7 @@ end;
 
 ## 🧩 Extract Interface
 
-Quando uma classe concreta é usada diretamente, crie uma interface para desacoplar.
+When a concrete class is used directly, create an interface to decouple it.
 
 ```pascal
 // ❌ ANTES — acoplado à classe concreta
@@ -371,7 +371,7 @@ public
   constructor Create(ARepository: TFireDACOrderRepository);
 end;
 
-// ✅ DEPOIS — depende da abstração
+// ✅ DEPOIS — depende da abstraction
 IOrderRepository = interface
   ['{GUID}']
   function FindById(AId: Integer): TOrder;
@@ -391,15 +391,15 @@ end;
 
 ---
 
-## ✅ Checklist de Refatoração
+## ✅ Refactoring Checklist
 
-Antes de cada refatoração, verifique:
+Before each refactoring, check:
 
-- [ ] Existe teste cobrindo o comportamento atual? (se não, escreva antes)
-- [ ] O comportamento observável permanece idêntico após a mudança?
-- [ ] Método extraído tem nome auto-descritivo (sem precisar de comentário)?
-- [ ] Nenhum `with` foi introduzido?
-- [ ] Nenhum número mágico foi introduzido?
-- [ ] A classe extraída tem uma única responsabilidade?
-- [ ] Interfaces substituem dependências concretas?
-- [ ] Guard clauses eliminam o nesting desnecessário?
+- [ ] Is there a test covering the current behavior? (if not, write first)
+- [ ] Does the observable behavior remain identical after the change?
+- [ ] Does the extracted method have a self-descriptive name (without needing a comment)?
+- [ ] No `with` was introduced?
+- [ ] No magic number was introduced?
+- [ ] Does the extracted class have a single responsibility?
+- [ ] Interfaces replace concrete dependencies?
+- [ ] Do guard clauses eliminate unnecessary nesting?

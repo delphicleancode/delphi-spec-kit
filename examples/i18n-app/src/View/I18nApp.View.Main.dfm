@@ -1,7 +1,7 @@
-object MainForm: TMainForm
+﻿object MainForm: TMainForm
   Left = 0
   Top = 0
-  Caption = 'Sistema de Vendas Internacional'
+  Caption = 'International Sales System'
   ClientHeight = 400
   ClientWidth = 600
   Color = clBtnFace
@@ -29,41 +29,41 @@ object MainForm: TMainForm
     Left = 32
     Top = 24
     object mnuFile: TMenuItem
-      Caption = 'Arquivo'
+      Caption = 'File'
       object mnuFileExit: TMenuItem
-        Caption = 'Sair'
+        Caption = 'To go out'
         ShortCut = 32883
         OnClick = mnuFileExitClick
       end
     end
     object mnuCadastros: TMenuItem
-      Caption = 'Cadastros'
+      Caption = 'Registrations'
       object mnuCadastrosClientes: TMenuItem
-        Caption = 'Clientes'
+        Caption = 'Customers'
         OnClick = mnuCadastrosClientesClick
       end
       object mnuCadastrosProdutos: TMenuItem
-        Caption = 'Produtos'
+        Caption = 'Products'
         OnClick = mnuCadastrosProdutosClick
       end
     end
     object mnuVendas: TMenuItem
-      Caption = 'Vendas'
+      Caption = 'Sales'
       object mnuVendasNova: TMenuItem
-        Caption = 'Nova Venda'
+        Caption = 'New Sale'
         OnClick = mnuVendasNovaClick
       end
     end
     object mnuConfig: TMenuItem
-      Caption = 'Configura'#231#245'es'
+      Caption = 'Configure'#231#245'is'
       object mnuConfigIdioma: TMenuItem
-        Caption = 'Idioma'
+        Caption = 'Language'
         object mnuIdiomaPTBR: TMenuItem
-          Caption = 'Portugu'#234's (Brasil)'
+          Caption = 'Portugu'#234's (Brazil)'
           OnClick = mnuIdiomaPTBRClick
         end
         object mnuIdiomaENUS: TMenuItem
-          Caption = 'Ingl'#234's (EUA)'
+          Caption = 'English'#234's (USA)'
           OnClick = mnuIdiomaENUSClick
         end
       end
@@ -71,8 +71,9 @@ object MainForm: TMainForm
     object mnuHelp: TMenuItem
       Caption = 'Ajuda'
       object mnuHelpAbout: TMenuItem
-        Caption = 'Sobre'
+        Caption = 'On'
       end
     end
   end
 end
+

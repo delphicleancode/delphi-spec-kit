@@ -1,4 +1,4 @@
-unit I18nApp.View.Cliente;
+﻿unit I18nApp.View.Cliente;
 
 interface
 
@@ -84,3 +84,4 @@ begin
 end;
 
 end.
+

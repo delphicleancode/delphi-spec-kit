@@ -1,4 +1,4 @@
-unit Test.I18nApp.Core.Resources;
+﻿unit Test.I18nApp.Core.Resources;
 
 interface
 
@@ -39,10 +39,10 @@ procedure TTestResources.GetString_UnloadedKey_ReturnsKeyInBrackets;
 var
   LResult: string;
 begin
-  // Action
+  //Action
   LResult := FResources.GetString('invalid.key');
 
-  // Assert
+  //Assert
   Assert.AreEqual('[invalid.key]', LResult);
 end;
 
@@ -52,7 +52,7 @@ begin
   // We assume the caller runs the test with the resources folder accessible.
   FResources.LoadFromFile('pt-BR');
   
-  // Assert
+  //Assert
   // Since we might not have the actual JSON accessible directly in the /tests folder depending on how it's run,
   // we do a simple sanity check. The main fallback guarantees it won't crash.
   Assert.Pass('LoadFromFile executed without exceptions.');
@@ -62,3 +62,4 @@ initialization
   TDUnitX.RegisterTestFixture(TTestResources);
 
 end.
+

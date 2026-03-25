@@ -1,48 +1,48 @@
 ---
-description: Regras e padrões de código para o desenvolvimento de aplicações com o framework Intraweb.
+description: Code rules and standards for developing applications with the Intraweb framework.
 globs: *.pas, *.dfm, *.iw
 ---
 
 # Intraweb Patterns - Cursor Rule
 
-Ao desenvolver uma aplicação web nativa no Delphi utilizando o framework Intraweb, você está trabalhando com um ambiente stateful para o browser hospedado por múltiplas threads isoladas. Aplique estritamente as diretrizes abaixo.
+When developing a native web application in Delphi using the Intraweb framework, you are working with a stateful environment for the browser hosted by multiple isolated threads. Strictly apply the guidelines below.
 
-## 1. Concorrência e Sessões (`UserSession`)
+## 1. Competition and Sessions (`UserSession`)
 
-- **Regra:** NUNCA utilize dados globais (`var` localizadas em `interface` ou instâncias Singleton abertas) para guardar dados de usuário online, credenciais e ID em cache. A aplicação é Web/Stateful/Threaded, essas variáveis vazarão cross-session.
-- **Implementação:** Toda a guarda de estado transiente e identidades de quem está logado devem fluir de ou guardar em estruturas residentes do `TIWUserSession` mapeado no pool do ServerController:
+- **Rule:** NEVER use global data (`var` located in `interface` or open Singleton instances) to cache online user data, credentials and ID. The application is Web/Stateful/Threaded, these variables will leak cross-session.
+- **Implementation:** All transient state storage and logged-in identities must flow from or store in resident structures of the `TIWUserSession` mapped in the ServerController pool:
   ```pascal
-  // Exemplo seguro para contexto de requisição do usuário logado:
+  //Safe example for logged in user request context:
   LUsuarioId := UserSession.GetLoggedUserID;
   ```
 
-## 2. Formulários Assíncronos (`Async Events`)
+## 2. Asynchronous Forms (`Async Events`)
 
-- **Regra:** Privilegie os eventos de classe `Async` no lugar de submissões tradicionais (`Postback`).
-- **Implementação:** Interceptações como cliques em botões de salvar, cancelar ou mudar combos de dados devem priorizar métodos declarados nos eventos assíncronos (AJAX), mitigando reloading da DOM Inteira:
+- **Rule:** Favor class events `Async` over traditional submissions (`Postback`).
+- **Implementation:** Interceptions such as clicking on save, cancel or change data combos buttons must prioritize methods declared in asynchronous events (AJAX), mitigating reloading of the entire DOM:
   ```pascal
-  // Correto: Eventos Assíncronos (Ajax)
+  //Correct: Asynchronous Events (Ajax)
   procedure TIWFormClientes.iwBtnSalvarAsyncClick(Sender: TObject; EventParams: TStringList);
   begin
-    // Gravações do banco e troca de cor na interface local
+    //Bank recordings and color change in the local interface
     iwLblStatus.Caption := 'Salvo!';
   end;
   ```
 
-## 3. Ausência de Dialogs Bloqueantes
-- **Regra:** Não use mecanismos síncronos da VCL Desktop (`ShowMessage`, `InputBox`, Retornos de Função Interativas ou exceptions que exibam erros Desktop visuais pelo sistema) no Intraweb.
-- **Implementação:** Acione métodos `WebApplication.ShowMessage` ou callbacks e templates para guiar decisões do Usuário via frontend.
+## 3. Absence of Blocking Dialogs
+- **Rule:** Do not use VCL Desktop synchronous mechanisms (`ShowMessage`, `InputBox`, Interactive Function Returns or exceptions that display visual Desktop errors across the system) in the Intraweb.
+- **Implementation:** Trigger `WebApplication.ShowMessage` methods or callbacks and templates to guide User decisions via the frontend.
 
-## 4. Ocultamento de Regras de Negócio (SRP)
+## 4. Business Rule Hiding (SRP)
 
-- **Regra:** O `TIWAppForm` é a View (e vagamente seu controller/roteador). Nenhum motor de inserção primária do negócio não pode viver neste `TIWAppForm.pas`.
-- **Implementação:** A classe de modelo injetable, `THouseService.Register()`, gerencia chamadas de manipulações de regra limpas de qualquer ligação com componentes do ServerController - Retornando dados abstratos passíveis da renderização no Forms.
+- **Rule:** The `TIWAppForm` is the View (and loosely its controller/router). No business's primary insertion engine cannot live in this `TIWAppForm.pas`.
+- **Implementation:** The injectable model class, `THouseService.Register()`, manages rule manipulation calls clean of any connection with ServerController components - Returning abstract data capable of rendering in Forms.
 
-## 5. Convenção Prefixada de Nomes `iw`
+## 5. Prefixed Naming Convention `iw`
 
-A família de componentes da paleta Intraweb deve possuir prefixo que demonstre a essência orientada sem erro:
-- Formulários: `TIWFormLogin` `-> iwFormLogin`
-- Botões: `TIWButton` `-> iwBtnAction`
-- Campos Texto: `TIWEdit` `-> iwEdtUser`
+The Intraweb palette component family must have a prefix that demonstrates the oriented essence without error:
+- Forms: `TIWFormLogin` `-> iwFormLogin`
+- Buttons: `TIWButton` `-> iwBtnAction`
+- Text Fields: `TIWEdit` `-> iwEdtUser`
 - Container/Region: `TIWRegion` `-> iwRegWrapper`
 - Grids: `TIWGrid` `-> iwGrdData`

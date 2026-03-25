@@ -1,7 +1,7 @@
-/// <summary>
-///   Exemplo completo do padrão Service em Delphi.
-///   Demonstra: SRP, DIP, constructor injection, guard clauses,
-///   validação de negócio, constantes nomeadas e XMLDoc.
+﻿/// <summary>
+/// Complete example of the Service pattern in Delphi.
+/// Demonstrates: SRP, DIP, constructor injection, guard clauses,
+/// business validation, named constants and XMLDoc.
 /// </summary>
 unit Example.Application.Customer.Service;
 
@@ -13,7 +13,7 @@ uses
 
 type
   // =========================================================================
-  // Exceptions de domínio (SRP — cada exception tem um propósito)
+  // Domain exceptions (SRP — each exception has a purpose)
   // =========================================================================
 
   EBusinessRuleException = class(Exception);
@@ -21,11 +21,11 @@ type
   EValidationException = class(Exception);
 
   // =========================================================================
-  // Interface do Service
+  // Service Interface
   // =========================================================================
 
   /// <summary>
-  ///   Interface para operações de negócio com clientes.
+  /// Interface for business operations with customers.
   /// </summary>
   ICustomerService = interface
     ['{B2C3D4E5-0002-0002-0002-000000000001}']
@@ -38,12 +38,12 @@ type
   end;
 
   // =========================================================================
-  // Implementação do Service (SRP + DIP)
+  // Service Implementation (SRP + DIP)
   // =========================================================================
 
   /// <summary>
-  ///   Service de clientes com validação e orquestração.
-  ///   Depende de ICustomerRepository (DIP — abstração, não implementação).
+  /// Customer service with validation and orchestration.
+  /// Depends on ICustomerRepository (DIP — abstraction, not implementation).
   /// </summary>
   TCustomerService = class(TInterfacedObject, ICustomerService)
   private
@@ -54,22 +54,22 @@ type
   public
     constructor Create(ARepository: ICustomerRepository);
 
-    /// <summary>Busca cliente por ID. Lança exception se não encontrado.</summary>
+    /// <summary>Search customer by ID. Throws exception if not found.</summary>
     function GetById(AId: Integer): TCustomer;
 
-    /// <summary>Retorna todos os clientes.</summary>
+    /// <summary>Returns all customers.</summary>
     function GetAll: TObjectList<TCustomer>;
 
-    /// <summary>Cria novo cliente com validações de negócio.</summary>
+    /// <summary>Create new client with business validations.</summary>
     procedure CreateCustomer(const AName, ACpf, AEmail: string);
 
-    /// <summary>Atualiza dados do cliente.</summary>
+    /// <summary>Updates customer data.</summary>
     procedure UpdateCustomer(ACustomer: TCustomer);
 
-    /// <summary>Exclui cliente por ID.</summary>
+    /// <summary>Excludes customer by ID.</summary>
     procedure DeleteCustomer(AId: Integer);
 
-    /// <summary>Desativa cliente (soft delete).</summary>
+    /// <summary>Deactivate client (soft delete).</summary>
     procedure DeactivateCustomer(AId: Integer);
   end;
 
@@ -85,7 +85,7 @@ constructor TCustomerService.Create(ARepository: ICustomerRepository);
 begin
   inherited Create;
   if not Assigned(ARepository) then
-    raise EArgumentNilException.Create('ARepository não pode ser nil');
+    raise EArgumentNilException.Create('ARepository cannot be nil');
   FRepository := ARepository;
 end;
 
@@ -93,7 +93,7 @@ function TCustomerService.GetById(AId: Integer): TCustomer;
 begin
   Result := FRepository.FindById(AId);
   if not Assigned(Result) then
-    raise EEntityNotFoundException.CreateFmt('Cliente não encontrado: %d', [AId]);
+    raise EEntityNotFoundException.CreateFmt('Customer not found: %d', [AId]);
 end;
 
 function TCustomerService.GetAll: TObjectList<TCustomer>;
@@ -105,16 +105,16 @@ procedure TCustomerService.CreateCustomer(const AName, ACpf, AEmail: string);
 var
   LCustomer: TCustomer;
 begin
-  // Guard clauses — validação no início
+  // Guard clauses — validation at the beginning
   if AName.Trim.Length < MIN_NAME_LENGTH then
     raise EValidationException.CreateFmt(
-      'Nome deve ter pelo menos %d caracteres', [MIN_NAME_LENGTH]);
+      'Name must have at least %d characters', [MIN_NAME_LENGTH]);
 
   ValidateCpf(ACpf);
   ValidateEmail(AEmail);
   EnsureCpfNotDuplicated(ACpf);
 
-  // Criação do objeto com tratamento de memória
+  // Object creation with memory processing
   LCustomer := TCustomer.Create(AName);
   try
     LCustomer.Cpf := ACpf;
@@ -129,10 +129,10 @@ end;
 procedure TCustomerService.UpdateCustomer(ACustomer: TCustomer);
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
   if not FRepository.Exists(ACustomer.Id) then
     raise EEntityNotFoundException.CreateFmt(
-      'Cliente não encontrado: %d', [ACustomer.Id]);
+      'Customer not found: %d', [ACustomer.Id]);
 
   FRepository.Update(ACustomer);
 end;
@@ -141,7 +141,7 @@ procedure TCustomerService.DeleteCustomer(AId: Integer);
 begin
   if not FRepository.Exists(AId) then
     raise EEntityNotFoundException.CreateFmt(
-      'Cliente não encontrado: %d', [AId]);
+      'Customer not found: %d', [AId]);
 
   FRepository.Delete(AId);
 end;
@@ -150,7 +150,7 @@ procedure TCustomerService.DeactivateCustomer(AId: Integer);
 var
   LCustomer: TCustomer;
 begin
-  LCustomer := GetById(AId); // Já lança exception se não encontrado
+  LCustomer := GetById(AId); // Already raises exception if not found
   try
     LCustomer.Deactivate;
     FRepository.Update(LCustomer);
@@ -160,24 +160,24 @@ begin
 end;
 
 // =========================================================================
-// Métodos privados de validação (SRP — cada um faz uma coisa)
+// Private validation methods (SRP — each one does one thing)
 // =========================================================================
 
 procedure TCustomerService.ValidateCpf(const ACpf: string);
 begin
   if ACpf.Trim.IsEmpty then
-    raise EValidationException.Create('CPF não pode ser vazio');
+    raise EValidationException.Create('CPF cannot be empty');
   if ACpf.Length <> CPF_LENGTH then
     raise EValidationException.CreateFmt(
-      'CPF deve ter %d dígitos', [CPF_LENGTH]);
+      'CPF must have %d digits', [CPF_LENGTH]);
 end;
 
 procedure TCustomerService.ValidateEmail(const AEmail: string);
 begin
   if AEmail.Trim.IsEmpty then
-    raise EValidationException.Create('E-mail não pode ser vazio');
+    raise EValidationException.Create('Email cannot be empty');
   if not AEmail.Contains('@') then
-    raise EValidationException.Create('E-mail inválido');
+    raise EValidationException.Create('Invalid email');
 end;
 
 procedure TCustomerService.EnsureCpfNotDuplicated(const ACpf: string);
@@ -188,10 +188,11 @@ begin
   try
     if Assigned(LExisting) then
       raise EBusinessRuleException.CreateFmt(
-        'CPF já cadastrado: %s', [ACpf]);
+        'CPF already registered: %s', [ACpf]);
   finally
     LExisting.Free;
   end;
 end;
 
 end.
+

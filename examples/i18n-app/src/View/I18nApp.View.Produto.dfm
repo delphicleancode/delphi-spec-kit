@@ -1,7 +1,7 @@
-object ProdutoForm: TProdutoForm
+﻿object ProdutoForm: TProdutoForm
   Left = 0
   Top = 0
-  Caption = 'Cadastro de Produtos'
+  Caption = 'Product Registration'
   ClientHeight = 300
   ClientWidth = 400
   Color = clBtnFace
@@ -30,7 +30,7 @@ object ProdutoForm: TProdutoForm
     Top = 72
     Width = 84
     Height = 13
-    Caption = 'Nome do Produto *'
+    Caption = 'Product Name *'
   end
   object lblPrice: TLabel
     Left = 24
@@ -44,7 +44,7 @@ object ProdutoForm: TProdutoForm
     Top = 168
     Width = 47
     Height = 13
-    Caption = 'Criado em'
+    Caption = 'Created in'
   end
   object edtId: TEdit
     Left = 24
@@ -96,7 +96,7 @@ object ProdutoForm: TProdutoForm
       Top = 8
       Width = 75
       Height = 25
-      Caption = 'Salvar'
+      Caption = 'Save'
       TabOrder = 1
     end
     object btnDelete: TButton
@@ -104,8 +104,9 @@ object ProdutoForm: TProdutoForm
       Top = 8
       Width = 75
       Height = 25
-      Caption = 'Excluir'
+      Caption = 'Delete'
       TabOrder = 2
     end
   end
 end
+

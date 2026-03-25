@@ -1,35 +1,35 @@
 ---
 name: "Firebird Database"
-description: "Padrões de desenvolvimento com banco de dados Firebird via FireDAC — conexão, PSQL, generators, transactions, migrations"
+description: "Development patterns with Firebird database via FireDAC — connection, PSQL, generators, transactions, migrations"
 ---
 
 # Firebird Database — Skill
 
-Use esta skill ao trabalhar com banco de dados Firebird em projetos Delphi via FireDAC.
+Use this skill when working with Firebird database in Delphi projects via FireDAC.
 
-## Quando Usar
+## When to Use
 
-- Ao configurar conexão FireDAC com Firebird
-- Ao criar tabelas, generators, stored procedures, triggers, domains e views
-- Ao implementar Repositories com FireDAC + Firebird
-- Ao trabalhar com transactions, isolation levels e concorrência
-- Ao planejar migrações de schema (scripts versionados)
-- Ao otimizar queries e índices para Firebird
+- When configuring FireDAC connection with Firebird
+- When creating tables, generators, stored procedures, triggers, domains and views
+- When implementing Repositories with FireDAC + Firebird
+- When working with transactions, isolation levels and concurrency
+- When planning schema migrations (versioned scripts)
+- When optimizing queries and indexes for Firebird
 
-## Versões do Firebird
+## Firebird Versions
 
-| Versão | Novidades Relevantes |
+| Version | Relevant News |
 |--------|----------------------|
 | **2.5** | Trace API, `LIST()` aggregate, Windows Trusted Auth |
-| **3.0** | `BOOLEAN` nativo, `IDENTITY` columns, Packages, UDR (substitui UDF), Window Functions (`OVER`), Encryption |
+| **3.0** | Native `BOOLEAN`, `IDENTITY` columns, Packages, UDR (replaces UDF), Window Functions (`OVER`), Encryption |
 | **4.0** | `DECFLOAT`, `INT128`, `TIME/TIMESTAMP WITH TIME ZONE`, Replication, Batch API, `LATERAL` join |
 | **5.0** | `WHEN NOT MATCHED BY SOURCE`, Parallel Backup, SQL Security hardening, Profiler |
 
-> **Recomendação:** Use Firebird 3.0+ para novos projetos. Evite features depreciadas como UDFs.
+> **Recommendation:** Use Firebird 3.0+ for new projects. Avoid deprecated features like UDFs.
 
-## Conexão FireDAC com Firebird
+## FireDAC connection with Firebird
 
-### Configuração Mínima
+### Minimum Configuration
 
 ```pascal
 unit MeuApp.Infra.Database.Connection;
@@ -38,34 +38,34 @@ interface
 
 uses
   FireDAC.Comp.Client,
-  FireDAC.Phys.FB,        // Driver Firebird
-  FireDAC.Phys.FBDef,     // Defaults do Firebird
+  FireDAC.Phys.FB,        //Driver Firebird
+  FireDAC.Phys.FBDef,     //Defaults do Firebird
   FireDAC.Stan.Def,
   FireDAC.Stan.Pool,
   FireDAC.DApt;
 
 type
-  /// <summary>
-  ///   Factory de conexão Firebird via FireDAC.
-  /// </summary>
+  ///<summary>
+  ///Firebird connection factory via FireDAC.
+  ///</summary>
   TFirebirdConnectionFactory = class
   public
-    /// <summary>
-    ///   Cria e configura uma conexão Firebird.
-    /// </summary>
-    /// <param name="ADatabasePath">Caminho completo do arquivo .fdb</param>
-    /// <param name="AUserName">Usuário (padrão: SYSDBA)</param>
-    /// <param name="APassword">Senha do banco</param>
-    /// <returns>Conexão FireDAC configurada e aberta</returns>
+    ///<summary>
+    ///Creates and configures a Firebird connection.
+    ///</summary>
+    ///<param name="ADatabasePath">Full path of the .fdb file</param>
+    ///<param name="AUserName">User (default: SYSDBA)</param>
+    ///<param name="APassword">Bank password</param>
+    ///<returns>FireDAC connection configured and opened</returns>
     class function CreateConnection(
       const ADatabasePath: string;
       const AUserName: string = 'SYSDBA';
       const APassword: string = 'masterkey'
     ): TFDConnection;
 
-    /// <summary>
-    ///   Cria uma conexão via Embedded Server (sem fbserver).
-    /// </summary>
+    ///<summary>
+    ///Creates a connection via Embedded Server (without fbserver).
+    ///</summary>
     class function CreateEmbeddedConnection(
       const ADatabasePath: string
     ): TFDConnection;
@@ -96,14 +96,14 @@ begin
     Result.Params.Values['Protocol'] := 'TCPIP';     // Local: 'Local'
     Result.Params.Values['Server'] := 'localhost';
     Result.Params.Values['Port'] := '3050';
-    Result.Params.Values['SQLDialect'] := '3';        // SEMPRE Dialect 3
+    Result.Params.Values['SQLDialect'] := '3';        //ALWAYS Dialect 3
     Result.Params.Values['PageSize'] := '16384';      // 16KB recomendado
 
     { Opções do driver FireDAC }
-    Result.FormatOptions.StrsTrim2Len := True;         // Trim CHAR para VARCHAR
+    Result.FormatOptions.StrsTrim2Len := True;         //Trim CHAR for VARCHAR
     Result.FetchOptions.Mode := fmAll;                 // Fetch completo
-    Result.ResourceOptions.AutoReconnect := True;      // Reconexão automática
-    Result.TxOptions.Isolation := xiReadCommitted;     // Isolation padrão
+    Result.ResourceOptions.AutoReconnect := True;      //Automatic reconnection
+    Result.TxOptions.Isolation := xiReadCommitted;     //Standard isolation
 
     Result.Connected := True;
   except
@@ -133,7 +133,7 @@ begin
 end;
 ```
 
-### FDPhysFBDriverLink — Configurar Client Library
+### FDPhysFBDriverLink — Configure Client Library
 
 ```pascal
 uses
@@ -149,7 +149,7 @@ begin
     LDriverLink.VendorLib := 'C:\Firebird\fbclient.dll';
 
     { Embedded: usar fbclient.dll local ao .exe }
-    // LDriverLink.VendorLib := ExtractFilePath(ParamStr(0)) + 'fbclient.dll';
+    //LDriverLink.VendorLib := ExtractFilePath(ParamStr(0)) + 'fbclient.dll';
   finally
     { DriverLink geralmente vive por toda a aplicação — criar no DataModule }
   end;
@@ -175,38 +175,38 @@ begin
 end;
 ```
 
-## Dialects — SEMPRE Dialect 3
+## Dialects — ALWAYS Dialect 3
 
 | Feature | Dialect 1 | Dialect 3 |
 |---------|-----------|-----------|
-| `DATE` | Inclui hora | Apenas data (use `TIMESTAMP` para data+hora) |
-| `"Identificadores"` | Erro de sintaxe | Permite nomes case-sensitive com aspas duplas |
-| Precisão numérica | `DOUBLE PRECISION` | `NUMERIC(18, x)` até 18 dígitos |
-| Recomendação | ❌ Legado | ✅ **Obrigatório para novos projetos** |
+| `DATE` | Includes time | Date only (use `TIMESTAMP` for date+time) |
+| `"Identificadores"` | Syntax error | Allows case-sensitive names with double quotes |
+| Numerical precision | `DOUBLE PRECISION` | `NUMERIC(18, x)` up to 18 digits |
+| Recommendation | ❌ Legacy | ✅ **Mandatory for new projects** |
 
-> ⚠️ **Regra:** Sempre `SQLDialect := 3`. Dialect 1 é legado do InterBase e causa ambiguidades com `DATE`.
+> ⚠️ **Rule:** Always `SQLDialect := 3`. Dialect 1 is legacy from InterBase and causes ambiguities with `DATE`.
 
-## Tipos de Dados — Mapeamento Firebird ↔ Delphi
+## Data Types — Firebird Mapping ↔ Delphi
 
-| Firebird | Delphi (FireDAC) | Observação |
+| Firebird | Delphi (FireDAC) | Note |
 |----------|------------------|------------|
 | `INTEGER` | `ftInteger` / `AsInteger` | 32-bit |
 | `BIGINT` | `ftLargeint` / `AsLargeInt` | 64-bit |
 | `SMALLINT` | `ftSmallint` / `AsSmallInt` | 16-bit |
-| `VARCHAR(N)` | `ftString` / `AsString` | Usar com `CHARACTER SET UTF8` |
-| `CHAR(N)` | `ftFixedChar` | Preenche com espaços — preferir `VARCHAR` |
-| `NUMERIC(P,S)` | `ftBCD` / `AsCurrency` | Valores monetários |
+| `VARCHAR(N)` | `ftString` / `AsString` | Use with `CHARACTER SET UTF8` |
+| `CHAR(N)` | `ftFixedChar` | Fill with spaces — prefer `VARCHAR` |
+| `NUMERIC(P,S)` | `ftBCD` / `AsCurrency` | Monetary values ​​|
 | `DOUBLE PRECISION`| `ftFloat` / `AsFloat` | Ponto flutuante |
-| `DATE` | `ftDate` / `AsDateTime` | Apenas data (Dialect 3) |
-| `TIME` | `ftTime` / `AsDateTime` | Apenas hora |
+| `DATE` | `ftDate` / `AsDateTime` | Date only (Dialect 3) |
+| `TIME` | `ftTime` / `AsDateTime` | Just in time |
 | `TIMESTAMP` | `ftDateTime` / `AsDateTime` | Data + Hora |
-| `BOOLEAN` (FB3+) | `ftBoolean` / `AsBoolean` | `TRUE`/`FALSE` nativo |
+| `BOOLEAN` (FB3+) | `ftBoolean` / `AsBoolean` | `TRUE`/`FALSE` native |
 | `BLOB SUB_TYPE TEXT` | `ftMemo` / `AsString` | Texto grande (CLOB) |
-| `BLOB SUB_TYPE 0` | `ftBlob` / `AsBytes` | Dados binários |
+| `BLOB SUB_TYPE 0` | `ftBlob` / `AsBytes` | Binary data |
 
 ## Generators (Sequences)
 
-### Criar Generator
+### Create Generator
 
 ```sql
 /* Generator clássico (todas as versões) */
@@ -216,12 +216,12 @@ CREATE GENERATOR GEN_CUSTOMER_ID;
 CREATE SEQUENCE SEQ_CUSTOMER_ID;
 ```
 
-### Obter Próximo Valor no Delphi
+### Get Next Value in Delphi
 
 ```pascal
-/// <summary>
-///   Obtém o próximo valor de um generator Firebird.
-/// </summary>
+///<summary>
+///Gets the next value from a Firebird generator.
+///</summary>
 function GetNextGeneratorValue(
   AConnection: TFDConnection;
   const AGeneratorName: string): Int64;
@@ -239,9 +239,9 @@ begin
   end;
 end;
 
-/// <summary>
-///   Alternativa moderna com NEXT VALUE FOR (Firebird 3+).
-/// </summary>
+///<summary>
+///Modern alternative with NEXT VALUE FOR (Firebird 3+).
+///</summary>
 function GetNextSequenceValue(
   AConnection: TFDConnection;
   const ASequenceName: string): Int64;
@@ -273,7 +273,7 @@ CREATE TABLE customers (
 INSERT INTO customers (name) VALUES ('João') RETURNING id;
 ```
 
-### RETURNING no Delphi (pegar ID após Insert)
+### RETURNING in Delphi (get ID after Insert)
 
 ```pascal
 procedure TFirebirdCustomerRepository.Insert(ACustomer: TCustomer);
@@ -297,9 +297,9 @@ begin
 end;
 ```
 
-## Stored Procedures em Firebird
+## Stored Procedures in Firebird
 
-### Selectable (retorna resultset — usa SUSPEND)
+### Selectable (returns resultset — uses SUSPEND)
 
 ```sql
 CREATE OR ALTER PROCEDURE SP_CUSTOMERS_BY_STATUS (
@@ -322,7 +322,7 @@ BEGIN
 END
 ```
 
-**Chamar no Delphi (tratada como SELECT):**
+**Call in Delphi (treated as SELECT):**
 
 ```pascal
 LQuery.SQL.Text := 'SELECT * FROM SP_CUSTOMERS_BY_STATUS(:P_STATUS)';
@@ -330,7 +330,7 @@ LQuery.ParamByName('P_STATUS').AsSmallInt := Ord(csActive);
 LQuery.Open;
 ```
 
-### Executable (executa ação — não usa SUSPEND)
+### Executable (performs action — does not use SUSPEND)
 
 ```sql
 CREATE OR ALTER PROCEDURE SP_DEACTIVATE_CUSTOMER (
@@ -342,7 +342,7 @@ BEGIN
 END
 ```
 
-**Chamar no Delphi:**
+**Call in Delphi:**
 
 ```pascal
 LQuery.SQL.Text := 'EXECUTE PROCEDURE SP_DEACTIVATE_CUSTOMER(:P_CUSTOMER_ID)';
@@ -350,7 +350,7 @@ LQuery.ParamByName('P_CUSTOMER_ID').AsInteger := ACustomerId;
 LQuery.ExecSQL;
 ```
 
-## Execute Block (SQL anônimo com PSQL)
+## Execute Block (Anonymous SQL with PSQL)
 
 ```sql
 /* Útil para lotes e scripts sem criar procedure permanente */
@@ -367,7 +367,7 @@ BEGIN
 END
 ```
 
-## Domains (Tipos Reutilizáveis)
+## Domains (Reusable Types)
 
 ```sql
 /* Domínios centralizam validações e tipos no schema */
@@ -390,7 +390,7 @@ CREATE TABLE customers (
 );
 ```
 
-## Triggers
+##Triggers
 
 ```sql
 /* Trigger para auto-increment com Generator */
@@ -412,22 +412,22 @@ BEGIN
 END
 ```
 
-## Transactions e Isolation Levels
+## Transactions and Isolation Levels
 
-### Níveis de Isolamento no Firebird
+### Isolation Levels in Firebird
 
-| Nível | FireDAC | Uso |
+| Level | FireDAC | Usage |
 |-------|---------|-----|
-| **Read Committed** | `xiReadCommitted` | ✅ Padrão — lê dados commitados, sem dirty reads |
-| **Snapshot** (Concurrency) | `xiSnapshot` | Relatórios — visão consistente do momento do START |
-| **Snapshot Table Stability** | `xiSerializable` | Raro — lock exclusivo na tabela |
+| **Read Committed** | `xiReadCommitted` | ✅ Standard — reads committed data, without dirty reads |
+| **Snapshot** (Concurrency) | `xiSnapshot` | Reports — consistent view of START momentum |
+| **Snapshot Table Stability** | `xiSerializable` | Rare — exclusive lock on table |
 
-### Controle Manual de Transação
+### Manual Transaction Control
 
 ```pascal
-/// <summary>
-///   Executa operação dentro de transação explícita.
-/// </summary>
+///<summary>
+///Performs operation within explicit transaction.
+///</summary>
 procedure ExecuteInTransaction(AConnection: TFDConnection; AProc: TProc);
 begin
   AConnection.StartTransaction;
@@ -451,7 +451,7 @@ ExecuteInTransaction(FConnection,
 );
 ```
 
-### Transação com Isolation Level Específico
+### Transaction with Specific Isolation Level
 
 ```pascal
 var
@@ -476,7 +476,7 @@ begin
 end;
 ```
 
-## Event Alerter (Eventos do Banco)
+## Event Alerter (Bank Events)
 
 ```sql
 /* No Firebird: */
@@ -491,7 +491,7 @@ END
 ```pascal
 { No Delphi: escutar eventos do banco }
 uses
-  FireDAC.Phys.FB; // TFDPhysFBEventAlerter
+  FireDAC.Phys.FB; //TFDPhysFBEventAlerts
 
 var
   LAlerter: TFDEventAlerter;
@@ -516,7 +516,7 @@ begin
 end;
 ```
 
-## Criação de Schema — Script de Migração
+## Schema Creation — Migration Script
 
 ```sql
 /* migration_001_initial_schema.sql */
@@ -627,12 +627,12 @@ END^
 SET TERM ;^
 ```
 
-## Migração de Schema no Delphi
+## Schema migration in Delphi
 
 ```pascal
-/// <summary>
-///   Controle de versão de schema via tabela de migrações.
-/// </summary>
+///<summary>
+///Schema version control via migration table.
+///</summary>
 procedure EnsureMigrationTable(AConnection: TFDConnection);
 begin
   AConnection.ExecSQL(
@@ -671,7 +671,7 @@ begin
 end;
 ```
 
-## Backup e Restore via GBak (Command Line)
+## Backup and Restore via GBak (Command Line)
 
 ```bash
 # Backup
@@ -680,53 +680,53 @@ gbak -b -v -user SYSDBA -password masterkey localhost:C:\Data\MeuBanco.fdb C:\Ba
 # Restore
 gbak -c -v -page_size 16384 -user SYSDBA -password masterkey C:\Backup\MeuBanco.fbk localhost:C:\Data\MeuBanco_Restored.fdb
 
-# Backup via Services API (sem caminho local)
+# Backup via Services API (no local path)
 gbak -b -se localhost:service_mgr C:\Data\MeuBanco.fdb C:\Backup\MeuBanco.fbk -user SYSDBA -password masterkey
 ```
 
-## Anti-Patterns Firebird a Evitar
+## Firebird Anti-Patterns to Avoid
 
 ```pascal
-// ❌ Dialect 1 — ambiguidade com DATE
+//❌ Dialect 1 — ambiguity with DATE
 Result.Params.Values['SQLDialect'] := '1';
 
-// ✅ Dialect 3 — SEMPRE
+//✅ Dialect 3 — ALWAYS
 Result.Params.Values['SQLDialect'] := '3';
 
-// ❌ Concatenar SQL — SQL Injection
+//❌ Concatenar SQL — SQL Injection
 LQuery.SQL.Text := 'SELECT * FROM customers WHERE name = ''' + AName + '''';
 
-// ✅ Parâmetros parametrizados
+//✅ Parameterized parameters
 LQuery.SQL.Text := 'SELECT * FROM customers WHERE name = :name';
 LQuery.ParamByName('name').AsString := AName;
 
-// ❌ Ignorar CharacterSet — problemas com acentos
+//❌ Ignore CharacterSet — problems with accents
 Result.DriverName := 'FB';
 Result.Params.Database := APath;
-Result.Connected := True;  // Sem CharacterSet!
+Result.Connected := True;  //Sem CharacterSet!
 
-// ✅ Sempre definir CharacterSet
+//✅ Always set CharacterSet
 Result.Params.Values['CharacterSet'] := 'UTF8';
 
-// ❌ ExecSQL com RETURNING — não retorna nada!
+//❌ ExecSQL with RETURNING — returns nothing!
 LQuery.SQL.Text := 'INSERT INTO ... RETURNING id';
-LQuery.ExecSQL;  // id PERDIDO!
+LQuery.ExecSQL;  //go LOST!
 
-// ✅ Open com RETURNING — retorna o resultset
+//✅ Open with RETURNING — returns the resultset
 LQuery.SQL.Text := 'INSERT INTO ... RETURNING id';
-LQuery.Open;  // id disponível em Fields[0]
+LQuery.Open;  //id available in Fields[0]
 ACustomer.Id := LQuery.Fields[0].AsInteger;
 
-// ❌ Criar banco sem Page Size adequado
-CREATE DATABASE '...' PAGE_SIZE 4096;  // Muito pequeno para tabelas grandes
+//❌ Create database without appropriate Page Size
+CREATE DATABASE '...' PAGE_SIZE 4096;  //Too small for large tables
 
-// ✅ Page Size otimizado
+//✅ Optimized Page Size
 CREATE DATABASE '...' PAGE_SIZE 16384 DEFAULT CHARACTER SET UTF8;
 
-// ❌ Não tratar deadlocks
-LQuery.ExecSQL;  // pode dar deadlock em concorrência
+//❌ Do not treat deadlocks
+LQuery.ExecSQL;  //can cause deadlock in competition
 
-// ✅ Tratar deadlocks com retry
+//✅ Tratar deadlocks com retry
 try
   LQuery.ExecSQL;
 except
@@ -773,7 +773,7 @@ BEGIN
 END
 ```
 
-**Chamar no Delphi:**
+**Call in Delphi:**
 
 ```pascal
 LQuery.SQL.Text := 'EXECUTE PROCEDURE PKG_CUSTOMER.DEACTIVATE(:ID)';
@@ -787,7 +787,7 @@ LQuery.Open;
 LFullName := LQuery.Fields[0].AsString;
 ```
 
-## Teste de Integração com Firebird Embedded
+## Integration Testing with Firebird Embedded
 
 ```pascal
 [TestFixture]
@@ -846,18 +846,18 @@ begin
 end;
 ```
 
-## Checklist Firebird
+## Firebird Checklist
 
-- [ ] Dialect 3 configurado (`SQLDialect := '3'`)?
-- [ ] CharacterSet UTF8 definido?
+- [ ] Dialect 3 configured (`SQLDialect := '3'`)?
+- [ ] CharacterSet UTF8 defined?
 - [ ] Page Size ≥ 8192 (ideal: 16384)?
-- [ ] Queries parametrizadas (sem concatenação de strings)?
-- [ ] Generators/Sequences para auto-increment com trigger BI?
-- [ ] `RETURNING` com `Open` (não `ExecSQL`)?
-- [ ] Transactions explícitas para operações compostas?
-- [ ] Deadlocks tratados com `EFDDBEngineException.Kind = ekRecordLocked`?
-- [ ] FBClient.dll correto (32/64-bit) configurado no VendorLib?
-- [ ] Indices criados para colunas usadas em WHERE e JOIN?
-- [ ] Foreign Keys com `ON DELETE`/`ON UPDATE` apropriados?
-- [ ] Backup regular via `gbak`?
-- [ ] Scripts de migração versionados?
+- [ ] Parameterized queries (without string concatenation)?
+- [ ] Generators/Sequences for auto-increment with BI trigger?
+- [ ] `RETURNING` with `Open` (not `ExecSQL`)?
+- [ ] Explicit transactions for compound operations?
+- [ ] Deadlocks treated with `EFDDBEngineException.Kind = ekRecordLocked`?
+- [ ] Correct FBClient.dll (32/64-bit) configured in VendorLib?
+- [ ] Indexes created for columns used in WHERE and JOIN?
+- [ ] Foreign Keys with appropriate `ON DELETE`/`ON UPDATE`?
+- [ ] Regular backup via `gbak`?
+- [ ] Versioned migration scripts?

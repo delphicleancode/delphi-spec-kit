@@ -1,12 +1,12 @@
 ---
-description: Test-Driven Development (TDD) rigoroso com DUnitX, nomenclaturas e injeção de dependências para isolamento com fakes e mocks.
+description: Rigorous Test-Driven Development (TDD) with DUnitX, naming and dependency injection for isolation with fakes and mocks.
 globs: *Test*.pas, *.pas
 ---
 
-# Delphi TDD e Testes de Unidade (DUnitX)
+# Delphi TDD and Unit Tests (DUnitX)
 
-- **Test-First (Red-Green-Refactor):** Ao implementar novas regras sob ordem de "TDD", você DEVE estruturar primeiro o Test Case e suas asserções (`Assert`) falhas, antes de conceber os algoritmos concretos da lógica de negócio.
-- **Nomenclatura Padrão Expressiva:** Prefixos de métodos de teste devem seguir o escopo semântico `Metodo_Cenario_Expectativa`. Exemplo: `[Test] procedure CalculateTax_EmptyOrder_ThrowsException;`.
-- **Framework Padrão:** Use `DUnitX`. Sempre decore as classes de teste com `[TestFixture]`, métodos com `[Test]` e setups com `[Setup] / [TearDown]`.
-- **Isolamento Total (Fakes/Mocks):** NUNCA escreva um teste de unidade que envolva acoplamento direto com Banco de Dados `TFDConnection`, APIs externas, Rede ou VCL/Forms. Tudo o que é externo à Service ou Entidade testada deve ser simulado no arquivo do teste em uma subclasse isolada FAKE implementando a Interface de dependência (`IMyRepository`).
-- **Validação de Exceções:** Para provar Guard Clauses de domínio, instancie obrigatoriamente métodos anônimos usando o `Assert.WillRaise()` injetando o tipo esperado de `Exception`.
+- **Test-First (Red-Green-Refactor):** When implementing new rules under "TDD" order, you MUST first structure the Test Case and its failed assertions (`Assert`), before designing the concrete business logic algorithms.
+- **Expressive Standard Nomenclature:** Test method prefixes must follow the `Metodo_Cenario_Expectativa` semantic scope. Example: `[Test] procedure CalculateTax_EmptyOrder_ThrowsException;`.
+- **Default Framework:** Use `DUnitX`. Always decorate test classes with `[TestFixture]`, methods with `[Test]` and setups with `[Setup] / [TearDown]`.
+- **Total Isolation (Fakes/Mocks):** NEVER write a unit test that involves direct coupling with the `TFDConnection` Database, external APIs, Network or VCL/Forms. Everything external to the tested Service or Entity must be simulated in the test file in a FAKE isolated subclass implementing the Dependency Interface (`IMyRepository`).
+- **Exception Validation:** To prove domain Guard Clauses, instantiate anonymous methods using `Assert.WillRaise()` by injecting the expected type of `Exception`.

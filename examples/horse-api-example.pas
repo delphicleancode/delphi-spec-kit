@@ -1,7 +1,7 @@
-/// <summary>
-///   Exemplo completo de API REST com Horse Framework.
-///   Demonstra: configuração do servidor, rotas RESTful, middleware,
-///   uso de Services, guard clauses e tratamento de erros.
+﻿/// <summary>
+/// Complete REST API example with Horse Framework.
+/// Demonstrates: server configuration, RESTful routes, middleware,
+/// use of Services, guard clauses and error handling.
 /// </summary>
 program Example.Horse.Api;
 
@@ -16,7 +16,7 @@ uses
   Horse.HandleException;
 
 // =========================================================================
-// Modelo simplificado (em projetos reais, separar em units próprias)
+// Simplified model (in real projects, separate into separate units)
 // =========================================================================
 
 type
@@ -24,7 +24,7 @@ type
   ENotFoundException = class(Exception);
 
 // =========================================================================
-// Controller de Saúde (Health Check)
+// Health Controller (Health Check)
 // =========================================================================
 
 type
@@ -53,7 +53,7 @@ begin
 end;
 
 // =========================================================================
-// Controller de Customers
+// Customer Controller
 // =========================================================================
 
 type
@@ -88,12 +88,12 @@ var
   LResult: TJSONArray;
   LCustomer: TJSONObject;
 begin
-  // Em projetos reais, delegar para Service
+  // In real projects, delegate to Service
   LResult := TJSONArray.Create;
 
   LCustomer := TJSONObject.Create;
   LCustomer.AddPair('id', TJSONNumber.Create(1));
-  LCustomer.AddPair('name', 'João Silva');
+  LCustomer.AddPair('name', 'John Silva');
   LCustomer.AddPair('cpf', '12345678901');
   LResult.AddElement(LCustomer);
 
@@ -106,17 +106,17 @@ var
   LId: Integer;
   LResult: TJSONObject;
 begin
-  // Guard clause — validar parâmetros
+  // Guard clause — validate parameters
   if not TryStrToInt(AReq.Params['id'], LId) then
   begin
     ARes.Send('Invalid ID').Status(THTTPStatus.BadRequest);
     Exit;
   end;
 
-  // Em projetos reais, delegar para Service
+  // In real projects, delegate to Service
   LResult := TJSONObject.Create;
   LResult.AddPair('id', TJSONNumber.Create(LId));
-  LResult.AddPair('name', 'João Silva');
+  LResult.AddPair('name', 'John Silva');
   ARes.Send<TJSONObject>(LResult).Status(THTTPStatus.OK);
 end;
 
@@ -128,7 +128,7 @@ var
 begin
   LBody := AReq.Body<TJSONObject>;
 
-  // Guard clauses — validar body
+  // Guard clauses — validate body
   if not Assigned(LBody) then
   begin
     ARes.Send('Request body is required').Status(THTTPStatus.BadRequest);
@@ -142,7 +142,7 @@ begin
     Exit;
   end;
 
-  // Em projetos reais, delegar para Service
+  // In real projects, delegate to Service
   ARes.Send('Customer created').Status(THTTPStatus.Created);
 end;
 
@@ -157,7 +157,7 @@ begin
     Exit;
   end;
 
-  // Em projetos reais, delegar para Service
+  // In real projects, delegate to Service
   ARes.Send('Customer updated').Status(THTTPStatus.OK);
 end;
 
@@ -172,12 +172,12 @@ begin
     Exit;
   end;
 
-  // Em projetos reais, delegar para Service
+  // In real projects, delegate to Service
   ARes.Send('').Status(THTTPStatus.NoContent);
 end;
 
 // =========================================================================
-// Middleware de Logger
+// Logger Middleware
 // =========================================================================
 
 procedure LoggerMiddleware(
@@ -191,24 +191,24 @@ begin
 end;
 
 // =========================================================================
-// Bootstrap do Servidor
+// Server Bootstrap
 // =========================================================================
 
 const
   SERVER_PORT = 9000;
 
 begin
-  // Registrar middleware (ordem importa!)
-  THorse.Use(Jhonson);           // JSON automático
+  // Register middleware (order matters!)
+  THorse.Use(Jhonson);           // Automatic JSON
   THorse.Use(CORS);              // Cross-Origin Resource Sharing
   THorse.Use(HandleException);   // Error handler global
   THorse.Use(LoggerMiddleware);  // Logger customizado
 
-  // Registrar rotas
+  // Register routes
   THealthController.RegisterRoutes;
   TCustomerController.RegisterRoutes;
 
-  // Iniciar servidor
+  // Start server
   THorse.Listen(SERVER_PORT,
     procedure
     begin
@@ -217,3 +217,4 @@ begin
     end
   );
 end.
+

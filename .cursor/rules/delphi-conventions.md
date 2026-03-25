@@ -1,27 +1,27 @@
 ---
-description: "Convenções Delphi Object Pascal — nomenclatura, estilo, formatação"
+description: "Delphi Object Pascal conventions — naming, style, formatting"
 globs: ["**/*.pas", "**/*.dpr", "**/*.dpk"]
 alwaysApply: true
 ---
 
-# Convenções Delphi — Cursor Rules
+# Delphi Conventions — Cursor Rules
 
 ## Nomenclatura
 
-- **PascalCase** para todos os identificadores
-- Palavras reservadas em **minúsculas** (`begin`, `end`, `if`, `nil`, `string`)
-- Prefixos: `T` (classes), `I` (interfaces), `E` (exceptions), `F` (campos privados), `A` (parâmetros), `L` (variáveis locais)
+- **PascalCase** for all identifiers
+- Reserved words in **lowercase** (`begin`, `end`, `if`, `nil`, `string`)
+- Prefixes: `T` (classes), `I` (interfaces), `E` (exceptions), `F` (private fields), `A` (parameters), `L` (local variables)
 - Units: `Projeto.Camada.Dominio.Funcionalidade.pas`
-- Componentes: prefixo de 3 letras (`btn`, `edt`, `lbl`, `cmb`, `pnl`, `qry`, `ds`)
+- Components: 3-letter prefix (`btn`, `edt`, `lbl`, `cmb`, `pnl`, `qry`, `ds`)
 
-## Formatação
+## Formatting
 
-- Indentação: 2 espaços
-- Limite: 120 caracteres por linha
-- `begin` na mesma linha para blocos `if`/`for`/`while`
-- `begin` em nova linha para corpo de métodos
+- Indentation: 2 spaces
+- Limit: 120 characters per line
+- `begin` on the same line for `if`/`for`/`while` blocks
+- `begin` on new line for method body
 
-## Seções Obrigatórias da Unit
+## Unit Mandatory Sections
 
 ```pascal
 unit Nome;
@@ -34,24 +34,24 @@ uses { imports extras };
 end.
 ```
 
-## Documentação
+## Documentation
 
-- XMLDoc para métodos e propriedades públicas
-- Comentários em português para projetos brasileiros
-- Não comentar código auto-explicativo
+- XMLDoc for public methods and properties
+- Comments in Portuguese for Brazilian projects
+- Do not comment self-explanatory code
 
-## Gerenciamento de Memória
+## Memory Management
 
-- `try/finally` com `Free` para objetos temporários
-- Interfaces para reference counting automático
-- Variáveis locais com prefixo `L`
-- Owner pattern para componentes visuais
+- `try/finally` with `Free` for temporary objects
+- Interfaces for automatic reference counting
+- Local variables with prefix `L`
+- Owner pattern for visual components
 
-## Proibições
+## Prohibitions
 
 - ❌ `with` statement
-- ❌ Variáveis globais
-- ❌ Catch genérico (`except on E: Exception`)
-- ❌ Números mágicos — use constantes
-- ❌ Strings hardcoded — use `resourcestring` ou constantes
-- ❌ Métodos > 20 linhas
+- ❌ Global variables
+- ❌ Generic Catch (`except on E: Exception`)
+- ❌ Magic numbers — use constants
+- ❌ Hardcoded strings — use `resourcestring` or constants
+- ❌ Methods > 20 lines

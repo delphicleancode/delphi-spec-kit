@@ -1,97 +1,97 @@
-# Frameworks — Delphi Spec-Kit
+﻿# Frameworks — Delphi Spec-Kit
 
-## Frameworks Suportados
+## Supported Frameworks
 
-Este spec-kit oferece suporte a três frameworks populares do ecossistema Delphi. A escolha depende do tipo de projeto.
+This spec-kit supports three popular frameworks from the Delphi ecosystem. The choice depends on the type of project.
 
-### Horse (REST API Minimalista)
+### Horse (Minimalist REST API)
 
-- **Quando usar:** APIs REST simples/médias, microsserviços, prototipagem rápida
-- **Estilo:** Minimalista, inspirado no Express.js
-- **Características:** Middleware chain, baixo acoplamento, rápido de configurar
-- **Instalação:** `boss install horse`
+- **When to use:** Simple/medium REST APIs, microservices, rapid prototyping
+- **Style:** Minimalist, inspired by Express.js
+- **Features:** Middleware chain, low coupling, quick to configure
+- **Installation:** `boss install horse`
 - **Skills:** `.gemini/skills/horse-framework/SKILL.md`
 - **Rules:** `.cursor/rules/horse-patterns.md`
 
-### DelphiMVCFramework (API Full-Featured)
+### DelphiMVCFramework (Full-Featured API)
 
-- **Quando usar:** APIs REST complexas, projetos enterprise, quando precisa de Active Record, Swagger, SSE, WebSockets
-- **Estilo:** MVC completo com annotations/attributes
-- **Características:** Active Record, RQL, JWT built-in, serialização automática, Swagger
-- **Instalação:** Clone do repositório + search paths
+- **When to use:** Complex REST APIs, enterprise projects, when you need Active Record, Swagger, SSE, WebSockets
+- **Style:** MVC complete with annotations/attributes
+- **Features:** Active Record, RQL, built-in JWT, automatic serialization, Swagger
+- **Installation:** Repository clone + search paths
 - **Skills:** `.gemini/skills/dmvc-framework/SKILL.md`
 - **Rules:** `.cursor/rules/dmvc-patterns.md`
 
 ### Dext Framework (Minimal APIs & ORM)
 
-- **Quando usar:** Aplicações enterprise modernas, APIs REST baseadas em Injeção de Dependências e Entity ORM
-- **Estilo:** Inspirado em .NET Core / Spring Boot (Minimal APIs, DTOs, DI)
-- **Características:** Roteamento fluente, Smart Properties, Dext.Entity, TAsyncTask
+- **When to use:** Modern enterprise applications, REST APIs based on Dependency Injection and Entity ORM
+- **Style:** Inspired by .NET Core / Spring Boot (Minimal APIs, DTOs, DI)
+- **Features:** Fluent Routing, Smart Properties, Dext.Entity, TAsyncTask
 - **Links:** https://github.com/cesarliws/dext
 - **Skills:** `.gemini/skills/dext-framework/SKILL.md`
 - **Rules:** `.cursor/rules/dext-patterns.md`
 
 ### DevExpress Components
 
-- **Quando usar:** Interfaces desktop ricas com grids avançados, dashboards, relatórios
-- **Estilo:** Component-based (design-time + runtime) VCL
-- **Características:** TcxGrid, TdxLayoutControl, skins, exportação, filtros avançados
-- **Instalação:** Licença comercial DevExpress
-- **Atenção:** "DEXT" aqui refere-se historicamente aos sufixos dos componentes DevExtreme, mas **não** é o Dext Framework citado acima.
+- **When to use:** Rich desktop interfaces with advanced grids, dashboards, reports
+- **Style:** Component-based (design-time + runtime) VCL
+- **Features:** TcxGrid, TdxLayoutControl, skins, export, advanced filters
+- **Installation:** DevExpress commercial license
+- **Attention:** "DEXT" here historically refers to the suffixes of DevExtreme components, but **is not** the Dext Framework mentioned above.
 - **Skills:** `.gemini/skills/devexpress-components/SKILL.md`
 
-### Projeto ACBr (Automação Comercial e Fiscal)
+### ACBr Project (Commercial and Tax Automation)
 
-- **Quando usar:** Emissão de documentos fiscais (NF-e, NFC-e, CT-e, SAT), TEF, Boletos e acesso a hardware não fiscal.
-- **Arquitetura:** Não jogue componentes visuais diretamente nos formulários. Crie Serviços/Adapters (`INFeService`) que injetem e isolem o componente `TACBrNFe`.
+- **When to use:** Issuing tax documents (NF-e, NFC-e, CT-e, SAT), TEF, Bills and access to non-fiscal hardware.
+- **Architecture:** Do not throw visual components directly into forms. Create Services/Adapters (`INFeService`) that inject and isolate the `TACBrNFe` component.
 - **Skills:** `.gemini/skills/acbr-components/SKILL.md`
 - **Rules:** `.cursor/rules/acbr-patterns.md`
 
 ### Intraweb Framework
 
-- **Quando usar:** Migração rápida de ERPs de desktop para Web com paradigma stateful baseado no servidor, equipes unicamente VCL criando Web.
-- **Estilo:** Component-based, Stateful, RAD, Server-side rendered (AJAX/Postbacks).
-- **Atenção:** Evite o uso de dados globais (como instâncias em `var` no `interface`), pois vazam state cross-session. Direcione o estado transiente sempre em instâncias do `UserSession`.
+- **When to use:** Rapid migration from desktop ERPs to Web with stateful server-based paradigm, VCL-only teams creating Web.
+- **Style:** Component-based, Stateful, RAD, Server-side rendered (AJAX/Postbacks).
+- **Attention:** Avoid using global data (such as instances in `var` in `interface`), as they leak cross-session state. Target transient state always on `UserSession` instances.
 - **Skills:** `.gemini/skills/intraweb-framework/SKILL.md`
 - **Rules:** `.cursor/rules/intraweb-patterns.md`
 
 ### Firebird Database
 
-- **Quando usar:** Aplicações corporativas que precisam de banco de dados robusto, com PSQL, transações ACID e embedded mode.
-- **Acesso:** Via FireDAC (driver `FB`) — o driver nativo mais utilizado no ecossistema Delphi.
-- **Características:** Generators/Sequences, Stored Procedures (Selectable/Executable), Domains, Triggers, Events, Packages (FB3+), IDENTITY columns (FB3+), BOOLEAN nativo (FB3+).
-- **Regras críticas:** Dialect 3 SEMPRE, CharacterSet UTF8, PageSize 16384, `RETURNING` com `Open` (não `ExecSQL`).
+- **When to use:** Corporate applications that need a robust database, with PSQL, ACID transactions and embedded mode.
+- **Access:** Via FireDAC (`FB` driver) — the most used native driver in the Delphi ecosystem.
+- **Features:** Generators/Sequences, Stored Procedures (Selectable/Executable), Domains, Triggers, Events, Packages (FB3+), IDENTITY columns (FB3+), native BOOLEAN (FB3+).
+- **Critical rules:** Dialect 3 ALWAYS, CharacterSet UTF8, PageSize 16384, `RETURNING` with `Open` (not `ExecSQL`).
 - **Skills:** `.gemini/skills/firebird-database/SKILL.md`
 - **Rules:** `.cursor/rules/firebird-patterns.md`
 
 ### PostgreSQL Database
 
-- **Quando usar:** Projetos modernos, cloud-native, microserviços, quando precisar de JSONB, Full-Text Search, UPSERT, Arrays ou particionamento avançado.
-- **Acesso:** Via FireDAC (driver `PG`) — client library `libpq.dll`.
-- **Características:** IDENTITY (SQL Standard), UPSERT (`ON CONFLICT`), JSONB indexável, Full-Text Search (`tsvector`), CTEs recursivas, Window Functions, ENUM types, Schemas, Partitioning, LISTEN/NOTIFY, extensões (`pgcrypto`, `pg_trgm`).
-- **Regras críticas:** `IDENTITY` em vez de `SERIAL`, CharacterSet UTF8, `RETURNING` com `Open`, metadata via `information_schema`.
+- **When to use:** Modern projects, cloud-native, microservices, when you need JSONB, Full-Text Search, UPSERT, Arrays or advanced partitioning.
+- **Access:** Via FireDAC (driver `PG`) — client library `libpq.dll`.
+- **Features:** IDENTITY (SQL Standard), UPSERT (`ON CONFLICT`), indexable JSONB, Full-Text Search (`tsvector`), recursive CTEs, Window Functions, ENUM types, Schemas, Partitioning, LISTEN/NOTIFY, extensions (`pgcrypto`, `pg_trgm`).
+- **Critical rules:** `IDENTITY` instead of `SERIAL`, CharacterSet UTF8, `RETURNING` with `Open`, metadata via `information_schema`.
 - **Skills:** `.gemini/skills/postgresql-database/SKILL.md`
 - **Rules:** `.cursor/rules/postgresql-patterns.md`
 
 ### MySQL / MariaDB Database
 
-- **Quando usar:** Projetos web com alta popularidade de hosting, aplicações LAMP/LEMP stack, cenários de alta leitura, compatibilidade com hosting compartilhado.
-- **Acesso:** Via FireDAC (driver `MySQL`) — client library `libmysql.dll` (ou `libmariadb.dll`).
-- **Características:** AUTO_INCREMENT, `LAST_INSERT_ID()`, UPSERT (`ON DUPLICATE KEY UPDATE`), JSON nativo (5.7+), FULLTEXT Search, ENUM/SET nativos, Generated Columns, CTEs e Window Functions (8.0+), Partitioning.
-- **Regras críticas:** `utf8mb4` SEMPRE (nunca `utf8`), `InnoDB` SEMPRE, sem `RETURNING` (usar `LAST_INSERT_ID()`), metadata via `information_schema`.
+- **When to use:** Web projects with high hosting popularity, LAMP/LEMP stack applications, high reading scenarios, compatibility with shared hosting.
+- **Access:** Via FireDAC (driver `MySQL`) — client library `libmysql.dll` (or `libmariadb.dll`).
+- **Features:** AUTO_INCREMENT, `LAST_INSERT_ID()`, UPSERT (`ON DUPLICATE KEY UPDATE`), native JSON (5.7+), FULLTEXT Search, native ENUM/SET, Generated Columns, CTEs and Window Functions (8.0+), Partitioning.
+- **Critical rules:** `utf8mb4` ALWAYS (never `utf8`), `InnoDB` ALWAYS, without `RETURNING` (use `LAST_INSERT_ID()`), metadata via `information_schema`.
 - **Skills:** `.gemini/skills/mysql-database/SKILL.md`
 - **Rules:** `.cursor/rules/mysql-patterns.md`
 
 ### Threading & Multi-Threading
 
-- **Quando usar:** Operações demoradas que bloqueiam a UI, processamento paralelo de dados, servidores/workers, pools de threads.
-- **Abordagens:** `TThread.CreateAnonymousThread` (simples), `TTask.Run` (PPL moderno), `TParallel.For` (loops), `TFuture<T>` (resultado assíncrono), `TThread` herdado (workers permanentes).
-- **Regra de Ouro:** NUNCA acessar VCL/FMX de thread secundária → `TThread.Synchronize` (bloqueante) ou `TThread.Queue` (não-bloqueante).
+- **When to use:** Time-consuming operations that block the UI, parallel data processing, servers/workers, thread pools.
+- **Approaches:** `TThread.CreateAnonymousThread` (simple), `TTask.Run` (modern PPL), `TParallel.For` (loops), `TFuture<T>` (asynchronous result), `TThread` legacy (permanent workers).
+- **Rule of Thumb:** NEVER access VCL/FMX from secondary thread → `TThread.Synchronize` (blocking) or `TThread.Queue` (non-blocking).
 - **Thread-Safety:** `TCriticalSection`, `TMonitor`, `TInterlocked`, `TThreadList<T>`, `TMultiReadExclusiveWriteSynchronizer`, `TThreadedQueue<T>`.
 - **Skills:** `.gemini/skills/threading/SKILL.md`
 - **Rules:** `.cursor/rules/threading-patterns.md`
 
-## Decisão de Framework
+## Framework Decision
 
 ```
 Preciso de API REST?
@@ -114,26 +114,27 @@ Preciso de UI/Visual?
 └── Web SPA Nativo Delphi (Form based) → Intraweb
 ```
 
-## Combinações Comuns
+## Common Combinations
 
-| Frontend | Backend | Componentes Específicos |
+| Frontend | Backend | Specific Components |
 |----------|---------|-------------------------|
-| DevExpress (VCL)| Dext.Entity ORM | Desktop monolítico moderno |
-| Intraweb (Web) | Intraweb (Stateful)| Portabilidade rápida Web, Single Binary, UserSession |
-| Web App (JS) | Dext Framework API | Web App consumindo API corporativa |
-| VCL / FMX | Horse API | App consumindo API minimalista |
-| PDV (VCL) | Horse API / Local| Projeto ACBr para Impressoras/TEF/NFC-e |
+| DevExpress (VCL)| Dext.Entity ORM | Modern Monolithic Desktop |
+| Intraweb (Web) | Intraweb (Stateful)| Fast Web Portability, Single Binary, UserSession |
+| Web App (JS) | Dext Framework API | Web App consuming corporate API |
+| VCL/FMX | Horse API | App consuming minimalist API |
+| POS (VCL) | Horse API / Local| ACBr Project for Printers/TEF/NFC-e |
 
-## Regra de Ouro Transversal (Memória e Exceções)
+## Transversal Golden Rule (Memory and Exceptions)
 
-Independentemente do framework ou ecossistema escolhido:
-1. **Zere a possibilidade de Memory Leaks**: Qualquer Classe sem `Reference Count` e sem `Owner` injetado deve ser instanciada vizinha a um `try` e libertada em bloco `finally`.
-2. **Exceções Transparentes e de Domínio**: Não "cale" processamentos de erro genéricos (`on E: Exception do`). Transforme Infraestrutura em exceções tipadas e garanta propagação correta (DDDErrors), deixando o Framework interceptar no handler global para a UI.
+Regardless of the chosen framework or ecosystem:
+1. **Zero the possibility of Memory Leaks**: Any Class without `Reference Count` and without `Owner` injected must be instantiated next to a `try` and released in the `finally` block.
+2. **Transparent and Domain Exceptions**: Do not "silence" generic error processing (`on E: Exception do`). Transform Infrastructure into typed exceptions and ensure correct propagation (DDDErrors), letting the Framework intercept in the global handler for the UI.
 
-## Regras Gerais para Todos os Frameworks
+## General Rules for All Frameworks
 
-- SOLID se aplica independente do framework
-- Clean Code se aplica independente do framework
-- Nomenclatura Pascal Guide se aplica sempre
-- Testes unitários com DUnitX são obrigatórios
-- Separação de camadas (Domain, Application, Infrastructure, Presentation) vale para todos
+- SOLID applies regardless of the framework
+- Clean Code applies regardless of the framework
+- Pascal Guide nomenclature always applies
+- Unit tests with DUnitX are mandatory
+- Separation of layers (Domain, Application, Infrastructure, Presentation) applies to everyone
+

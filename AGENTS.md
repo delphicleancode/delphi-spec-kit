@@ -1,73 +1,73 @@
-# Delphi AI Spec-Kit — AGENTS.md
+﻿# Delphi AI Spec-Kit — AGENTS.md
 
-> Este arquivo é reconhecido automaticamente por **Antigravity**, **GitHub Copilot**, **Cursor** e **Kiro**.
-> Ele define as regras universais para desenvolvimento Delphi com IA.
+> This file is automatically recognized by **Antigravity**, **GitHub Copilot**, **Cursor** and **Kiro**.
+> It defines the universal rules for Delphi development with AI.
 
-## Linguagem e Stack
+## Language and Stack
 
-- **Linguagem:** Object Pascal (Delphi)
-- **IDE Nativa:** RAD Studio / Delphi
+- **Language:** Object Pascal (Delphi)
+- **Native IDE:** RAD Studio / Delphi
 - **Frameworks:** VCL, FMX, FireDAC
-- **Banco de dados:** FireDAC (SQLite, PostgreSQL, Firebird, SQL Server)
-- **Testes:** DUnitX
+- **Database:** FireDAC (SQLite, PostgreSQL, Firebird, SQL Server)
+- **Tests:** DUnitX
 - **Build:** MSBuild / Delphi Compiler (dcc32/dcc64)
-- **Extensões de arquivo:** `.pas` (units), `.dfm`/`.fmx` (forms), `.dpr` (project), `.dpk` (package), `.dproj` (project config)
+- **File extensions:** `.pas` (units), `.dfm`/`.fmx` (forms), `.dpr` (project), `.dpk` (package), `.dproj` (project config)
 
-## Convenções de Nomenclatura — Pascal Guide
+## Naming Conventions — Pascal Guide
 
-### Regra Geral
+### General Rule
 
-Usar **PascalCase** (InfixCaps) para todos os identificadores. Palavras reservadas sempre em **minúsculas** (`begin`, `end`, `if`, `then`, `else`, `nil`, `string`).
+Use **PascalCase** (InfixCaps) for all identifiers. Reserved words are always in **TOK_6__, `end`, `if`, `then`, `else`, `nil`, `string`).
 
-### Prefixos Obrigatórios
+### Mandatory Prefixes
 
-| Tipo | Prefixo | Exemplo |
+| Type | Prefix | Example |
 |------|---------|---------|
-| Classe | `T` | `TCustomerRepository` |
+| Class | `T` | `TCustomerRepository` |
 | Interface | `I` | `ICustomerRepository` |
 | Exception | `E` | `ECustomerNotFound` |
-| Campo privado | `F` | `FCustomerName` |
-| Parâmetro | `A` | `ACustomerName` |
-| Tipo enumerado | `T` | `TOrderStatus` |
-| Itens de enum | prefixo curto | `osNew`, `osPending`, `osClosed` |
+| Private field | `F` | `FCustomerName` |
+| Parameter | `A` | `ACustomerName` |
+| Enumerated type | `T` | `TOrderStatus` |
+| Enum Items | short prefix | `osNew`, `osPending`, `osClosed` |
 
-### Nomenclatura de Units
+### Unit Naming
 
 ```
 NomeProjeto.Camada.Dominio.Funcionalidade.pas
 ```
 
-Exemplos:
+Examples:
 
-- `MeuApp.Domain.Customer.Entity.pas`
-- `MeuApp.Infra.Customer.Repository.pas`
-- `MeuApp.Application.Customer.Service.pas`
-- `MeuApp.Presentation.Customer.View.pas`
+- `MyApp.Domain.Customer.Entity.pas`
+- `MyApp.Infra.Customer.Repository.pas`
+- `MyApp.Application.Customer.Service.pas`
+- `MyApp.Presentation.Customer.View.pas`
 
-### Nomenclatura de Métodos
+### Method Naming
 
-- Métodos de ação: usar verbos — `Execute`, `CreateOrder`, `ValidateCustomer`
-- Getters: prefixo `Get` — `GetCustomerName`
-- Setters: prefixo `Set` — `SetCustomerName`
-- Funções booleanas: prefixo `Is`, `Has`, `Can` — `IsValid`, `HasPermission`, `CanDelete`
+- Action methods: use verbs — `Execute`, `CreateOrder`, `ValidateCustomer`
+- Getters: prefix `Get` — `GetCustomerName`
+- Setters: prefix `Set` — `SetCustomerName`
+- Boolean functions: prefix `Is`, `Has`, `Can` — `IsValid`, `HasPermission`, `CanDelete`
 
-### Nomenclatura de Testes de Unidade (TDD)
+### Unit Test Naming (TDD)
 
-- Seguir o padrão genérico comportamental em testes DUnitX: `Action_Condition_ExpectedResult`
-- Exemplo: `ProcessOrder_WithoutStock_RaisesException`, `CalculateTotal_WithDiscount_ReturnsLowerValue`
-- Crie fakes na unit de teste com prefixo `TFake` (ex: `TFakeInventoryRepository`)
+- Follow the generic behavioral pattern in DUnitX tests: `Action_Condition_ExpectedResult`
+- Example: `ProcessOrder_WithoutStock_RaisesException`, `CalculateTotal_WithDiscount_ReturnsLowerValue`
+- Create fakes in the test unit with prefix `TFake` (ex: `TFakeInventoryRepository`)
 
-### Nomenclatura de Forms e DataModules
+### Naming of Forms and DataModules
 
-- Tipo: `TfrmCustomerEdit`, `TdmDatabase`
-- Variável: `frmCustomerEdit`, `dmDatabase`
-- Unit: `MeuApp.Presentation.Customer.Edit.pas`
+- Type: `TfrmCustomerEdit`, `TdmDatabase`
+- Variable: `frmCustomerEdit`, `dmDatabase`
+- Unit: `MyApp.Presentation.Customer.Edit.pas`
 
-### Componentes em Forms
+### Components in Forms
 
-Usar prefixo de 3 letras indicando o tipo:
+Use a 3-letter prefix indicating the type:
 
-| Componente | Prefixo | Exemplo |
+| Component | Prefix | Example |
 |-----------|---------|---------|
 | TButton | `btn` | `btnSave` |
 | TEdit | `edt` | `edtName` |
@@ -89,12 +89,12 @@ Usar prefixo de 3 letras indicando o tipo:
 | TToolBar | `tlb` | `tlbMain` |
 | TActionList | `act` | `actMain` |
 | TPopupMenu | `pmn` | `pmnGrid` |
-| TTimer | `tmr` | `tmrRefresh` |
+| T Hours | `tmr` | `tmrRefresh` |
 | TStatusBar | `stb` | `stbMain` |
 
-### Componentes DevExpress (DEXT) em Forms
+### DevExpress (DEXT) components in Forms
 
-| Componente | Prefixo | Exemplo |
+| Component | Prefix | Example |
 |-----------|---------|---------|
 | TcxGrid | `grd` | `grdCustomers` |
 | TcxGridDBTableView | `tvw` | `tvwCustomers` |
@@ -111,9 +111,9 @@ Usar prefixo de 3 letras indicando o tipo:
 | TdxRibbon | `rbn` | `rbnMain` |
 | TdxSkinController | `skn` | `sknController` |
 
-### Projeto ACBr (Automação Comercial)
+### ACBr Project (Commercial Automation)
 
-| Componente | Prefixo | Exemplo |
+| Component | Prefix | Example |
 |-----------|---------|---------|
 | TACBrNFe | `acbrNFe` | `acbrNFe1` ou `acbrNfeEmissor` |
 | TACBrCTe | `acbrCte` | `acbrCteMain` |
@@ -123,11 +123,11 @@ Usar prefixo de 3 letras indicando o tipo:
 | TACBrSAT | `acbrSat` | `acbrSatFiscal` |
 | TACBrCEP | `acbrCep` | `acbrCepBusca` |
 
-**Nota ACBr:** Evite prender a UI diretamente em eventos interativos do componente. Isole a lógica fiscal.
+**ACBr Note:** Avoid trapping the UI directly in component interactive events. Isolate tax logic.
 
-### Componentes Intraweb (Web)
+### Intraweb Components (Web)
 
-| Componente | Prefixo | Exemplo |
+| Component | Prefix | Example |
 |-----------|---------|---------|
 | TIWAppForm | `iwForm`| `iwFormLogin` |
 | TIWButton | `iwBtn` | `iwBtnSave` |
@@ -137,100 +137,100 @@ Usar prefixo de 3 letras indicando o tipo:
 | TIWGrid | `iwGrd` | `iwGrdItems` |
 | TIWRegion | `iwReg` | `iwRegContainer` |
 
-**Nota Intraweb:** Evite variáveis globais de unit para controle de estado do usuário. Guarde dados transientes sempre no `UserSession` para evitar vazamentos entre sessões.
+**Intraweb Note:** Avoid global unit variables to control user state. Always store transient data in `UserSession` to avoid leaks between sessions.
 
-## Frameworks REST (Horse, DMVC, Dext)
+## REST Frameworks (Horse, DMVC, Dext)
 
 ### Dext Framework
 
-Dext (<https://github.com/cesarliws/dext>) é um marco corporativo com inspiração no ecossistema .NET. Convenções:
+Dext (<https://github.com/cesarliws/dext>) is an enterprise landmark inspired by the .NET ecosystem. Conventions:
 
-- **Minimal APIs:** Use `App.Builder.MapGet` com Auto-Binding para DTOs
-- **Injeção de Dependência:** Obrigatória. Injete nos endpoints: `function(Dto: MyDto; Rep: ICustomerRepository): IResult`
-- **Entity ORM:** Consultas tipo LINQ (`DbContext.Where(U.Age > 18)`). Não use queries em SQL puro encadeado.
-- **Async:** Use `TAsyncTask.Run` do `Dext.Core.Tasks`.
-- **Resultados:** Retorne frameworks tipados ou Records diretamente, serializados como JSON.
+- **Minimal APIs:** Use `App.Builder.MapGet` with Auto-Binding for DTOs
+- **Dependency Injection:** Mandatory. Inject into endpoints: `function(Dto: MyDto; Rep: ICustomerRepository): IResult`
+- **Entity ORM:** LINQ type queries (`DbContext.Where(U.Age > 18)`). Do not use queries in pure SQL chained.
+- **Async:** Use `TAsyncTask.Run` from `Dext.Core.Tasks`.
+- **Results:** Return typed frameworks or Records directly, serialized as JSON.
 
 ### Horse Framework
 
-Horse é um framework REST minimalista para Delphi (estilo Express). Convenções:
+Horse is a minimalist REST framework for Delphi (Express style). Conventions:
 
-- **Controller:** Classe com `class procedure RegisterRoutes`
+- **Controller:** Class with `class procedure RegisterRoutes`
 - **Handler:** `class procedure Nome(AReq: THorseRequest; ARes: THorseResponse; ANext: TProc)`
 - **Middleware:** `procedure Nome(AReq: THorseRequest; ARes: THorseResponse; ANext: TProc)`
-- **Rotas:** Kebab-case, plural — `/api/customers`, `/api/order-items`
-- **JSON:** Usar middleware `Jhonson` para serialização automática
-- **CORS:** Usar middleware `Horse.CORS`
-- **Estrutura:** Controllers separados de Services, Services separados de Repositories
-- **Pacotes:** `boss install horse horse-jhonson horse-cors horse-jwt`
+- **Routes:** Kebab-case, plural — `/api/customers`, `/api/order-items`
+- **JSON:** Use `Jhonson` middleware for automatic serialization
+- **CORS:** Use `Horse.CORS` middleware
+- **Structure:** Controllers separated from Services, Services separated from Repositories
+- **Packages:** `boss install horse horse-jhonson horse-cors horse-jwt`
 
 ### DelphiMVCFramework (DMVC)
 
-DMVC é um framework MVC clássico com Active Record, JWT e Swagger:
+DMVC is a classic MVC framework with Active Record, JWT and Swagger:
 
-- **Controller:** Herda de `TMVCController` com `[MVCPath]` attribute
-- **Rotas:** Attributes — `[MVCPath]`, `[MVCHTTPMethod]`, `[MVCProduces]`, `[MVCConsumes]`
-- **Active Record:** Herda de `TMVCActiveRecord` com `[MVCTable]`, `[MVCTableField]`
-- **Serialização:** Automática via `Render()` (JSON por padrão)
-- **WebModule:** `TMVCEngine` criado no WebModule com controllers e middleware
+- **Controller:** Inherits from `TMVCController` with `[MVCPath]` attribute
+- **Routes:** Attributes — `[MVCPath]`, `[MVCHTTPMethod]`, `[MVCProduces]`, `[MVCConsumes]`
+- **Active Record:** Inherits from `TMVCActiveRecord` with `[MVCTable]`, `[MVCTableField]`
+- **Serialization:** Automatic via `Render()` (JSON by default)
+- **WebModule:** `TMVCEngine` created in WebModule with controllers and middleware
 - **JWT:** `TMVCJWTAuthenticationMiddleware` built-in
-- **RQL:** Resource Query Language para filtros via query string
+- **RQL:** Resource Query Language for filters via query string
 
 ### DevExpress Components
 
-Componentes visuais avançados para VCL:
+Advanced visual components for VCL:
 
-- **Grid:** `TcxGrid` com `TcxGridDBTableView` (data-aware)
-- **Layout:** `TdxLayoutControl` para formulários responsivos
-- **Skins:** `TdxSkinController` para temas globais
-- **Exportação:** `cxGridExportLink` para Excel/PDF
-- **Filtros:** `DataController.Filter` para filtros programáticos
+- **Grid:** `TcxGrid` with `TcxGridDBTableView` (data-aware)
+- **Layout:** `TdxLayoutControl` for responsive forms
+- **Skins:** `TdxSkinController` for global themes
+- **Export:** `cxGridExportLink` to Excel/PDF
+- **Filters:** `DataController.Filter` for programmatic filters
 
-## Banco de Dados Firebird
+## Firebird Database
 
-Firebird é o banco de dados corporativo mais utilizado com Delphi. Acesso via **FireDAC** (driver `FB`).
+Firebird is the most used corporate database with Delphi. Access via **FireDAC** (driver `FB`).
 
-### Configuração de Conexão Obrigatória
+### Mandatory Connection Configuration
 
 ```pascal
 FConnection.DriverName := 'FB';
-FConnection.Params.Values['CharacterSet'] := 'UTF8';    // SEMPRE UTF8
-FConnection.Params.Values['SQLDialect'] := '3';          // NUNCA Dialect 1
-FConnection.Params.Values['Protocol'] := 'TCPIP';        // Ou 'Local' para embedded
+FConnection.Params.Values['CharacterSet'] := 'UTF8';    //ALWAYS UTF8
+FConnection.Params.Values['SQLDialect'] := '3';          //NEVER Dialect 1
+FConnection.Params.Values['Protocol'] := 'TCPIP';        //Or 'Local' for embedded
 FConnection.Params.Values['PageSize'] := '16384';         // 16KB recomendado
-FConnection.TxOptions.Isolation := xiReadCommitted;       // Isolation padrão
+FConnection.TxOptions.Isolation := xiReadCommitted;       //Standard isolation
 ```
 
-### Regras Essenciais Firebird
+### Essential Rules Firebird
 
-- **Dialect 3 SEMPRE** — Dialect 1 é legado InterBase e causa ambiguidade com `DATE`
-- **CharacterSet UTF8** — obrigatório para suporte correto a acentos
-- **Queries parametrizadas** — nunca concatenar strings em SQL
-- **RETURNING com Open** — `INSERT ... RETURNING id` exige `LQuery.Open`, não `ExecSQL`
-- **Generators** para auto-increment com triggers `BEFORE INSERT`
-- **Domains** para centralizar tipos e validações no schema
-- **Stored Procedures:** Selectable (com `SUSPEND`) usa `SELECT FROM SP`; Executable usa `EXECUTE PROCEDURE`
-- **Transactions explícitas** para operações compostas (StartTransaction/Commit/Rollback)
-- **Tratar deadlocks** via `EFDDBEngineException.Kind = ekRecordLocked`
+- **Dialect 3 ALWAYS** — Dialect 1 is InterBase legacy and causes ambiguity with `DATE`
+- **CharacterSet UTF8** — required for correct accent support
+- **Parameterized queries** — never concatenate strings in SQL
+- **RETURNING with Open** — `INSERT ... RETURNING id` requires `LQuery.Open`, not `ExecSQL`
+- **Generators** for auto-increment with `BEFORE INSERT` triggers
+- **Domains** to centralize types and validations in the schema
+- **Stored Procedures:** Selectable (with `SUSPEND`) uses `SELECT FROM SP`; Executable uses `EXECUTE PROCEDURE`
+- **Explicit transactions** for compound operations (StartTransaction/Commit/Rollback)
+- **Treat deadlocks** via `EFDDBEngineException.Kind = ekRecordLocked`
 
-### Anti-Patterns Firebird
+### Firebird Anti-Patterns
 
-- ❌ `SQLDialect := '1'` — usar SEMPRE `'3'`
-- ❌ `ExecSQL` com `RETURNING` — usar `Open`
-- ❌ Concatenar SQL — usar parâmetros
-- ❌ Ignorar `CharacterSet` — definir `UTF8`
-- ❌ `PAGE_SIZE 4096` — usar `16384` para produção
-- ❌ Ignorar deadlocks — tratar `ekRecordLocked`
-- ❌ `CREATE TABLE IF NOT EXISTS` — não existe no Firebird (verificar via `RDB$RELATIONS`)
+- ❌ `SQLDialect := '1'` — ALWAYS use `'3'`
+- ❌ `ExecSQL` with `RETURNING` — use `Open`
+- ❌ Concatenate SQL — use parameters
+- ❌ Ignore `CharacterSet` — set `UTF8`
+- ❌ `PAGE_SIZE 4096` — use `16384` for production
+- ❌ Bypass deadlocks — handle `ekRecordLocked`
+- ❌ `CREATE TABLE IF NOT EXISTS` — does not exist in Firebird (check via `RDB$RELATIONS`)
 
 > **Skills:** `.gemini/skills/firebird-database/SKILL.md`
 > **Rules:** `.cursor/rules/firebird-patterns.md`
 
-## Banco de Dados PostgreSQL
+## PostgreSQL Database
 
-PostgreSQL é o banco de dados open-source mais avançado, ideal para projetos modernos. Acesso via **FireDAC** (driver `PG`).
+PostgreSQL is the most advanced open-source database, ideal for modern projects. Access via **FireDAC** (driver `PG`).
 
-### Configuração de Conexão
+### Connection Configuration
 
 ```pascal
 FConnection.DriverName := 'PG';
@@ -243,36 +243,36 @@ FConnection.Params.Values['CharacterSet'] := 'UTF8';
 FConnection.TxOptions.Isolation := xiReadCommitted;
 ```
 
-### Regras Essenciais PostgreSQL
+### Essential Rules PostgreSQL
 
-- **IDENTITY em vez de SERIAL** — usar `GENERATED ALWAYS AS IDENTITY` para novos projetos (PG 10+)
-- **RETURNING com Open** — `INSERT ... RETURNING id` exige `LQuery.Open`, não `ExecSQL`
-- **UPSERT nativo** — `INSERT ... ON CONFLICT (col) DO UPDATE SET ...`
-- **JSONB** — para dados semi-estruturados, indexável com GIN
-- **ENUM types** — `CREATE TYPE status AS ENUM ('active', 'inactive')` mapeado para enum Pascal
+- **IDENTITY instead of SERIAL** — use `GENERATED ALWAYS AS IDENTITY` for new projects (PG 10+)
+- **RETURNING with Open** — `INSERT ... RETURNING id` requires `LQuery.Open`, not `ExecSQL`
+- **native UPSERT** — `INSERT ... ON CONFLICT (col) DO UPDATE SET ...`
+- **JSONB** — for semi-structured data, indexable with GIN
+- **ENUM types** — `CREATE TYPE status AS ENUM ('active', 'inactive')` mapped to Pascal enum
 - **PL/pgSQL** — Functions (`RETURNS TABLE` = Selectable), Procedures (`CALL`, PG 11+)
-- **Transactions explícitas** — `StartTransaction/Commit/Rollback`, suporta `SAVEPOINT`
-- **Full-Text Search** — `tsvector` + `tsquery` com índice GIN
-- **Metadata via `information_schema`** — não usar `RDB$` (isso é Firebird)
+- **Explicit transactions** — `StartTransaction/Commit/Rollback`, supports `SAVEPOINT`
+- **Full-Text Search** — `tsvector` + `tsquery` with GIN index
+- **Metadata via `information_schema`** — do not use `RDB$` (this is Firebird)
 
-### Anti-Patterns PostgreSQL
+### PostgreSQL Anti-Patterns
 
-- ❌ Concatenar SQL — usar parâmetros parametrizados
-- ❌ `ExecSQL` com `RETURNING` — usar `Open`
-- ❌ `SERIAL` em novos projetos — usar `IDENTITY`
-- ❌ `SELECT *` em tabelas grandes — selecionar colunas necessárias
-- ❌ N+1 queries — usar JOIN ou subquery
-- ❌ Guardar JSON como TEXT — usar `JSONB`
-- ❌ Ignorar índices em colunas de WHERE/JOIN
+- ❌ Concatenate SQL — use parameterized parameters
+- ❌ `ExecSQL` with `RETURNING` — use `Open`
+- ❌ `SERIAL` in new projects — use `IDENTITY`
+- ❌ `SELECT *` in large tables — select required columns
+- ❌ N+1 queries — use JOIN or subquery
+- ❌ Save JSON as TEXT — use `JSONB`
+- ❌ Ignore indexes on WHERE/JOIN columns
 
 > **Skills:** `.gemini/skills/postgresql-database/SKILL.md`
 > **Rules:** `.cursor/rules/postgresql-patterns.md`
 
-## Banco de Dados MySQL / MariaDB
+## MySQL / MariaDB Database
 
-MySQL é o banco de dados open-source mais popular do mundo. MariaDB é um fork compatível. Acesso via **FireDAC** (driver `MySQL`).
+MySQL is the most popular open-source database in the world. MariaDB is a compatible fork. Access via **FireDAC** (driver `MySQL`).
 
-### Configuração de Conexão
+### Connection Configuration
 
 ```pascal
 FConnection.DriverName := 'MySQL';
@@ -281,83 +281,83 @@ FConnection.Params.Values['Port'] := '3306';
 FConnection.Params.Database := 'meubanco';
 FConnection.Params.UserName := 'root';
 FConnection.Params.Password := 'senha';
-FConnection.Params.Values['CharacterSet'] := 'utf8mb4';  // NUNCA 'utf8' (só 3 bytes!)
+FConnection.Params.Values['CharacterSet'] := 'utf8mb4';  //NEVER 'utf8' (only 3 bytes!)
 FConnection.TxOptions.Isolation := xiReadCommitted;
 ```
 
-### Regras Essenciais MySQL
+### Essential Rules MySQL
 
-- **`utf8mb4` SEMPRE** — `utf8` no MySQL só tem 3 bytes (não suporta emoji). Usar `utf8mb4`
-- **AUTO_INCREMENT + LAST_INSERT_ID()** — MySQL NÃO suporta `RETURNING`. Obter ID via `LAST_INSERT_ID()`
-- **UPSERT nativo** — `INSERT ... ON DUPLICATE KEY UPDATE`
-- **JSON nativo** — tipo `JSON` com operadores `->>`/`JSON_EXTRACT` (MySQL 5.7+)
-- **InnoDB SEMPRE** — nunca MyISAM em novos projetos (precisa de FK e transactions)
-- **Stored Procedures** — `CALL sp_nome(...)` para procedures, `SELECT fn_nome(...)` para functions
-- **Transactions explícitas** — `StartTransaction/Commit/Rollback`, suporta `SAVEPOINT`
-- **COLLATE** — `utf8mb4_unicode_ci` para comparação case-insensitive correta
-- **Metadata via `information_schema`** — usar `DATABASE()` para schema atual
+- **`utf8mb4` ALWAYS** — `utf8` in MySQL only has 3 bytes (does not support emoji). Use `utf8mb4`
+- **AUTO_INCREMENT + LAST_INSERT_ID()** — MySQL does NOT support `RETURNING`. Get ID via `LAST_INSERT_ID()`
+- **native UPSERT** — `INSERT ... ON DUPLICATE KEY UPDATE`
+- **Native JSON** — `JSON` type with `->>`/`JSON_EXTRACT` operators (MySQL 5.7+)
+- **InnoDB ALWAYS** — never MyISAM in new projects (needs FK and transactions)
+- **Stored Procedures** — `CALL sp_nome(...)` for procedures, `SELECT fn_nome(...)` for functions
+- **Explicit transactions** — `StartTransaction/Commit/Rollback`, supports `SAVEPOINT`
+- **COLLATE** — `utf8mb4_unicode_ci` for correct case-insensitive comparison
+- **Metadata via `information_schema`** — use `DATABASE()` for current schema
 
-### Anti-Patterns MySQL
+### MySQL Anti-Patterns
 
-- ❌ `utf8` como charset — usar `utf8mb4`
-- ❌ Tentar `RETURNING` — não existe, usar `LAST_INSERT_ID()`
-- ❌ `MyISAM` em novas tabelas — usar `InnoDB`
-- ❌ Concatenar SQL — usar parâmetros
-- ❌ `SELECT *` sem `LIMIT` — paginar resultados
-- ❌ N+1 queries — usar JOIN ou subquery
-- ❌ Ignorar índices em colunas de WHERE/JOIN
+- ❌ `utf8` as charset — use `utf8mb4`
+- ❌ Try `RETURNING` — does not exist, use `LAST_INSERT_ID()`
+- ❌ `MyISAM` in new tables — use `InnoDB`
+- ❌ Concatenate SQL — use parameters
+- ❌ `SELECT *` without `LIMIT` — page results
+- ❌ N+1 queries — use JOIN or subquery
+- ❌ Ignore indexes on WHERE/JOIN columns
 
 > **Skills:** `.gemini/skills/mysql-database/SKILL.md`
 > **Rules:** `.cursor/rules/mysql-patterns.md`
 
-## Threads e Multi-Threading
+## Threads and Multi-Threading
 
-Threads são fundamentais para manter a UI responsiva e processar dados em paralelo. Delphi oferece `TThread`, PPL (`TTask`, `TParallel.For`, `TFuture<T>`) e primitivas de sincronização.
+Threads are essential for keeping the UI responsive and processing data in parallel. Delphi offers `TThread`, PPL (`TTask`, `TParallel.For`, `TFuture<T>`) and synchronization primitives.
 
-### Regra de Ouro
+### Golden Rule
 
-> **NUNCA acesse componentes visuais (VCL/FMX) diretamente de uma thread secundária.**
-> Use `TThread.Synchronize` (bloqueante) ou `TThread.Queue` (não-bloqueante) para atualizar a UI.
+> **NEVER access visual components (VCL/FMX) directly from a secondary thread.**
+> Use `TThread.Synchronize` (blocking) or `TThread.Queue` (non-blocking) to update the UI.
 
-### Abordagens de Threading
+### Threading Approaches
 
-| Abordagem | Quando Usar |
+| Approach | When to Use |
 |-----------|-------------|
-| `TThread.CreateAnonymousThread` | Tarefas simples, one-shot |
-| `TTask.Run` (PPL) | Forma moderna, pool gerenciado |
-| `TParallel.For` | Loop paralelo em coleções independentes |
-| `TFuture<T>` | Resultado assíncrono com valor de retorno |
-| `TThread` (herança) | Workers permanentes, filas, servidores |
+| `TThread.CreateAnonymousThread` | Simple, one-shot tasks |
+| `TTask.Run` (PPL) | Modern way, managed pool |
+| `TParallel.For` | Parallel loop in independent collections |
+| `TFuture<T>` | Asynchronous result with return value |
+| `TThread` (inheritance) | Permanent workers, queues, servers |
 
 ### Thread-Safety
 
-- **`TCriticalSection`** — Seção crítica clássica (`Enter`/`Leave` SEMPRE no `finally`)
-- **`TMonitor`** — Lock nativo de objeto (`Enter`/`Exit`)
-- **`TInterlocked`** — Operações atômicas (`Increment`, `Decrement`, `Exchange`)
-- **`TThreadList<T>`** — Lista thread-safe com `LockList`/`UnlockList`
-- **`TMultiReadExclusiveWriteSynchronizer`** — Cache: múltiplas leituras, poucas escritas
-- **`TThreadedQueue<T>`** — Fila thread-safe para Producer-Consumer
+- **`TCriticalSection`** — Classic critical section (`Enter`/`Leave` ALWAYS in `finally`)
+- **`TMonitor`** — Native object lock (`Enter`/`Exit`)
+- **`TInterlocked`** — Atomic operations (`Increment`, `Decrement`, `Exchange`)
+- **`TThreadList<T>`** — Thread-safe list with `LockList`/`UnlockList`
+- **`TMultiReadExclusiveWriteSynchronizer`** — Cache: multiple reads, few writes
+- **`TThreadedQueue<T>`** — Thread-safe queue for Producer-Consumer
 
-### Anti-Patterns de Threading
+### Threading Anti-Patterns
 
-- ❌ Acessar VCL/FMX diretamente de thread secundária
-- ❌ `Sleep()` na main thread (congela a UI!)
+- ❌ Access VCL/FMX directly from secondary thread
+- ❌ `Sleep()` in the main thread (freezes the UI!)
 - ❌ `FreeOnTerminate := True` + `WaitFor` (crash!)
-- ❌ Acessar variáveis compartilhadas sem lock
-- ❌ Ignorar exceções em threads (são silenciosas!)
+- ❌ Access shared variables without locking
+- ❌ Ignore exceptions in threads (they are silent!)
 - ❌ `TCriticalSection.Leave` fora de `finally`
 
 > **Skills:** `.gemini/skills/threading/SKILL.md`
 > **Rules:** `.cursor/rules/threading-patterns.md`
 
-## Princípios SOLID em Delphi
+## SOLID principles in Delphi
 
 ### S — Single Responsibility Principle (SRP)
 
-Cada unit e cada classe deve ter **uma única responsabilidade**:
+Each unit and each class must have **a single responsibility**:
 
 ```pascal
-// ✅ BOM — responsabilidades separadas
+//✅ GOOD — separate responsibilities
 TCustomerValidator = class
   function Validate(ACustomer: TCustomer): TValidationResult;
 end;
@@ -367,17 +367,17 @@ TCustomerRepository = class(TInterfacedObject, ICustomerRepository)
   procedure Save(ACustomer: TCustomer);
 end;
 
-// ❌ RUIM — classe fazendo tudo
+//❌ BAD — class doing it all
 TCustomer = class
-  procedure Validate;     // deveria ser um Validator
-  procedure SaveToDb;     // deveria ser um Repository
-  procedure SendEmail;    // deveria ser um Service
+  procedure Validate;     //should be a Validator
+  procedure SaveToDb;     //should be a Repository
+  procedure SendEmail;    //should be a Service
 end;
 ```
 
 ### O — Open/Closed Principle (OCP)
 
-Classes devem ser **abertas para extensão**, fechadas para modificação. Use herança e interfaces:
+Classes should be **open for extension**, closed for modification. Use inheritance and interfaces:
 
 ```pascal
 type
@@ -396,23 +396,23 @@ type
 
 ### L — Liskov Substitution Principle (LSP)
 
-Subtipos devem ser substituíveis pelo tipo base sem quebrar o comportamento:
+Subtypes must be replaceable with the base type without breaking behavior:
 
 ```pascal
-// ✅ BOM — qualquer ICustomerRepository funciona
+//✅ GOOD — any ICustomerRepository works
 procedure TCustomerService.LoadCustomer(ARepo: ICustomerRepository);
 begin
-  // funciona com TFireDACCustomerRepo, TMemoryCustomerRepo, TMockCustomerRepo
+  //works with TFireDACCustomerRepo, TMemoryCustomerRepo, TMockCustomerRepo
   FCustomer := ARepo.FindById(FCustomerId);
 end;
 ```
 
 ### I — Interface Segregation Principle (ISP)
 
-Interfaces pequenas e coesas, não interfaces "gordas":
+Small, cohesive interfaces, not "fat" interfaces:
 
 ```pascal
-// ✅ BOM — interfaces segregadas
+//✅ GOOD — segregated interfaces
 type
   IReadableRepository<T> = interface
     function FindById(AId: Integer): T;
@@ -432,7 +432,7 @@ type
 
 ### D — Dependency Inversion Principle (DIP)
 
-Dependa de **abstrações** (interfaces), não de implementações concretas. Use **constructor injection**:
+Depend on **abstractions** (interfaces), not concrete implementations. Use **constructor injection**:
 
 ```pascal
 type
@@ -453,17 +453,17 @@ begin
 end;
 ```
 
-## Clean Code — Regras Essenciais
+## Clean Code — Essential Rules
 
-### 1. Métodos Curtos
+### 1. Short Methods
 
-- Máximo **20 linhas** por método (ideal: 5-10)
-- Se um método precisa de comentário explicando "o que faz", ele deveria ser extraído em um método com nome descritivo
+- Maximum **20 lines** per method (ideal: 5-10)
+- If a method needs a comment explaining "what it does", it should be extracted into a method with a descriptive name
 
-### 2. Nomes Auto-Descritivos
+### 2. Self-Descriptive Names
 
 ```pascal
-// ❌ RUIM
+//❌ SPACIOUS
 procedure Proc1(S: string; N: Integer);
 function Calc(V: Double): Double;
 
@@ -472,10 +472,10 @@ procedure SendNotificationEmail(const ARecipientEmail: string; ATemplateId: Inte
 function CalculateDiscountedPrice(AOriginalPrice: Double): Double;
 ```
 
-### 3. Evitar Números Mágicos
+### 3. Avoid Magic Numbers
 
 ```pascal
-// ❌ RUIM
+//❌ SPACIOUS
 if ACustomer.Age > 18 then
 
 // ✅ BOM
@@ -488,7 +488,7 @@ if ACustomer.Age > MINIMUM_AGE then
 ### 4. Guard Clauses
 
 ```pascal
-// ❌ RUIM — nesting excessivo
+//❌ BAD — excessive nesting
 procedure ProcessOrder(AOrder: TOrder);
 begin
   if Assigned(AOrder) then
@@ -497,13 +497,13 @@ begin
     begin
       if AOrder.IsValid then
       begin
-        // lógica real aqui
+        //real logic here
       end;
     end;
   end;
 end;
 
-// ✅ BOM — guard clauses
+//✅ BOM — guard clauses
 procedure ProcessOrder(AOrder: TOrder);
 begin
   if not Assigned(AOrder) then
@@ -513,22 +513,22 @@ begin
   if not AOrder.IsValid then
     raise EValidationException.Create('Order validation failed');
 
-  // lógica real aqui — sem nesting
+  //real logic here — no nesting
 end;
 ```
 
-### 5. Try/Except Focado e Tipado
+### 5. Focused and Typed Try/Except
 
 ```pascal
-// ❌ RUIM — catch genérico engolindo erros críticos (Access Violation, OOM)
+//❌ BAD — generic catch swallowing critical errors (Access Violation, OOM)
 try
-  // grande bloco de código longo
+  //large block of long code
 except
-  on E: Exception do // Ou pior: sem declarar "on E:"
+  on E: Exception do //Or worse: without declaring "on E:"
     ShowMessage(E.Message);
 end;
 
-// ✅ BOM — exceptions específicas e recuperação granular
+//✅ GOOD — specific exceptions and granular recovery
 try
   FConnection.Open;
   PerformCriticalAction;
@@ -536,19 +536,19 @@ except
   on E: EFDDBEngineException do
     raise EDatabaseConnectionException.Create('Falha local no banco: ' + E.Message);
   on E: EBusinessRuleException do
-    raise; // Repassa a exceção para Controller capturar
+    raise; //Pass the exception to the Controller to catch
   on E: Exception do
   begin
     Logger.LogError('Critical unexpected failure', E);
-    raise; // NUNCA esconda exceções puras do root Exception sem relançar!
+    raise; //NEVER hide pure root Exception exceptions without rethrowing!
   end;
 end;
 ```
 
-### 6. Organização de Unit
+### 6. Unit Organization
 
 ```pascal
-unit MeuApp.Domain.Customer.Entity;
+unit MyApp.Domain.Customer.Entity;
 
 interface
 
@@ -558,17 +558,17 @@ uses
   System.Generics.Collections;
 
 type
-  // 1. Types, enums e records primeiro
+  //1. Types, enums and records first
   TCustomerStatus = (csActive, csInactive, csSuspended);
 
-  // 2. Interfaces
+  //2. Interfaces
   ICustomer = interface
     ['{GUID}']
     function GetName: string;
     property Name: string read GetName;
   end;
 
-  // 3. Classes
+  //3. Classes
   TCustomer = class(TInterfacedObject, ICustomer)
   private
     FId: Integer;
@@ -576,16 +576,16 @@ type
     FStatus: TCustomerStatus;
     function GetName: string;
   public
-    // Constructor e Destructor primeiro
+    //Constructor and Destructor first
     constructor Create(const AName: string);
     destructor Destroy; override;
 
-    // Depois métodos públicos
+    //After public methods
     function IsActive: Boolean;
     procedure Activate;
     procedure Deactivate;
 
-    // Properties por último
+    //Properties last
     property Id: Integer read FId write FId;
     property Name: string read GetName;
     property Status: TCustomerStatus read FStatus;
@@ -604,37 +604,37 @@ begin
   FStatus := csActive;
 end;
 
-// ... demais implementações
+//... other implementations
 ```
 
-## Padrões de Projeto Recomendados
+## Recommended Design Patterns
 
-| Padrão | Uso em Delphi |
+| Standard | Use in Delphi |
 |--------|---------------|
-| **Repository** | Abstrai acesso a dados via interface (FireDAC, REST, etc.) |
-| **Service** | Contém lógica de negócio orquestrando repositories e outros services |
-| **Factory** | Cria instâncias de objetos complexos ou com dependências |
-| **Observer** | Usar `TNotifyEvent` ou interfaces para desacoplar notificações |
-| **Strategy** | Interfaces para variar algoritmos (ex: cálculo de impostos) |
-| **Unit of Work** | Gerencia transações de banco de dados |
+| **Repository** | Abstracts data access via interface (FireDAC, REST, etc.) |
+| **Service** | Contains business logic orchestrating repositories and other services |
+| **Factory** | Creates instances of complex objects or with dependencies |
+| **Observer** | Use `TNotifyEvent` or interfaces to decouple notifications |
+| **Strategy** | Interfaces to vary algorithms (e.g. tax calculation) |
+| **Unit of Work** | Manages database transactions |
 
-## Anti-Patterns a Evitar
+## Anti-Patterns to Avoid
 
-- ❌ **God class / God unit** — units com milhares de linhas fazendo tudo
-- ❌ **Acoplamento direto a forms** — lógica de negócio em `OnClick` de botões
-- ❌ **Uses circular** — resolvido separando em camadas (Domain, Infra, Application, Presentation)
-- ❌ **Variáveis globais** — usar injeção de dependência
-- ❌ **Strings hardcoded** — usar `resourcestring` ou constantes
-- ❌ **Ignoring memory management** — sempre liberar objetos não gerenciados por referência
-- ❌ **`with` statement** — evitar `with` pois reduz legibilidade e dificulta debug
-- ❌ **Testes em Banco Real** — acoplar projetos DUnitX diretamente no `TFDConnection` pulando Mocks/Fakes.
+- ❌ **God class / God unit** — units with thousands of lines doing everything
+- ❌ **Direct coupling to forms** — business logic in `OnClick` of buttons
+- ❌ **Uses circular** — resolved by separating into layers (Domain, Infra, Application, Presentation)
+- ❌ **Global variables** — use dependency injection
+- ❌ **Hardcoded Strings** — use `resourcestring` or constants
+- ❌ **Ignoring memory management** — always free unmanaged objects by reference
+- ❌ **`with` statement** — avoid `with` as it reduces readability and makes debugging difficult
+- ❌ **Testing in Banco Real** — attach DUnitX projects directly to `TFDConnection`, skipping Mocks/Fakes.
 
-## Gerenciamento de Memória (Crítico)
+## Memory Management (Critical)
 
-- **Blocos Vigiados:** A regra de ouro no Delphi: Toda vez que existir um código chamando `.Create` para instâncias de Classes TObject, a linha IMEDIATAMENTE subsequente deve ser obrigatoriamente um `try`. NENHUMA linha de código intermediária!
+- **Watched Blocks:** The golden rule in Delphi: Whenever there is code calling `.Create` for instances of TObject Classes, the IMMEDIATELY subsequent line must be a `try`. NO intermediate lines of code!
 
 ```pascal
-// ✅ O Padrão Ouro para Objetos Descartáveis
+//✅ The Gold Standard for Disposable Objects
 var LList: TStringList;
 begin
   LList := TStringList.Create;
@@ -642,43 +642,43 @@ begin
     LList.Add('item');
     // ...
   finally
-    LList.Free; // ou FreeAndNil(LList)
+    LList.Free; //i FreeAndNil(LList)
   end;
 end;
 
-// ✅ Objetos com dono (Owner) - Componentes VCL/FMX
-TMyComponent := TMyComponent.Create(Self); // Owner (Self) assume liberação
+//✅ Objects with owner - VCL/FMX components
+TMyComponent := TMyComponent.Create(Self); //Owner (Self) assumes release
 
-// ✅ Garbage Collection com Interfaces (ARC)
-// O objeto será limpo automaticamente no fim do escopo, dispensando try..free
+//✅ Garbage Collection com Interfaces (ARC)
+//The object will be automatically cleaned up at the end of the scope, eliminating the need for try..free
 var LService: IMyService;
 begin
   LService := TMyService.Create; 
   LService.DoSomething;
 end;
 
-// ✅ Variáveis locais: usar prefixo L
+//✅ Local variables: use L prefix
 var LCustomer: TCustomer;
 ```
 
-## Documentação
+## Documentation
 
-- Usar **XMLDoc** para métodos públicos e interfaces:
+- Use **XMLDoc** for public methods and interfaces:
 
 ```pascal
-/// <summary>
-///   Localiza um cliente pelo CPF informado.
-/// </summary>
-/// <param name="ACpf">CPF do cliente (somente números)</param>
-/// <returns>Instância de TCustomer ou nil se não encontrado</returns>
-/// <exception cref="EArgumentException">Se ACpf estiver vazio</exception>
+///<summary>
+///Locates a customer by the CPF entered.
+///</summary>
+///<param name="ACpf">Customer CPF (numbers only)</param>
+///<returns>TCustomer instance or nil if not found</returns>
+///<exception cref="EArgumentException">If ACpf is empty</exception>
 function FindByCpf(const ACpf: string): TCustomer;
 ```
 
-- Comentários em **português** para projetos brasileiros
-- Não comentar código óbvio — deixar o nome do método explicar
+- Comments in **Portuguese** for Brazilian projects
+- Don't comment obvious code — let the method name explain
 
-## Estrutura de Camadas (Arquitetura)
+## Layer Structure (Architecture)
 
 ```
 src/
@@ -690,5 +690,6 @@ tests/
 └── Unit/             ← Projetos DUnitX e Fakes/Mocks isolados por contexto
 ```
 
-> **Regra de dependência:** `Presentation → Application → Domain ← Infrastructure`
-> O Domain **nunca** depende de outras camadas. Os `tests` dependem de `Application` e `Domain` mas injetam implementações Fakes copiando a `Infrastructure` isoladamente.
+> **Dependency rule:** `Presentation → Application → Domain ← Infrastructure`
+> The Domain **never** depends on other layers. `tests` depend on `Application` and `Domain` but inject Fake implementations by copying `Infrastructure` alone.
+

@@ -1,34 +1,34 @@
 ---
-name: "Refatoração de Código Delphi"
-description: "Técnicas de refatoração para Object Pascal: Extract Method, Extract Class, Guard Clauses, Replace Magic Numbers, Replace Conditional with Polymorphism, Introduce Parameter Object, Remove With, Extract Interface. Sempre com foco em manter o comportamento e melhorar a legibilidade."
+name: "Delphi Code Refactoring"
+description: "Refactoring techniques for Object Pascal: Extract Method, Extract Class, Guard Clauses, Replace Magic Numbers, Replace Conditional with Polymorphism, Introduce Parameter Object, Remove With, Extract Interface. Always focusing on maintaining behavior and improving readability."
 ---
 
-# Refatoração de Código Delphi — Skill
+# Delphi Code Refactoring — Skill
 
-Use esta skill quando o usuário solicitar refatoração, revisão de código ou remoção de code smells em Object Pascal. A refatoração **nunca altera o comportamento observável** — apenas melhora a estrutura interna do código.
+Use this skill when the user requests refactoring, code review or removal of code smells in Object Pascal. Refactoring **never changes observable behavior** — it only improves the internal structure of the code.
 
-## Quando Usar
+## When to Use
 
-- O usuário pede para "melhorar", "limpar" ou "refatorar" um código existente
-- Ao revisar código e encontrar code smells
-- Ao preparar código legado para receber novas funcionalidades
-- Antes de adicionar testes a um código não testável
-- Ao responder "por que este código é difícil de entender?"
+- User asks to "improve", "clean up" or "refactor" existing code
+- When reviewing code and finding code smells
+- When preparing legacy code to receive new functionality
+- Before adding tests to untestable code
+- When answering "why is this code difficult to understand?"
 
-## Princípio Fundamental
+## Fundamental Principle
 
-> "Refatoração é a arte de mudar a estrutura do código sem mudar seu comportamento."
-> Sempre escreva (ou verifique a existência de) testes **antes** de refatorar.
+> "Refactoring is the art of changing the structure of code without changing its behavior."
+> Always write (or check for) tests **before** refactoring.
 
 ---
 
-## 📋 Catálogo de Code Smells e Técnicas
+## 📋 Catalog of Code Smells and Techniques
 
-### 1. Extract Method — Método Longo
+### 1. Extract Method — Long Method
 
-**Detectar:** Método com mais de 20 linhas ou que precisa de comentários para explicar blocos.
+**Detect:** Method with more than 20 lines or that needs comments to explain blocks.
 
-**Antes:**
+**Before:**
 ```pascal
 procedure TInvoiceService.GenerateInvoice(AOrder: TOrder);
 var
@@ -63,7 +63,7 @@ begin
 end;
 ```
 
-**Depois:**
+**After:**
 ```pascal
 procedure TInvoiceService.GenerateInvoice(AOrder: TOrder);
 var
@@ -112,23 +112,23 @@ end;
 
 ---
 
-### 2. Extract Class — Classe com Múltiplas Responsabilidades
+### 2. Extract Class — Class with Multiple Responsibilities
 
-**Detectar:** Classe com campos de naturezas diferentes, métodos sem coesão.
+**Detect:** Class with fields of different nature, methods without cohesion.
 
-**Antes:**
+**Before:**
 ```pascal
 TEmployee = class
 private
-  // Dados pessoais
+  // Data pessoais
   FName: string;
   FBirthDate: TDate;
   FCpf: string;
-  // Dados salariais
+  // Data salariais
   FBaseSalary: Currency;
   FBonusPercentage: Double;
   FDepartmentId: Integer;
-  // Dados de RH
+  // Data de RH
   FHiredDate: TDate;
   FVacationDaysLeft: Integer;
   FPerformanceScore: Integer;
@@ -142,7 +142,7 @@ public
 end;
 ```
 
-**Depois:**
+**After:**
 ```pascal
 // Value Object — imutável
 TEmployeePersonalData = record
@@ -151,7 +151,7 @@ TEmployeePersonalData = record
   Cpf: string;
 end;
 
-// Classe coesa: responsabilidade salarial
+// Classe coesa: responsibility salarial
 TEmployeeSalary = class
 private
   FBaseSalary: Currency;
@@ -163,7 +163,7 @@ public
   function IsEligibleForBonus: Boolean;
 end;
 
-// Classe coesa: responsabilidade de RH
+// Classe coesa: responsibility de RH
 TEmployeeHrRecord = class
 private
   FHiredDate: TDate;
@@ -175,7 +175,7 @@ public
   function CalculateVacationPay(AGrossSalary: Currency): Currency;
 end;
 
-// Entidade principal — agora apenas agrega as partes
+// Entidade principal — agora only agrega as partes
 TEmployee = class
 private
   FPersonalData: TEmployeePersonalData;
@@ -195,9 +195,9 @@ end;
 
 ### 3. Replace Nested Conditionals with Guard Clauses
 
-**Detectar:** Mais de 2 níveis de `if..then..begin..end` aninhados.
+**Detect:** More than 2 levels of `if..then..begin..end` nested.
 
-**Antes:**
+**Before:**
 ```pascal
 function TBankService.Withdraw(AAccount: TAccount; AAmount: Currency): Boolean;
 begin
@@ -223,7 +223,7 @@ begin
 end;
 ```
 
-**Depois:**
+**After:**
 ```pascal
 function TBankService.Withdraw(AAccount: TAccount; AAmount: Currency): Boolean;
 begin
@@ -249,9 +249,9 @@ end;
 
 ### 4. Replace Magic Numbers with Constants
 
-**Detectar:** Literais numéricos ou de string sem nome explicativo no código.
+**Detect:** Numeric or string literals without an explanatory name in the code.
 
-**Antes:**
+**Before:**
 ```pascal
 if AProduct.Stock < 5 then NotifyLowStock(AProduct);
 LInstallmentValue := AOrder.Total / 12;
@@ -260,7 +260,7 @@ if AUser.FailedLogins >= 3 then LockAccount(AUser);
 LInterest := ADebt * 0.02;  // juros de mora
 ```
 
-**Depois:**
+**After:**
 ```pascal
 const
   LOW_STOCK_THRESHOLD       = 5;
@@ -280,9 +280,9 @@ LInterest := ADebt * MONTHLY_INTEREST_RATE;
 
 ### 5. Replace Conditional with Polymorphism (Strategy/State)
 
-**Detectar:** `case` ou cadeia `if/else if` que verifica o tipo ou regime de um objeto.
+**Detect:** `case` or `if/else if` string that checks the type or regime of an object.
 
-**Antes:**
+**Before:**
 ```pascal
 function TShippingService.CalculateFreight(AOrder: TOrder): Currency;
 begin
@@ -295,7 +295,7 @@ begin
 end;
 ```
 
-**Depois:**
+**After:**
 ```pascal
 // Interface Strategy
 IFreightStrategy = interface
@@ -304,7 +304,7 @@ IFreightStrategy = interface
   function GetCarrierName: string;
 end;
 
-// Implementações: uma por variação
+// Implementations: uma por variaction
 TPACFreightStrategy = class(TInterfacedObject, IFreightStrategy)
   function Calculate(AWeightKg: Double): Currency;   // peso * 2.50 + 8.0
   function GetCarrierName: string;
@@ -325,7 +325,7 @@ TRetiradaFreightStrategy = class(TInterfacedObject, IFreightStrategy)
   function GetCarrierName: string;
 end;
 
-// Context — não precisa mais do case
+// Context — not precisa mais do case
 function TShippingService.CalculateFreight(AOrder: TOrder;
   AStrategy: IFreightStrategy): Currency;
 begin
@@ -337,9 +337,9 @@ end;
 
 ### 6. Introduce Parameter Object
 
-**Detectar:** Método com > 4 parâmetros, especialmente se vários são opcionais.
+**Detect:** Method with > 4 parameters, especially if several are optional.
 
-**Antes:**
+**Before:**
 ```pascal
 function TReportService.GenerateSalesReport(
   AStartDate: TDate;
@@ -351,7 +351,7 @@ function TReportService.GenerateSalesReport(
   AIncludeReturns: Boolean): TReportResult;
 ```
 
-**Depois:**
+**After:**
 ```pascal
 TSalesReportFilter = record
   StartDate: TDate;
@@ -384,11 +384,11 @@ function TReportService.GenerateSalesReport(
 
 ### 7. Remove `with` Statement
 
-**Detectar:** Qualquer `with Objeto do begin...end` no código.
+**Detect:** Any `with Objeto do begin...end` in the code.
 
-**Regra:** Nunca use `with`. Prefira variáveis locais ou qualificação explícita.
+**Rule:** Never use `with`. Prefer local variables or explicit qualification.
 
-**Antes:**
+**Before:**
 ```pascal
 procedure TCustomerForm.LoadData;
 begin
@@ -406,7 +406,7 @@ begin
 end;
 ```
 
-**Depois:**
+**After:**
 ```pascal
 procedure TCustomerForm.LoadData;
 var LAddressField: TField;
@@ -425,9 +425,9 @@ end;
 
 ### 8. Extract Interface / Invert Dependency
 
-**Detectar:** Service ou classe dependendo diretamente de classe concreta (não interface).
+**Detect:** Service or class depending directly on concrete class (not interface).
 
-**Antes:**
+**Before:**
 ```pascal
 TOrderService = class
 private
@@ -444,7 +444,7 @@ begin
 end;
 ```
 
-**Depois:**
+**After:**
 ```pascal
 // 1. Extraia interfaces
 IEmailSender = interface
@@ -476,9 +476,9 @@ end;
 
 ---
 
-### 9. Rename — Nomes Auto-Descritivos
+### 9. Rename — Self-Descriptive Names
 
-**Detectar:** Variáveis como `x`, `tmp`, `data`, `flag`; métodos como `Proc1`, `DoIt`, `Handle`.
+**Detect:** Variables like `x`, `tmp`, `data`, `flag`; methods like `Proc1`, `DoIt`, `Handle`.
 
 ```pascal
 // ❌ ANTES
@@ -498,12 +498,12 @@ function CalculateShippingCost(AWeightKg: Double): Currency;
 
 ---
 
-### 10. Inline Method — Método Desnecessariamente Delegado
+### 10. Inline Method — Unnecessarily Delegate Method
 
-**Detectar:** Método que apenas chama outro método, sem lógica adicional.
+**Detect:** Method that just calls another method, without additional logic.
 
 ```pascal
-// ❌ ANTES — delegação desnecessária
+// ❌ ANTES — delegaction desnecessária
 function TOrder.GetTotal: Currency;
 begin
   Result := CalculateOrderTotal;  // só delega
@@ -514,7 +514,7 @@ begin
   Result := FSubtotal + FTax - FDiscount;
 end;
 
-// ✅ DEPOIS — apenas um método com nome descritivo
+// ✅ DEPOIS — only um método com nome descritivo
 function TOrder.GetTotal: Currency;
 begin
   Result := FSubtotal + FTax - FDiscount;
@@ -523,7 +523,7 @@ end;
 
 ---
 
-## 🔄 Processo de Refatoração Seguro
+## 🔄 Secure Refactoring Process
 
 ```
 1. ENTENDER  → Leia e compreenda o código atual
@@ -534,14 +534,14 @@ end;
 6. REPETIR   → Próxima refatoração
 ```
 
-## ✅ Checklist Final
+## ✅ Final Checklist
 
-- [ ] Existe teste cobrindo o comportamento antes de refatorar?
-- [ ] O comportamento observável permanece igual?
-- [ ] Nenhum `with` foi introduzido?
-- [ ] Nenhum número mágico sem nome?
-- [ ] Método resultante tem ≤ 20 linhas?
-- [ ] Nome do método extraído dispensa comentário?
-- [ ] Dependências são agora via interface?
-- [ ] Guard clauses substituem nesting profundo?
-- [ ] Parâmetros em excesso foram agrupados em DTO/Record?
+- [ ] Is there testing covering the behavior before refactoring?
+- [ ] Does the observable behavior remain the same?
+- [ ] No `with` was introduced?
+- [ ] No nameless magic number?
+- [ ] Resulting method has ≤ 20 lines?
+- [ ] Name of the extracted method needs no comment?
+- [ ] Dependencies are now via interface?
+- [ ] Do guard clauses replace deep nesting?
+- [ ] Were excess parameters grouped in DTO/Record?

@@ -1,4 +1,4 @@
-program I18nAppTests;
+﻿program I18nAppTests;
 
 {$IFNDEF TESTINSIGHT}
 {$APPTYPE CONSOLE}
@@ -61,3 +61,4 @@ begin
       System.Writeln(E.ClassName, ': ', E.Message);
   end;
 end.
+

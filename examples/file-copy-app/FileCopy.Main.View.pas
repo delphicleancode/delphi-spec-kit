@@ -1,6 +1,6 @@
-/// <summary>
-///   Form principal da aplicação de cópia de arquivos.
-///   Permite selecionar pasta de origem e destino, listar e copiar arquivos.
+﻿/// <summary>
+/// Main form of the file copy application.
+/// Allows you to select source and destination folder, list and copy files.
 /// </summary>
 unit FileCopy.Main.View;
 
@@ -64,7 +64,7 @@ constructor TfrmMain.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FCopierService := TFileCopierService.Create;
-  SetStatus('Selecione as pastas de origem e destino.');
+  SetStatus('Select the source and destination folders.');
 end;
 
 function TfrmMain.SelectFolder(const ATitle: string): string;
@@ -79,7 +79,7 @@ procedure TfrmMain.btnSelectSourceClick(Sender: TObject);
 var
   LFolder: string;
 begin
-  LFolder := SelectFolder('Selecionar Pasta de Origem');
+  LFolder := SelectFolder('Select Source Folder');
   if LFolder.IsEmpty then
     Exit;
 
@@ -91,12 +91,12 @@ procedure TfrmMain.btnSelectDestClick(Sender: TObject);
 var
   LFolder: string;
 begin
-  LFolder := SelectFolder('Selecionar Pasta de Destino');
+  LFolder := SelectFolder('Select Destination Folder');
   if LFolder.IsEmpty then
     Exit;
 
   edtDest.Text := LFolder;
-  SetStatus('Pasta de destino selecionada.');
+  SetStatus('Destination folder selected.');
 end;
 
 procedure TfrmMain.LoadFileList;
@@ -114,7 +114,7 @@ begin
   for LFile in LFiles do
     lbxFiles.Items.Add(TPath.GetFileName(LFile));
 
-  SetStatus(Format('%d arquivo(s) encontrado(s).', [Length(LFiles)]));
+  SetStatus(Format('%d file(s) found.', [Length(LFiles)]));
 end;
 
 procedure TfrmMain.btnCopyClick(Sender: TObject);
@@ -123,19 +123,19 @@ var
 begin
   if edtSource.Text.IsEmpty then
   begin
-    ShowMessage('Selecione a pasta de origem.');
+    ShowMessage('Select the source folder.');
     Exit;
   end;
 
   if edtDest.Text.IsEmpty then
   begin
-    ShowMessage('Selecione a pasta de destino.');
+    ShowMessage('Select the destination folder.');
     Exit;
   end;
 
   if lbxFiles.Items.Count = 0 then
   begin
-    ShowMessage('Nenhum arquivo para copiar.');
+    ShowMessage('No files to copy.');
     Exit;
   end;
 
@@ -147,17 +147,17 @@ begin
       procedure(const AFileName: string; ACurrent, ATotal: Integer)
       begin
         prgCopy.Position := ACurrent;
-        SetStatus(Format('Copiando: %s (%d/%d)', [AFileName, ACurrent, ATotal]));
+        SetStatus(Format('Copying: %s (%d/%d)', [AFileName, ACurrent, ATotal]));
         Application.ProcessMessages;
       end);
 
-    SetStatus(Format('Concluído! %d arquivo(s) copiado(s).', [LCopied]));
-    ShowMessage(Format('%d arquivo(s) copiado(s) com sucesso!', [LCopied]));
+    SetStatus(Format('Completed! %d file(s) copied.', [LCopied]));
+    ShowMessage(Format('%d file(s) copied successfully!', [LCopied]));
   except
     on E: Exception do
     begin
-      SetStatus('Erro durante a cópia.');
-      ShowMessage('Erro ao copiar: ' + E.Message);
+      SetStatus('Error during copying.');
+      ShowMessage('Error when copying:' + E.Message);
     end;
   end;
   btnCopy.Enabled := True;
@@ -169,3 +169,4 @@ begin
 end;
 
 end.
+

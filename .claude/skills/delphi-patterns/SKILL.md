@@ -1,23 +1,23 @@
 ---
 name: "Delphi SOLID Patterns"
-description: "Padrões de implementação SOLID para projetos Delphi — Repository, Service, Factory, Strategy com constructor injection e interfaces"
+description: "SOLID implementation patterns for Delphi projects — Repository, Service, Factory, Strategy with constructor injection and interfaces"
 ---
 
 # Delphi SOLID Patterns — Skill
 
-Use esta skill quando o usuário solicitar criação de classes, services, repositories ou qualquer estrutura que siga os princípios SOLID em Delphi.
+Use this skill when the user requests the creation of classes, services, repositories or any structure that follows SOLID principles in Delphi.
 
-## Quando Usar
+## When to Use
 
-- Ao criar uma nova **entidade** de domínio
-- Ao criar um **repository** (acesso a dados)
-- Ao criar um **service** (lógica de negócio)
-- Ao implementar um **use case**
-- Ao aplicar qualquer padrão de projeto (Factory, Strategy, Observer)
+- When creating a new domain **entity**
+- When creating a **repository** (data access)
+- When creating a **service** (business logic)
+- When implementing a **use case**
+- When applying any design pattern (Factory, Strategy, Observer)
 
 ## Repository Pattern
 
-### Interface do Repository
+### Repository Interface
 
 ```pascal
 unit MeuApp.Domain.Customer.Repository.Intf;
@@ -29,9 +29,9 @@ uses
   MeuApp.Domain.Customer.Entity;
 
 type
-  /// <summary>
-  ///   Interface para operações de leitura de clientes.
-  /// </summary>
+  ///<summary>
+  ///Interface for client reading operations.
+  ///</summary>
   ICustomerReadRepository = interface
     ['{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}']
     function FindById(AId: Integer): TCustomer;
@@ -39,9 +39,9 @@ type
     function FindByCpf(const ACpf: string): TCustomer;
   end;
 
-  /// <summary>
-  ///   Interface para operações de escrita de clientes.
-  /// </summary>
+  ///<summary>
+  ///Interface for client writing operations.
+  ///</summary>
   ICustomerWriteRepository = interface
     ['{B2C3D4E5-F6A7-8901-BCDE-F12345678901}']
     procedure Insert(ACustomer: TCustomer);
@@ -49,9 +49,9 @@ type
     procedure Delete(AId: Integer);
   end;
 
-  /// <summary>
-  ///   Interface completa de repository combinando leitura e escrita.
-  /// </summary>
+  ///<summary>
+  ///Complete repository interface combining reading and writing.
+  ///</summary>
   ICustomerRepository = interface(ICustomerReadRepository)
     ['{C3D4E5F6-A7B8-9012-CDEF-123456789012}']
     procedure Insert(ACustomer: TCustomer);
@@ -64,7 +64,7 @@ implementation
 end.
 ```
 
-### Implementação com FireDAC
+### Implementation with FireDAC
 
 ```pascal
 unit MeuApp.Infra.Customer.Repository;
@@ -128,12 +128,12 @@ begin
   end;
 end;
 
-// ... demais métodos seguem o mesmo padrão
+//... other methods follow the same pattern
 ```
 
 ## Service Pattern
 
-### Interface do Service
+### Service Interface
 
 ```pascal
 unit MeuApp.Application.Customer.Service.Intf;
@@ -157,7 +157,7 @@ implementation
 end.
 ```
 
-### Implementação do Service
+### Service Implementation
 
 ```pascal
 unit MeuApp.Application.Customer.Service;
@@ -171,9 +171,9 @@ uses
   MeuApp.Application.Customer.Service.Intf;
 
 type
-  /// <summary>
-  ///   Service de clientes com validação e orquestração de dependências.
-  /// </summary>
+  ///<summary>
+  ///Customer service with dependency validation and orchestration.
+  ///</summary>
   TCustomerService = class(TInterfacedObject, ICustomerService)
   private
     FRepository: ICustomerRepository;
@@ -234,7 +234,7 @@ begin
     raise EValidationException.CreateFmt('CPF must have %d digits', [CPF_LENGTH]);
 end;
 
-// ... demais métodos
+//...other methods
 ```
 
 ## Factory Pattern
@@ -250,9 +250,9 @@ uses
   MeuApp.Application.Customer.Service.Intf;
 
 type
-  /// <summary>
-  ///   Factory para criar instâncias de services e repositories.
-  /// </summary>
+  ///<summary>
+  ///Factory to create instances of services and repositories.
+  ///</summary>
   TServiceFactory = class
   public
     class function CreateCustomerRepository(AConnection: TFDConnection): ICustomerRepository;
@@ -287,9 +287,9 @@ unit MeuApp.Domain.Tax.Strategy;
 interface
 
 type
-  /// <summary>
-  ///   Interface para estratégias de cálculo de imposto.
-  /// </summary>
+  ///<summary>
+  ///Interface for tax calculation strategies.
+  ///</summary>
   ITaxCalculator = interface
     ['{E5F6A7B8-C9D0-1234-EF01-345678901234}']
     function Calculate(ABaseValue: Currency): Currency;
@@ -339,17 +339,17 @@ begin
 end;
 ```
 
-## Checklist para Novas Implementações
+## Checklist for New Implementations
 
-Ao criar qualquer nova funcionalidade, verificar:
+When creating any new functionality, check:
 
-- [ ] Interface definida no Domain?
-- [ ] Implementação no Infrastructure?
-- [ ] Service no Application com constructor injection?
-- [ ] Factory method atualizado?
-- [ ] Guard clauses no início dos métodos?
-- [ ] Try/finally para objetos temporários?
-- [ ] Nomes seguindo convenções (T, I, E, F, A, L)?
-- [ ] XMLDoc nos métodos públicos?
-- [ ] Métodos ≤ 20 linhas?
-- [ ] Sem `with`, sem variáveis globais, sem números mágicos?
+- [ ] Interface defined in the Domain?
+- [ ] Implementation in Infrastructure?
+- [ ] Service in Application with constructor injection?
+- [ ] Factory method updated?
+- [ ] Guard clauses at the beginning of methods?
+- [ ] Try/finally for temporary objects?
+- [ ] Names following conventions (T, I, E, F, A, L)?
+- [ ] XMLDoc in public methods?
+- [ ] Methods ≤ 20 lines?
+- [ ] No `with`, no global variables, no magic numbers?

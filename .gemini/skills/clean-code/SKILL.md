@@ -1,56 +1,56 @@
 ---
 name: "Delphi Clean Code"
-description: "Padrões pragmáticos de código limpo para Delphi — conciso, direto, sem over-engineering"
+description: "Pragmatic clean code standards for Delphi — concise, direct, no over-engineering"
 ---
 
 # Delphi Clean Code — Skill
 
-> **CRITICAL SKILL** — Seja **conciso, direto e focado na solução**.
+> **CRITICAL SKILL** — Be **concise, direct and solution-focused**.
 
-## Princípios Fundamentais
+## Fundamental Principles
 
-| Princípio | Regra |
+| Principle | Rule |
 |-----------|-------|
-| **SRP** | Uma função/classe faz UMA coisa |
-| **DRY** | Não repita código — extraia e reutilize |
-| **KISS** | Solução mais simples que funciona |
-| **YAGNI** | Não construa o que não foi pedido |
-| **Boy Scout** | Deixe o código melhor do que encontrou |
+| **SRP** | A function/class does ONE thing |
+| **DRY** | Don't repeat code — extract and reuse |
+| **KISS** | Simplest solution that works |
+| **YAGNI** | Don't build what wasn't asked for |
+| **Boy Scout** | Leave the code better than you found it |
 
-## Regras de Nomenclatura (Pascal Guide)
+## Naming Rules (Pascal Guide)
 
-| Elemento | Convenção |
+| Element | Convention |
 |----------|-----------|
-| **Variáveis** | Revelar intenção: `LCustomerCount` não `N` |
-| **Métodos** | Verbo + substantivo: `GetCustomerById` não `Customer` |
-| **Booleanos** | Forma de pergunta: `IsActive`, `HasPermission`, `CanEdit` |
-| **Constantes** | SCREAMING_SNAKE: `MAX_RETRY_COUNT` |
-| **Campos** | Prefixo `F`: `FCustomerName` |
-| **Parâmetros** | Prefixo `A`: `ACustomerName` |
-| **Var. locais** | Prefixo `L`: `LCustomer` |
+| **Variables** | Reveal intent: `LCustomerCount` not `N` |
+| **Methods** | Verb + noun: `GetCustomerById` not `Customer` |
+| **Booleans** | Question form: `IsActive`, `HasPermission`, `CanEdit` |
+| **Constants** | SCREAMING_SNAKE: `MAX_RETRY_COUNT` |
+| **Fields** | Prefix `F`: `FCustomerName` |
+| **Parameters** | Prefix `A`: `ACustomerName` |
+| **Var. locations** | Prefix `L`: `LCustomer` |
 
-> **Regra:** Se precisar de comentário para explicar um nome, renomeie.
+> **Rule:** If you need a comment to explain a name, rename it.
 
-## Regras de Métodos
+## Method Rules
 
-| Regra | Descrição |
+| Rule | Description |
 |-------|-----------|
-| **Curto** | Máximo 20 linhas, ideal 5-10 |
-| **Uma Coisa** | Faz uma coisa e faz bem |
-| **Um Nível** | Um nível de abstração por método |
-| **Poucos Args** | Máximo 3 argumentos, preferir 0-2 |
-| **Sem Efeitos Colaterais** | Não mute inputs inesperadamente |
+| **Short** | Maximum 20 lines, ideal 5-10 |
+| **One Thing** | Do one thing and do it well |
+| **One Level** | One level of abstraction per method |
+| **Few Args** | Maximum 3 arguments, prefer 0-2 |
+| **No Side Effects** | Don't mute inputs unexpectedly |
 
-## Estrutura de Código
+## Code Structure
 
-| Padrão | Aplicação |
+| Standard | Application |
 |--------|-----------|
-| **Guard Clauses** | Early returns para edge cases |
-| **Flat > Nested** | Evitar nesting profundo (máx 2 níveis) |
-| **Composição** | Métodos pequenos compostos |
-| **Colocation** | Código relacionado junto |
+| **Guard Clauses** | Early returns for edge cases |
+| **Flat > Nested** | Avoid deep nesting (max 2 levels) |
+| **Composition** | Small compound methods |
+| **Colocation** | Related code together |
 
-### Guard Clauses em Delphi
+### Guard Clauses in Delphi
 
 ```pascal
 // ❌ RUIM — nesting excessivo
@@ -62,7 +62,7 @@ begin
     begin
       if AOrder.IsValid then
       begin
-        // lógica real aqui
+        // logic real aqui
       end;
     end;
   end;
@@ -78,25 +78,25 @@ begin
   if not AOrder.IsValid then
     raise EValidationException.Create('Order validation failed');
 
-  // lógica real aqui — sem nesting
+  // logic real aqui — sem nesting
 end;
 ```
 
-## Anti-Patterns (NÃO FAÇA)
+## Anti-Patterns (DO NOT DO)
 
-| ❌ Padrão | ✅ Correção |
+| ❌ Pattern | ✅ Fix |
 |-----------|------------|
-| Comentar cada linha | Deletar comentários óbvios |
-| Método > 20 linhas | Dividir por responsabilidade |
-| Números mágicos | Constantes nomeadas |
-| `with` statement | Variáveis locais explícitas |
-| Variáveis globais | Constructor injection |
-| Catch genérico | Exceptions específicas |
-| Lógica em `OnClick` | Delegar para Service |
-| God class / God unit | Uma classe = uma responsabilidade |
-| Ignorar `Free` | `try/finally` sempre |
+| Comment each line | Delete obvious comments |
+| Method > 20 lines | Share by responsibility |
+| Magic numbers | Named constants |
+| `with` statement | Explicit local variables |
+| Global variables | Constructor injection |
+| Generic Catch | Specific exceptions |
+| Logic in `OnClick` | Delegate to Service |
+| God class / God unity | One class = one responsibility |
+| Ignore `Free` | `try/finally` always |
 
-## Gerenciamento de Memória
+## Memory Management
 
 ```pascal
 // ✅ Objetos temporários — sempre try/finally
@@ -116,34 +116,34 @@ LService := TMyService.Create; // liberado automaticamente
 LButton := TButton.Create(Self); // Self libera automaticamente
 ```
 
-## Estilo de Código AI
+## AI Code Style
 
-| Situação | Ação |
+| Situation | Action |
 |----------|------|
-| Usuário pede feature | Escreva diretamente |
-| Usuário reporta bug | Corrija, não explique |
-| Requisito não claro | Pergunte, não assuma |
+| User requests feature | Write directly |
+| User reports bug | Correct, don't explain |
+| Requirement unclear | Ask, don't assume |
 
-## 🔴 Antes de Editar (PENSE PRIMEIRO!)
+## 🔴 Before Editing (THINK FIRST!)
 
-| Pergunta | Por quê |
+| Question | Why |
 |----------|---------|
-| **Quais units usam esta?** | Podem quebrar |
-| **O que esta unit importa?** | Interfaces podem mudar |
-| **Que testes cobrem isto?** | Testes podem falhar |
-| **É componente compartilhado?** | Múltiplos pontos afetados |
+| **Which units use this?** | They can break |
+| **What does this unit matter?** | Interfaces can change |
+| **What tests cover this?** | Tests may fail |
+| **Is it a shared component?** | Multiple points affected |
 
-> 🔴 **Regra:** Edite o arquivo + todos os dependentes na MESMA tarefa.
+> 🔴 **Rule:** Edit the file + all dependents in the SAME task.
 
-## 🔴 Self-Check (OBRIGATÓRIO)
+## 🔴 Self-Check (MANDATORY)
 
 | Check | Pergunta |
 |-------|----------|
-| ✅ **Objetivo atingido?** | Fiz exatamente o que foi pedido? |
-| ✅ **Arquivos editados?** | Modifiquei todos os necessários? |
-| ✅ **Código funciona?** | Testei/verifiquei? |
-| ✅ **Sem erros?** | Compila sem warnings? |
-| ✅ **Nada esquecido?** | Edge cases tratados? |
-| ✅ **Memory safe?** | Objetos liberados corretamente? |
+| ✅ **Goal achieved?** | Did I do exactly what was asked? |
+| ✅ **Edited files?** | Have I modified everything necessary? |
+| ✅ **Does the code work?** | Have I tested/verified? |
+| ✅ **No errors?** | Compiles without warnings? |
+| ✅ **Nothing forgotten?** | Edge cases treated? |
+| ✅ **Memory safe?** | Objects released correctly? |
 
-> 🔴 **Regra:** Se QUALQUER check falhar, corrija antes de finalizar.
+> 🔴 **Rule:** If ANY check fails, correct it before finishing.

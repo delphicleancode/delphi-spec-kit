@@ -1,4 +1,4 @@
-unit I18nApp.Core.Resources;
+﻿unit I18nApp.Core.Resources;
 
 interface
 
@@ -85,7 +85,7 @@ begin
         end;
       except
         on E: Exception do
-          // Fallback passivo caso erro de parse
+          // Passive fallback in case of parse error
           ;
       end;
     finally
@@ -101,3 +101,4 @@ begin
 end;
 
 end.
+

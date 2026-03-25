@@ -1,6 +1,6 @@
-# Estrutura e Convenções — Delphi
+# Structure and Conventions — Delphi
 
-## Arquitetura em Camadas
+## Layered Architecture
 
 ```
 src/
@@ -35,27 +35,27 @@ src/
         └── MeuApp.Presentation.Main.pas
 ```
 
-## Regra de Dependência
+## Dependency Rule
 
 ```
 Presentation → Application → Domain ← Infrastructure
 ```
 
-- **Domain** nunca depende de outras camadas
-- **Application** depende apenas de Domain (interfaces)
-- **Infrastructure** implementa interfaces de Domain
-- **Presentation** depende de Application (via interfaces)
+- **Domain** never depends on other layers
+- **Application** depends only on Domain (interfaces)
+- **Infrastructure** implements Domain interfaces
+- **Presentation** depends on Application (via interfaces)
 
-## Nomenclatura de Units
+## Unit Naming
 
-### Padrão
+### Standard
 ```
 {Projeto}.{Camada}.{Domínio}.{Funcionalidade}.pas
 ```
 
-### Exemplos por Camada
+### Examples per Layer
 
-| Camada | Padrão | Exemplo |
+| Layer | Standard | Example |
 |--------|--------|---------|
 | Domain | `*.Domain.*.Entity.pas` | `MeuApp.Domain.Customer.Entity.pas` |
 | Domain | `*.Domain.*.Repository.Intf.pas` | `MeuApp.Domain.Customer.Repository.Intf.pas` |
@@ -63,9 +63,9 @@ Presentation → Application → Domain ← Infrastructure
 | Infrastructure | `*.Infra.*.Repository.pas` | `MeuApp.Infra.Customer.Repository.pas` |
 | Presentation | `*.Presentation.*.View.pas` | `MeuApp.Presentation.Customer.Edit.pas` |
 
-## Nomenclatura de Componentes em Forms
+## Component Naming in Forms
 
-| Componente | Prefixo | Exemplo |
+| Component | Prefix | Example |
 |-----------|---------|---------|
 | TButton | `btn` | `btnSave`, `btnCancel`, `btnSearch` |
 | TEdit | `edt` | `edtName`, `edtEmail` |
@@ -79,7 +79,7 @@ Presentation → Application → Domain ← Infrastructure
 | TFDQuery | `qry` | `qryCustomers` |
 | TFDConnection | `con` | `conMain` |
 
-## Seções da Unit
+## Unit Sections
 
 ```pascal
 unit NomeDaUnit;
@@ -88,18 +88,18 @@ interface                    // Parte pública
 
 uses                         // Units necessárias (interface)
 
-type                         // Declarações de tipo
+type                         // Declarations de tipo
   // 1. Enums e Records
   // 2. Interfaces
-  // 3. Classes (public antes de published)
+  // 3. Classes (public before de published)
 
 const                        // Constantes públicas
 
 implementation               // Parte privada
 
-uses                         // Units só necessárias na implementação
+uses                         // Units só necessárias na implementaction
 
-{ TMinhaClasse }             // Seções agrupadas por classe
+{ TMinhaClasse }             // Setions agrupadas por classe
 
 end.
 ```

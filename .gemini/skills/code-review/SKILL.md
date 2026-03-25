@@ -1,62 +1,62 @@
 ---
 name: "Delphi Code Review"
-description: "Checklist de revisão de código Delphi — qualidade, segurança, performance, SOLID, memória"
+description: "Delphi code review checklist — quality, security, performance, SOLID, memory"
 ---
 
 # Delphi Code Review — Skill
 
-## Checklist Rápido
+## Quick Checklist
 
 ### Corretude
-- [ ] Código faz o que deveria fazer
-- [ ] Edge cases tratados (nil, lista vazia, valor zero)
-- [ ] Error handling implementado com exceptions específicas
-- [ ] Sem bugs óbvios
+- [ ] Code does what it's supposed to do
+- [ ] Edge cases handled (nil, empty list, zero value)
+- [ ] Error handling implemented with specific exceptions
+- [ ] No obvious bugs
 
-### Segurança
-- [ ] Queries SQL parametrizadas (sem concatenação de strings)
-- [ ] Input validado e sanitizado
-- [ ] Sem credenciais ou senhas hardcoded
-- [ ] Sem SQL injection via `Format` ou concatenação em queries
+### Security
+- [ ] Parameterized SQL queries (without string concatenation)
+- [ ] Validated and sanitized input
+- [ ] No hardcoded credentials or passwords
+- [ ] No SQL injection via `Format` or concatenation in queries
 
 ### Performance
-- [ ] Sem queries N+1 (evitar loop com query dentro)
-- [ ] Sem loops desnecessários
-- [ ] Objetos grandes liberados o mais cedo possível
-- [ ] `TObjectList` com `OwnsObjects` configurado corretamente
+- [ ] No N+1 queries (avoid loop with query inside)
+- [ ] No unnecessary loops
+- [ ] Large objects released as early as possible
+- [ ] `TObjectList` with `OwnsObjects` configured correctly
 
-### Qualidade de Código
-- [ ] Nomes auto-descritivos seguindo Pascal Guide
-- [ ] DRY — sem código duplicado
-- [ ] SOLID — princípios respeitados
-- [ ] Métodos ≤ 20 linhas
-- [ ] Guard clauses em vez de nesting profundo
+### Code Quality
+- [ ] Self-descriptive names following Pascal Guide
+- [ ] DRY — no duplicate code
+- [ ] SOLID — principles respected
+- [ ] Methods ≤ 20 lines
+- [ ] Guard clauses instead of deep nesting
 
-### Gerenciamento de Memória
-- [ ] `try/finally` com `Free` para objetos temporários
-- [ ] Interfaces para reference counting automático
-- [ ] `Assigned()` antes de acessar referências que podem ser nil
-- [ ] Destructor `Destroy` com `override` liberando campos owned
-- [ ] Sem memory leaks em caminhos de exception
+### Memory Management
+- [ ] `try/finally` with `Free` for temporary objects
+- [ ] Interfaces for automatic reference counting
+- [ ] `Assigned()` before accessing references that may be nil
+- [ ] Destructor `Destroy` with `override` freeing owned fields
+- [ ] No memory leaks in exception paths
 
-### Nomenclatura Pascal
-- [ ] PascalCase para todos os identificadores
-- [ ] Prefixo `T` em classes, `I` em interfaces, `E` em exceptions
-- [ ] Prefixo `F` em campos privados, `A` em parâmetros, `L` em variáveis locais
+### Pascal Nomenclature
+- [ ] PascalCase for all identifiers
+- [ ] Prefix `T` in classes, `I` in interfaces, `E` in exceptions
+- [ ] Prefix `F` in private fields, `A` in parameters, `L` in local variables
 - [ ] Units: `Projeto.Camada.Dominio.Funcionalidade.pas`
-- [ ] Componentes: prefixo de 3 letras (`btn`, `edt`, `lbl`, etc.)
+- [ ] Components: 3-letter prefix (`btn`, `edt`, `lbl`, etc.)
 
-### Testes
-- [ ] Testes unitários para código novo
-- [ ] Edge cases testados
-- [ ] Testes legíveis e manuteníveis
+### Tests
+- [ ] Unit tests for new code
+- [ ] Edge cases tested
+- [ ] Readable and maintainable tests
 
-### Documentação
-- [ ] XMLDoc para métodos e propriedades públicas
-- [ ] Comentários em português quando necessário
-- [ ] Não comentar código auto-explicativo
+### Documentation
+- [ ] XMLDoc for public methods and properties
+- [ ] Comments in Portuguese when necessary
+- [ ] Do not comment self-explanatory code
 
-## Anti-Patterns a Sinalizar
+## Anti-Patterns to Flag
 
 ```pascal
 // ❌ Números mágicos
@@ -85,10 +85,10 @@ except
   on E: EFDDBEngineException do
     raise EDatabaseException.Create('Falha: ' + E.Message);
 
-// ❌ Lógica em OnClick
+// ❌ Logic em OnClick
 procedure TfrmMain.btnSaveClick(Sender: TObject);
 begin
-  // 50 linhas de lógica de negócio aqui
+  // 50 linhas de logic de negócio aqui
 end;
 
 // ✅ Delegar para Service
@@ -117,7 +117,7 @@ begin
 end;
 ```
 
-## Guia de Comentários de Review
+## Review Comments Guide
 
 ```
 🔴 BLOQUEANTE: Memory leak — objeto não liberado em caso de exception
@@ -133,12 +133,12 @@ end;
 ❓ PERGUNTA: Este objeto é liberado por quem?
 ```
 
-## Checklist SOLID Específico
+## Specific SOLID Checklist
 
-| Princípio | Verificar |
+| Principle | Check |
 |-----------|-----------|
-| **SRP** | Classe tem UMA responsabilidade? Service não faz acesso a dados? |
-| **OCP** | Novas funcionalidades adicionam classes, não modificam existentes? |
-| **LSP** | Qualquer implementação da interface funciona no lugar da outra? |
-| **ISP** | Interface não tem métodos que implementadores não usam? |
-| **DIP** | Constructor recebe interfaces, não classes concretas? |
+| **SRP** | Does class have ONE responsibility? Service does not access data? |
+| **OCP** | Do new features add classes, not modify existing ones? |
+| **LSP** | Does either implementation of the interface work in place of the other? |
+| **ISP** | Doesn't interface have methods that implementers don't use? |
+| **DIP** | Constructor takes interfaces, not concrete classes? |

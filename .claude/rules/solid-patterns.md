@@ -1,71 +1,71 @@
 ---
-description: "Padrões SOLID e Design Patterns para Delphi — Repository, Service, Factory, Strategy"
+description: "SOLID Patterns and Design Patterns for Delphi — Repository, Service, Factory, Strategy"
 globs: ["**/*.pas"]
 alwaysApply: false
 ---
 
-# Padrões SOLID — Claude Rules
+# SOLID Patterns — Claude Rules
 
-Use estas regras quando criar novas classes, services ou repositories em Delphi.
+Use these rules when creating new classes, services or repositories in Delphi.
 
-## Princípios SOLID
+## SOLID Principles
 
 ### SRP — Single Responsibility
-- Uma classe = uma responsabilidade
-- Separar: `TCustomerValidator`, `TCustomerRepository`, `TCustomerService`
-- Não colocar lógica de negócio em forms
+- One class = one responsibility
+- Separate: `TCustomerValidator`, `TCustomerRepository`, `TCustomerService`
+- Do not put business logic in forms
 
 ### OCP — Open/Closed
-- Usar interfaces para extensão
-- Novas funcionalidades = novas classes implementando interface existente
+- Use interfaces for extension
+- New features = new classes implementing existing interface
 
 ### LSP — Liskov Substitution
-- Qualquer implementação de `ICustomerRepository` deve funcionar de forma intercambiável
+- Any implementation of `ICustomerRepository` must work interchangeably
 
 ### ISP — Interface Segregation
-- `IReadableRepository<T>` separado de `IWritableRepository<T>`
-- Interfaces pequenas e coesas
+- `IReadableRepository<T>` separated from `IWritableRepository<T>`
+- Small and cohesive interfaces
 
 ### DIP — Dependency Inversion
-- Sempre usar **constructor injection**
-- Dependências via interfaces, nunca classes concretas
+- Always use **constructor injection**
+- Dependencies via interfaces, never concrete classes
 
-## Padrão de Criação de Repository
+## Repository Creation Pattern
 
 ```pascal
-// 1. Interface no Domain
+//1. Interface no Domain
 ICustomerRepository = interface
   ['{GUID}']
   function FindById(AId: Integer): TCustomer;
   procedure Save(ACustomer: TCustomer);
 end;
 
-// 2. Implementação no Infrastructure
+//2. Implementation on Infrastructure
 TCustomerRepository = class(TInterfacedObject, ICustomerRepository)
   constructor Create(AConnection: TFDConnection);
 end;
 ```
 
-## Padrão de Criação de Service
+## Service Creation Pattern
 
 ```pascal
-// 1. Interface no Application
+//1. Interface no Application
 ICustomerService = interface
   ['{GUID}']
   procedure CreateCustomer(const AName, ACpf: string);
 end;
 
-// 2. Implementação com constructor injection
+//2. Implementation with constructor injection
 TCustomerService = class(TInterfacedObject, ICustomerService)
   constructor Create(ARepository: ICustomerRepository);
 end;
 ```
 
-## Checklist
+##Checklist
 
-- [ ] Interfaces definidas no Domain
-- [ ] Constructor injection para todas as dependências
-- [ ] Guard clauses no início dos métodos
-- [ ] Try/finally para objetos temporários
-- [ ] XMLDoc nos métodos públicos
-- [ ] Sem variáveis globais, sem `with`, sem catch genérico
+- [ ] Interfaces defined in the Domain
+- [ ] Constructor injection for all dependencies
+- [ ] Guard clauses at the beginning of methods
+- [ ] Try/finally for temporary objects
+- [ ] XMLDoc in public methods
+- [ ] No global variables, no `with`, no generic catch

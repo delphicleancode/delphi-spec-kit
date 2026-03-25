@@ -1,17 +1,17 @@
-Crie um exemplo completo e funcional de aplicação Delphi VCL utilizando o padrão i18n (internationalization) com Observer Pattern.
+Create a complete and functional example of a Delphi VCL application using the i18n (internationalization) pattern with Observer Pattern.
 
-## REQUISITOS FUNCIONAIS
+## FUNCTIONAL REQUIREMENTS
 
-A aplicação deve conter:
+The application must contain:
 
-- Form principal com MenuBar (Arquivo, Cadastros, Vendas, Configurações, Ajuda)
-- 3 forms de cadastro: Clientes, Produtos, Vendas  
-- Banco SQLite com FireDAC (script DDL incluído)
-- Menu Configurações > Idioma com seleção PT-BR/EN-US
+- Main form with MenuBar (File, Registrations, Sales, Settings, Help)
+- 3 registration forms: Customers, Products, Sales
+- SQLite database with FireDAC (DDL script included)
+- Settings menu > Language with PT-BR/EN-US selection
 
-## ESTRUTURA TÉCNICA OBRIGATÓRIA
+## MANDATORY TECHNICAL STRUCTURE
 
-### 1. **Padrão Observer para i18n**
+### 1. **Observer Pattern for i18n**
 
 ```
 TLanguageObserver = interface
@@ -31,7 +31,7 @@ public
 end;
 ```
 
-### 2. **Arquivos de Recursos JSON**
+### 2. **JSON Resource Files**
 
 ```
 resources/
@@ -39,7 +39,7 @@ resources/
 └── en-US.json → {"app.title": "Sales System", "client.cadastro": "Customer Registration"}
 ```
 
-### 3. **Componentes Visual**
+### 3. **Visual Components**
 
 ```
 - TMenuItem para cada ação traduzida
@@ -48,9 +48,9 @@ resources/
 - Formatação de moeda/data por cultura (PT-BR: R$ 1.234,56 | EN: $1,234.56)
 ```
 
-## IMPLEMENTAÇÃO POR FORM
+## IMPLEMENTATION BY FORM
 
-### FormPrincipal (implementa TLanguageObserver)
+### FormPrincipal (implements TLanguageObserver)
 
 ```
 protected
@@ -61,7 +61,7 @@ public
   constructor Create(AOwner: TComponent); override;
 ```
 
-### FormCliente, FormProduto, FormVenda
+### CustomerForm, ProductForm, VendaForm
 
 ```
 - Todos implementam TLanguageObserver
@@ -69,7 +69,7 @@ public
 - Campos obrigatórios com asterisco (*) traduzido
 ```
 
-## BANCO DE DADOS
+## DATABASE
 
 ```
 CREATE TABLE clientes (
@@ -81,7 +81,7 @@ CREATE TABLE clientes (
 -- + tabelas produtos, vendas
 ```
 
-## FLUXO DE MUDANÇA DE IDIOMA
+## LANGUAGE CHANGE FLOW
 
 ```
 1. Menu Config > Idioma > [PT-BR|EN-US]
@@ -90,7 +90,7 @@ CREATE TABLE clientes (
 4. StatusBar mostra "Idioma alterado para Português"
 ```
 
-## DELIVERABLES ESPERADOS NO CÓDIGO
+## DELIVERABLES EXPECTED IN THE CODE
 
 ```
 [ ] Unit LanguageManager.pas (Singleton Observer)
@@ -103,7 +103,7 @@ CREATE TABLE clientes (
 [ ] Hotkeys traduzidos (Ctrl+N = Novo)
 ```
 
-## BOAS PRÁTICAS OBRIGATÓRIAS
+## MANDATORY GOOD PRACTICES
 
 ```
 - NENHUM hard-coded string no código
@@ -113,4 +113,4 @@ CREATE TABLE clientes (
 - Suporte RTL (Right-to-Left) preparado
 ```
 
-Crie o código **completo e compilável** seguindo exatamente esta especificação, incluindo todas as units, forms e recursos.
+Create **complete and compilable** code following this specification exactly, including all units, forms and resources.

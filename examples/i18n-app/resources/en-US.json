@@ -1,4 +1,4 @@
-{
+﻿{
   "app.title": "International Sales System",
   "menu.file": "File",
   "menu.file.exit": "Exit",
@@ -42,3 +42,4 @@
   "sale.btn.save": "Save Sale",
   "sale.btn.delete": "Cancel"
 }
+

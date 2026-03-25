@@ -1,7 +1,7 @@
-/// <summary>
-///   Exemplo completo do padrão Repository em Delphi.
-///   Demonstra: ISP, DIP, constructor injection, guard clauses,
-///   try/finally, nomenclatura Pascal e XMLDoc.
+﻿/// <summary>
+/// Complete example of the Repository pattern in Delphi.
+/// Demonstrates: ISP, DIP, constructor injection, guard clauses,
+/// try/finally, Pascal and XMLDoc naming.
 /// </summary>
 unit Example.Domain.Customer.Repository;
 
@@ -14,13 +14,13 @@ uses
 
 type
   // =========================================================================
-  // Entidade
+  // Entity
   // =========================================================================
 
   TCustomerStatus = (csActive, csInactive, csSuspended);
 
   /// <summary>
-  ///   Entidade de domínio representando um cliente.
+  /// Domain entity representing a customer.
   /// </summary>
   TCustomer = class
   private
@@ -44,11 +44,11 @@ type
   end;
 
   // =========================================================================
-  // Interfaces segregadas (ISP)
+  // Segregated interfaces (ISP)
   // =========================================================================
 
   /// <summary>
-  ///   Interface de leitura de clientes.
+  /// Client reading interface.
   /// </summary>
   ICustomerReadRepository = interface
     ['{A1B2C3D4-0001-0001-0001-000000000001}']
@@ -59,7 +59,7 @@ type
   end;
 
   /// <summary>
-  ///   Interface de escrita de clientes.
+  /// Client writing interface.
   /// </summary>
   ICustomerWriteRepository = interface
     ['{A1B2C3D4-0001-0001-0001-000000000002}']
@@ -69,7 +69,7 @@ type
   end;
 
   /// <summary>
-  ///   Interface completa combinando leitura e escrita.
+  /// Complete interface combining reading and writing.
   /// </summary>
   ICustomerRepository = interface(ICustomerReadRepository)
     ['{A1B2C3D4-0001-0001-0001-000000000003}']
@@ -79,11 +79,11 @@ type
   end;
 
   // =========================================================================
-  // Implementação com FireDAC (DIP — Infrastructure implementa Domain)
+  // Implementation with FireDAC (DIP — Infrastructure implements Domain)
   // =========================================================================
 
   /// <summary>
-  ///   Implementação concreta do repository usando FireDAC.
+  /// Concrete implementation of the repository using FireDAC.
   /// </summary>
   TFireDACCustomerRepository = class(TInterfacedObject, ICustomerRepository)
   private
@@ -112,7 +112,7 @@ constructor TCustomer.Create(const AName: string);
 begin
   inherited Create;
   if AName.Trim.IsEmpty then
-    raise EArgumentException.Create('Nome do cliente não pode ser vazio');
+    raise EArgumentException.Create('Customer name cannot be empty');
   FName := AName.Trim;
   FStatus := csActive;
 end;
@@ -138,7 +138,7 @@ constructor TFireDACCustomerRepository.Create(AConnection: TFDConnection);
 begin
   inherited Create;
   if not Assigned(AConnection) then
-    raise EArgumentNilException.Create('AConnection não pode ser nil');
+    raise EArgumentNilException.Create('AConnection cannot be nil');
   FConnection := AConnection;
 end;
 
@@ -147,7 +147,7 @@ begin
   Result := TCustomer.Create(AQuery.FieldByName('name').AsString);
   Result.Id := AQuery.FieldByName('id').AsInteger;
   Result.Cpf := AQuery.FieldByName('cpf').AsString;
-  Result.Email := AQuery.FieldByName('email').AsString;
+  Result.Email := AQuery.FieldByName('e-mail').AsString;
 end;
 
 function TFireDACCustomerRepository.FindById(AId: Integer): TCustomer;
@@ -230,17 +230,17 @@ var
   LQuery: TFDQuery;
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
 
   LQuery := TFDQuery.Create(nil);
   try
     LQuery.Connection := FConnection;
     LQuery.SQL.Text :=
-      'INSERT INTO customers (name, cpf, email, status) ' +
+      'INSERT INTO customers (name, cpf, email, status)' +
       'VALUES (:name, :cpf, :email, :status)';
     LQuery.ParamByName('name').AsString := ACustomer.Name;
     LQuery.ParamByName('cpf').AsString := ACustomer.Cpf;
-    LQuery.ParamByName('email').AsString := ACustomer.Email;
+    LQuery.ParamByName('e-mail').AsString := ACustomer.Email;
     LQuery.ParamByName('status').AsInteger := Ord(ACustomer.Status);
     LQuery.ExecSQL;
   finally
@@ -253,18 +253,18 @@ var
   LQuery: TFDQuery;
 begin
   if not Assigned(ACustomer) then
-    raise EArgumentNilException.Create('ACustomer não pode ser nil');
+    raise EArgumentNilException.Create('ACustomer cannot be nil');
 
   LQuery := TFDQuery.Create(nil);
   try
     LQuery.Connection := FConnection;
     LQuery.SQL.Text :=
-      'UPDATE customers SET name = :name, cpf = :cpf, ' +
+      'UPDATE customers SET name = :name, cpf = :cpf,' +
       'email = :email, status = :status WHERE id = :id';
     LQuery.ParamByName('id').AsInteger := ACustomer.Id;
     LQuery.ParamByName('name').AsString := ACustomer.Name;
     LQuery.ParamByName('cpf').AsString := ACustomer.Cpf;
-    LQuery.ParamByName('email').AsString := ACustomer.Email;
+    LQuery.ParamByName('e-mail').AsString := ACustomer.Email;
     LQuery.ParamByName('status').AsInteger := Ord(ACustomer.Status);
     LQuery.ExecSQL;
   finally
@@ -288,3 +288,4 @@ begin
 end;
 
 end.
+

@@ -1,23 +1,23 @@
 ---
 name: "Delphi SOLID Patterns"
-description: "Padrões de implementação SOLID para projetos Delphi — Repository, Service, Factory, Strategy com constructor injection e interfaces"
+description: "SOLID implementation patterns for Delphi projects — Repository, Service, Factory, Strategy with constructor injection and interfaces"
 ---
 
 # Delphi SOLID Patterns — Skill
 
-Use esta skill quando o usuário solicitar criação de classes, services, repositories ou qualquer estrutura que siga os princípios SOLID em Delphi.
+Use this skill when the user requests the creation of classes, services, repositories or any structure that follows SOLID principles in Delphi.
 
-## Quando Usar
+## When to Use
 
-- Ao criar uma nova **entidade** de domínio
-- Ao criar um **repository** (acesso a dados)
-- Ao criar um **service** (lógica de negócio)
-- Ao implementar um **use case**
-- Ao aplicar qualquer padrão de projeto (Factory, Strategy, Observer)
+- When creating a new domain **entity**
+- When creating a **repository** (data access)
+- When creating a **service** (business logic)
+- When implementing a **use case**
+- When applying any design pattern (Factory, Strategy, Observer)
 
 ## Repository Pattern
 
-### Interface do Repository
+### Repository Interface
 
 ```pascal
 unit MeuApp.Domain.Customer.Repository.Intf;
@@ -30,7 +30,7 @@ uses
 
 type
   /// <summary>
-  ///   Interface para operações de leitura de clientes.
+  ///   Interface para operations de leitura de customers.
   /// </summary>
   ICustomerReadRepository = interface
     ['{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}']
@@ -40,7 +40,7 @@ type
   end;
 
   /// <summary>
-  ///   Interface para operações de escrita de clientes.
+  ///   Interface para operations de escrita de customers.
   /// </summary>
   ICustomerWriteRepository = interface
     ['{B2C3D4E5-F6A7-8901-BCDE-F12345678901}']
@@ -64,7 +64,7 @@ implementation
 end.
 ```
 
-### Implementação com FireDAC
+### Implementation with FireDAC
 
 ```pascal
 unit MeuApp.Infra.Customer.Repository;
@@ -128,12 +128,12 @@ begin
   end;
 end;
 
-// ... demais métodos seguem o mesmo padrão
+// ... demais métodos seguem o mesmo default
 ```
 
 ## Service Pattern
 
-### Interface do Service
+### Service Interface
 
 ```pascal
 unit MeuApp.Application.Customer.Service.Intf;
@@ -157,7 +157,7 @@ implementation
 end.
 ```
 
-### Implementação do Service
+### Service Implementation
 
 ```pascal
 unit MeuApp.Application.Customer.Service;
@@ -172,7 +172,7 @@ uses
 
 type
   /// <summary>
-  ///   Service de clientes com validação e orquestração de dependências.
+  ///   Service de customers com validation e orquestraction de dependências.
   /// </summary>
   TCustomerService = class(TInterfacedObject, ICustomerService)
   private
@@ -339,17 +339,17 @@ begin
 end;
 ```
 
-## Checklist para Novas Implementações
+## Checklist for New Implementations
 
-Ao criar qualquer nova funcionalidade, verificar:
+When creating any new functionality, check:
 
-- [ ] Interface definida no Domain?
-- [ ] Implementação no Infrastructure?
-- [ ] Service no Application com constructor injection?
-- [ ] Factory method atualizado?
-- [ ] Guard clauses no início dos métodos?
-- [ ] Try/finally para objetos temporários?
-- [ ] Nomes seguindo convenções (T, I, E, F, A, L)?
-- [ ] XMLDoc nos métodos públicos?
-- [ ] Métodos ≤ 20 linhas?
-- [ ] Sem `with`, sem variáveis globais, sem números mágicos?
+- [ ] Interface defined in the Domain?
+- [ ] Implementation in Infrastructure?
+- [ ] Service in Application with constructor injection?
+- [ ] Factory method updated?
+- [ ] Guard clauses at the beginning of methods?
+- [ ] Try/finally for temporary objects?
+- [ ] Names following conventions (T, I, E, F, A, L)?
+- [ ] XMLDoc in public methods?
+- [ ] Methods ≤ 20 lines?
+- [ ] No `with`, no global variables, no magic numbers?

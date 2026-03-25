@@ -1,48 +1,48 @@
 ---
-description: "Regras de desenvolvimento Delphi (Object Pascal) — Convenções, SOLID, Clean Code"
+description: "Delphi (Object Pascal) development rules — Conventions, SOLID, Clean Code"
 globs: ["**/*.pas", "**/*.dpr", "**/*.dpk", "**/*.dfm", "**/*.fmx"]
 alwaysApply: false
 ---
 
-# Regras Delphi — Antigravity / Gemini
+# Delphi Rules — Antigravity / Gemini
 
-Consulte `AGENTS.md` na raiz do projeto para a referência completa.
+See `AGENTS.md` in the project root for the complete reference.
 
-## Resumo de Convenções
+## Convention Summary
 
-- **PascalCase** para identificadores, palavras reservadas em minúsculas
-- Prefixos obrigatórios: `T` (classes), `I` (interfaces), `E` (exceptions), `F` (campos), `A` (parâmetros), `L` (variáveis locais)
+- **PascalCase** for identifiers, lowercase reserved words
+- Mandatory prefixes: `T` (classes), `I` (interfaces), `E` (exceptions), `F` (fields), `A` (parameters), `L` (local variables)
 - Units: `NomeProjeto.Camada.Dominio.Funcionalidade.pas`
-- Componentes em forms: prefixo de 3 letras (`btn`, `edt`, `lbl`, `cmb`, etc.)
+- Components in forms: 3-letter prefix (`btn`, `edt`, `lbl`, `cmb`, etc.)
 
-## Princípios SOLID
+## SOLID Principles
 
-1. **SRP** — Uma classe = uma responsabilidade. Separar Validator, Repository, Service
-2. **OCP** — Extensão via interfaces, não modificação de classes existentes
-3. **LSP** — Subtipos substituíveis pelo tipo base
-4. **ISP** — Interfaces pequenas e coesas (IReadable, IWritable separados)
-5. **DIP** — Depender de interfaces, constructor injection para dependências
+1. **SRP** — One class = one responsibility. Separate Validator, Repository, Service
+2. **OCP** — Extension via interfaces, not modification of existing classes
+3. **LSP** — Subtypes replaceable by the base type
+4. **ISP** — Small and cohesive interfaces (separate IReadable, IWritable)
+5. **DIP** — Depend on interfaces, constructor injection for dependencies
 
 ## Clean Code
 
-- Métodos ≤ 20 linhas (ideal: 5-10)
-- Nomes auto-descritivos (verbos para métodos, substantivos para properties)
-- Guard clauses em vez de nesting profundo
-- Constantes nomeadas em vez de números mágicos
-- Try/except focado com exceptions específicas
-- Try/finally para gerenciamento de memória
+- Methods ≤ 20 lines (ideal: 5-10)
+- Self-descriptive names (verbs for methods, nouns for properties)
+- Guard clauses instead of deep nesting
+- Named constants instead of magic numbers
+- Try/except focused with specific exceptions
+- Try/finally for memory management
 
-## Proibições
+## Prohibitions
 
 - ❌ `with` statement
-- ❌ Variáveis globais
-- ❌ Lógica de negócio em event handlers de forms
-- ❌ Catch genérico (`except on E: Exception`)
+- ❌ Global variables
+- ❌ Business logic in form event handlers
+- ❌ Generic Catch (`except on E: Exception`)
 - ❌ God classes / God units
-- ❌ Strings hardcoded
-- ❌ Ignorar `Free` de objetos temporários
+- ❌ Hardcoded strings
+- ❌ Ignore `Free` of temporary objects
 
-## Arquitetura em Camadas
+## Layered Architecture
 
 ```
 Domain → Entidades, Value Objects, Interfaces
@@ -51,23 +51,23 @@ Infrastructure → Repositories (FireDAC), APIs
 Presentation → Forms VCL/FMX, ViewModels
 ```
 
-Regra: `Presentation → Application → Domain ← Infrastructure`
+Rule: `Presentation → Application → Domain ← Infrastructure`
 
 ## Frameworks
 
-Consulte skills específicas para cada framework:
+Consult specific skills for each framework:
 
-- **Horse:** `.gemini/skills/horse-framework/SKILL.md` — APIs REST minimalistas (Express-like)
-- **DMVC:** `.gemini/skills/dmvc-framework/SKILL.md` — APIs REST full-featured com Active Record
-- **Dext Framework:** `.gemini/skills/dext-framework/SKILL.md` — APIs corporativas com DI, ORM e Minimal APIs (.NET-like)
-- **Intraweb:** `.gemini/skills/intraweb-framework/SKILL.md` — Desenvolvimento web (VCL for the Web) stateful
-- **ACBr:** `.gemini/skills/acbr-components/SKILL.md` — Bibliotecas Fiscais/Automação Comercial
-- **DevExpress:** `.gemini/skills/devexpress-components/SKILL.md` — Componentes VCL avançados
-- **Firebird Database:** `.gemini/skills/firebird-database/SKILL.md` — Conexão, PSQL, generators, transactions, migrations
-- **PostgreSQL Database:** `.gemini/skills/postgresql-database/SKILL.md` — Conexão, PL/pgSQL, UPSERT, JSONB, full-text search
-- **MySQL Database:** `.gemini/skills/mysql-database/SKILL.md` — Conexão, AUTO_INCREMENT, UPSERT, JSON, stored procedures
+- **Horse:** `.gemini/skills/horse-framework/SKILL.md` — Minimalist (Express-like) REST APIs
+- **DMVC:** `.gemini/skills/dmvc-framework/SKILL.md` — Full-featured REST APIs with Active Record
+- **Dext Framework:** `.gemini/skills/dext-framework/SKILL.md` — Enterprise APIs with DI, ORM and Minimal APIs (.NET-like)
+- **Intraweb:** `.gemini/skills/intraweb-framework/SKILL.md` — Stateful web development (VCL for the Web)
+- **ACBr:** `.gemini/skills/acbr-components/SKILL.md` — Tax Libraries/Commercial Automation
+- **DevExpress:** `.gemini/skills/devexpress-components/SKILL.md` — Advanced VCL components
+- **Firebird Database:** `.gemini/skills/firebird-database/SKILL.md` — Connection, PSQL, generators, transactions, migrations
+- **PostgreSQL Database:** `.gemini/skills/postgresql-database/SKILL.md` — Connection, PL/pgSQL, UPSERT, JSONB, full-text search
+- **MySQL Database:** `.gemini/skills/mysql-database/SKILL.md` — Connection, AUTO_INCREMENT, UPSERT, JSON, stored procedures
 - **Threading:** `.gemini/skills/threading/SKILL.md` — TThread, TTask, Synchronize/Queue, thread-safety, PPL
 - **TDD (DUnitX):** `.gemini/skills/tdd-dunitx/SKILL.md` — Test-Driven Development, Mocks, DUnitX
-- **Clean Code:** `.gemini/skills/clean-code/SKILL.md` — Padrões pragmáticos de código limpo
-- **Code Review:** `.gemini/skills/code-review/SKILL.md` — Checklist de revisão de código
+- **Clean Code:** `.gemini/skills/clean-code/SKILL.md` — Pragmatic clean code standards
+- **Code Review:** `.gemini/skills/code-review/SKILL.md` — Code review checklist
 

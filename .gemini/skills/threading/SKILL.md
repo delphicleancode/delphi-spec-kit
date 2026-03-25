@@ -1,41 +1,41 @@
 ---
 name: "Threading & Multi-Threading"
-description: "Padrões de threading em Delphi — TThread, TTask, TParallel, Synchronize, Queue, thread-safety, Producer-Consumer, pools, cancelamento e debugging"
+description: "Threading patterns in Delphi — TThread, TTask, TParallel, Synchronize, Queue, thread-safety, Producer-Consumer, pools, cancellation and debugging"
 ---
 
 # Threading & Multi-Threading — Skill
 
-Use esta skill ao trabalhar com threads, tarefas assíncronas e paralelismo em projetos Delphi.
+Use this skill when working with threads, asynchronous tasks and parallelism in Delphi projects.
 
-## Quando Usar
+## When to Use
 
-- Ao executar operações demoradas sem bloquear a UI (VCL/FMX)
-- Ao implementar processamento paralelo de dados
-- Ao criar servidores/workers que processam requisições concorrentes
-- Ao sincronizar acesso a recursos compartilhados
-- Ao gerenciar pools de threads e filas de trabalho
-- Ao implementar cancelamento gracioso de threads
+- When performing time-consuming operations without blocking the UI (VCL/FMX)
+- When implementing parallel data processing
+- When creating servers/workers that process concurrent requests
+- When synchronizing access to shared resources
+- When managing thread pools and work queues
+- By implementing graceful thread cancellation
 
-## Regra de Ouro do Threading em Delphi
+## Golden Rule of Threading in Delphi
 
-> **NUNCA acesse componentes visuais (VCL/FMX) diretamente de uma thread secundária.**
-> Use `TThread.Synchronize` ou `TThread.Queue` para atualizar a UI.
+> **NEVER access visual components (VCL/FMX) directly from a secondary thread.**
+> Use `TThread.Synchronize` or `TThread.Queue` to update the UI.
 
-## Abordagens Disponíveis
+## Available Approaches
 
-| Abordagem | Quando Usar | Complexidade |
+| Approach | When to Use | Complexity |
 |-----------|-------------|-------------|
-| `TThread` | Controle total, threads de longa duração | Média |
-| `TThread.CreateAnonymousThread` | Tarefas simples, one-shot | Baixa |
-| `TTask` (PPL) | Paralelismo moderno, tasks leves | Baixa |
-| `TParallel.For` (PPL) | Loops paralelos em coleções | Baixa |
-| `TFuture<T>` (PPL) | Resultado assíncrono com valor de retorno | Baixa |
-| `TThreadPool` | Pool de threads reutilizáveis | Média |
-| Thread dedicada (herança) | Workers permanentes, servidores, filas | Alta |
+| `TThread` | Full control, long-running threads | Average |
+| `TThread.CreateAnonymousThread` | Simple, one-shot tasks | Low |
+| `TTask` (PPL) | Modern parallelism, lightweight tasks | Low |
+| `TParallel.For` (PPL) | Parallel loops in collections | Low |
+| `TFuture<T>` (PPL) | Asynchronous result with return value | Low |
+| `TThreadPool` | Reusable Thread Pool | Average |
+| Dedicated thread (inheritance) | Permanent workers, servers, queues | High |
 
-## TThread — Abordagem Clássica
+## TThread — Classical Approach
 
-### Thread com Herança (Recomendado para Workers)
+### Thread with Inheritance (Recommended for Workers)
 
 ```pascal
 type
@@ -114,7 +114,7 @@ begin
 end;
 ```
 
-### Uso da Thread Dedicada
+### Use of Dedicated Thread
 
 ```pascal
 procedure TfrmMain.btnProcessClick(Sender: TObject);
@@ -148,7 +148,7 @@ begin
 end;
 ```
 
-### CreateAnonymousThread (Tarefas Simples)
+### CreateAnonymousThread (Simple Tasks)
 
 ```pascal
 /// <summary>
@@ -188,10 +188,10 @@ end;
 
 ## Synchronize vs Queue
 
-| Método | Comportamento | Quando Usar |
+| Method | Behavior | When to Use |
 |--------|--------------|-------------|
-| `TThread.Synchronize` | **Bloqueante** — espera a main thread processar | Quando precisa do resultado da UI |
-| `TThread.Queue` | **Não-bloqueante** — enfileira e continua | Progresso, logs, atualizações visuais |
+| `TThread.Synchronize` | **Blocking** — waits for the main thread to process | When you need the UI result |
+| `TThread.Queue` | **Non-blocking** — queue and continue | Progress, logs, visual updates |
 
 ```pascal
 { Synchronize: BLOQUEIA a thread até a main thread processar }
@@ -200,7 +200,7 @@ TThread.Synchronize(nil,
   begin
     lblStatus.Caption := 'Processando...';
   end);
-// A thread só continua AQUI depois que a main thread executou o código acima
+// A thread só continua AQUI after que a main thread executou o código acima
 
 { Queue: NÃO BLOQUEIA — enfileira e continua imediatamente }
 TThread.Queue(nil,
@@ -211,11 +211,11 @@ TThread.Queue(nil,
 // A thread continua IMEDIATAMENTE, sem esperar a main thread
 ```
 
-> **Recomendação:** Prefira `Queue` sempre que possível. Use `Synchronize` apenas quando precisar de um resultado da UI de volta na thread.
+> **Recommendation:** Prefer `Queue` whenever possible. Use `Synchronize` only when you need a result from the UI back in the thread.
 
 ## PPL — Parallel Programming Library (System.Threading)
 
-### TTask — Tarefas Leves
+### TTask — Light Tasks
 
 ```pascal
 uses
@@ -266,7 +266,7 @@ begin
 end;
 ```
 
-### TTask.Run — Atalho Direto
+### TTask.Run — Direct Shortcut
 
 ```pascal
 { Forma mais simples de executar em background via PPL }
@@ -284,7 +284,7 @@ TTask.Run(
   end);
 ```
 
-### TParallel.For — Loops Paralelos
+### TParallel.For — Parallel Loops
 
 ```pascal
 uses
@@ -292,8 +292,8 @@ uses
   System.SyncObjs;
 
 /// <summary>
-///   TParallel.For distribui iterações do loop entre múltiplas threads.
-///   Ideal para processamento de coleções independentes.
+///   TParallel.For distribui iterations do loop entre múltiplas threads.
+///   Ideal para processamento de coletions independentes.
 /// </summary>
 procedure TfrmMain.ProcessImagesParallel;
 var
@@ -327,16 +327,16 @@ begin
 end;
 ```
 
-> **⚠️ CUIDADO:** Cada iteração de `TParallel.For` pode rodar em threads diferentes. Variáveis compartilhadas **DEVEM** ser protegidas com `TCriticalSection`, `TMonitor` ou `TInterlocked`.
+> **⚠️ CAUTION:** Each iteration of `TParallel.For` can run on different threads. Shared variables **MUST** be protected with `TCriticalSection`, `TMonitor` or `TInterlocked`.
 
-### TFuture<T> — Resultado Assíncrono
+### TFuture<T> — Asynchronous Result
 
 ```pascal
 uses
   System.Threading;
 
 /// <summary>
-///   TFuture executa uma tarefa e retorna um valor quando pronto.
+///   TFuture executa uma tarefa e returns um valor quando pronto.
 ///   A leitura de .Value bloqueia até o resultado estar disponível.
 /// </summary>
 procedure TfrmMain.CalculateAsync;
@@ -361,7 +361,7 @@ begin
 end;
 ```
 
-## Thread-Safety — Proteção de Recursos
+## Thread-Safety — Resource Protection
 
 ### TCriticalSection
 
@@ -398,7 +398,7 @@ begin
   try
     Inc(FCount);
   finally
-    FLock.Leave;  // SEMPRE no finally!
+    FLock.Leave;  // ALWAYS no finally!
   end;
 end;
 
@@ -413,7 +413,7 @@ begin
 end;
 ```
 
-### TMonitor (Lock Nativo de Objeto)
+### TMonitor (Native Object Lock)
 
 ```pascal
 { TMonitor usa o próprio objeto como lock — sem criar TCriticalSection }
@@ -428,7 +428,7 @@ begin
 end;
 ```
 
-### TInterlocked (Operações Atômicas)
+### TInterlocked (Atomic Operations)
 
 ```pascal
 { Para operações simples em Integer/Int64 — sem lock explícito }
@@ -439,7 +439,7 @@ TInterlocked.Exchange(FOldValue, LNewValue);
 TInterlocked.CompareExchange(FTarget, LNewVal, LExpectedVal);
 ```
 
-### TThreadList<T> (Lista Thread-Safe)
+### TThreadList<T> (Thread-Safe List)
 
 ```pascal
 var
@@ -499,7 +499,7 @@ begin
 end;
 ```
 
-## Padrão Producer-Consumer
+## Producer-Consumer Pattern
 
 ```pascal
 type
@@ -574,7 +574,7 @@ begin
 end;
 ```
 
-## Eventos e Sinalização
+## Events and Signage
 
 ### TEvent
 
@@ -606,7 +606,7 @@ end;
 FStopEvent.SetEvent;
 ```
 
-### TSemaphore (Limite de Concorrência)
+### TSemaphore (Competition Threshold)
 
 ```pascal
 uses
@@ -628,7 +628,7 @@ finally
 end;
 ```
 
-## Thread Pool Customizado
+## Custom Thread Pool
 
 ```pascal
 type
@@ -689,7 +689,7 @@ begin
 end;
 ```
 
-## Cancelamento com Token
+## Cancellation with Token
 
 ```pascal
 type
@@ -736,14 +736,14 @@ begin
 end;
 ```
 
-## Padrões Importantes
+## Important Standards
 
-### Padrão: Background Worker com Resultado
+### Pattern: Background Worker with Result
 
 ```pascal
 type
   /// <summary>
-  ///   Generic background worker que executa uma função e retorna
+  ///   Generic background worker que executa uma função e returns
   ///   o resultado na main thread.
   /// </summary>
   TBackgroundWorker<T> = class
@@ -799,7 +799,7 @@ TBackgroundWorker<TObjectList<TCustomer>>.Execute(
   end);
 ```
 
-### Padrão: Timer Thread (Execução Periódica)
+### Default: Timer Thread (Periodic Execution)
 
 ```pascal
 type
@@ -832,17 +832,17 @@ begin
 end;
 ```
 
-## Anti-Patterns a Evitar
+## Anti-Patterns to Avoid
 
 ```pascal
-// ❌ NUNCA acessar UI diretamente de thread secundária
+// ❌ NEVER acessar UI diretamente de thread secundária
 TThread.CreateAnonymousThread(
   procedure
   begin
     lblStatus.Caption := 'Processando...';  // CRASH ou comportamento imprevisível!
   end).Start;
 
-// ✅ SEMPRE usar Synchronize/Queue para UI
+// ✅ ALWAYS usar Synchronize/Queue para UI
 TThread.CreateAnonymousThread(
   procedure
   begin
@@ -853,25 +853,25 @@ TThread.CreateAnonymousThread(
       end);
   end).Start;
 
-// ❌ NUNCA criar thread com FreeOnTerminate=True e manter referência
+// ❌ NEVER criar thread com FreeOnTerminate=True e manter referência
 FMyThread := TMyThread.Create(True);
 FMyThread.FreeOnTerminate := True;
 FMyThread.Start;
-// ... depois
+// ... after
 FMyThread.WaitFor;  // CRASH! O objeto pode já ter sido liberado!
 
 // ✅ Se precisa de WaitFor, NÃO use FreeOnTerminate
 FMyThread := TMyThread.Create(True);
 FMyThread.FreeOnTerminate := False;
 FMyThread.Start;
-// ... depois
+// ... after
 FMyThread.WaitFor;
 FMyThread.Free;
 
-// ❌ NUNCA acessar variáveis compartilhadas sem proteção
+// ❌ NEVER acessar variáveis compartilhadas sem proteção
 Inc(FSharedCounter);  // Race condition!
 
-// ✅ SEMPRE proteger acesso compartilhado
+// ✅ ALWAYS proteger acesso compartilhado
 TInterlocked.Increment(FSharedCounter);  // Atômico!
 // ou
 FLock.Enter;
@@ -881,7 +881,7 @@ finally
   FLock.Leave;
 end;
 
-// ❌ NUNCA usar Sleep() na main thread
+// ❌ NEVER usar Sleep() na main thread
 Sleep(5000);  // Congela a UI por 5 segundos!
 
 // ✅ Mover trabalho pesado para thread
@@ -896,14 +896,14 @@ TTask.Run(
       end);
   end);
 
-// ❌ NUNCA ignorar exceções em threads (elas são silenciosas!)
+// ❌ NEVER ignorar exceptions em threads (elas são silenciosas!)
 TThread.CreateAnonymousThread(
   procedure
   begin
     RiskyOperation;  // Se lançar exception, ninguém saberá!
   end).Start;
 
-// ✅ SEMPRE tratar exceções em threads
+// ✅ ALWAYS tratar exceptions em threads
 TThread.CreateAnonymousThread(
   procedure
   begin
@@ -920,9 +920,9 @@ TThread.CreateAnonymousThread(
   end).Start;
 ```
 
-## Debugging de Threads
+## Thread Debugging
 
-### Nomear Threads (Facilita Debug)
+### Name Threads (Facilitates Debug)
 
 ```pascal
 TThread.CreateAnonymousThread(
@@ -940,21 +940,21 @@ begin
 end;
 ```
 
-### Thread Window no IDE
+### Thread Window in IDE
 
-- **View → Debug Windows → Threads:** Lista todas as threads ativas
-- Cada thread nomeada aparece com seu nome customizado
-- Útil para identificar deadlocks e race conditions
+- **View → Debug Windows → Threads:** Lists all active threads
+- Each named thread appears with its custom name
+- Useful for identifying deadlocks and race conditions
 
-## Checklist de Threading
+## Threading Checklist
 
-- [ ] Operações pesadas estão em threads secundárias (não na main thread)?
-- [ ] Toda atualização de UI usa `Synchronize` ou `Queue`?
-- [ ] Variáveis compartilhadas protegidas com locks (`TCriticalSection`, `TMonitor`, `TInterlocked`)?
-- [ ] `FreeOnTerminate` configurado corretamente (True para fire-and-forget, False se precisa WaitFor)?
-- [ ] Threads verificam `Terminated` em loops para cancelamento gracioso?
-- [ ] Exceções tratadas dentro das threads (não propagam silenciosamente)?
-- [ ] Threads nomeadas com `NameThreadForDebugging` para facilitar debug?
-- [ ] `TCriticalSection.Leave` sempre no `finally`?
-- [ ] Sem `Sleep()` na main thread?
-- [ ] Sem deadlocks (locks aninhados na mesma ordem)?
+- [ ] Are heavy operations on secondary threads (not the main thread)?
+- [ ] Does every UI update use `Synchronize` or `Queue`?
+- [ ] Shared variables protected with locks (`TCriticalSection`, `TMonitor`, `TInterlocked`)?
+- [ ] `FreeOnTerminate` configured correctly (True for fire-and-forget, False if you need WaitFor)?
+- [ ] Threads check `Terminated` in loops for graceful cancellation?
+- [ ] Exceptions handled within threads (do not propagate silently)?
+- [ ] Threads named with `NameThreadForDebugging` to facilitate debugging?
+- [ ] `TCriticalSection.Leave` always on `finally`?
+- [ ] Without `Sleep()` in the main thread?
+- [ ] No deadlocks (locks nested in the same order)?
